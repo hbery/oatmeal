@@ -1,0 +1,10 @@
+! Xresources
+! setup things that use .Xresources for config setup
+!
+! by hbery (www.github.com/hbery)
+
+
+! Config setup for rxvt-unicode
+#include "/home/hbery/.config/urxvt/urxvtrc"
+! Config setup for xterm
+#include "/home/hbery/.config/xterm/xtermrc"
