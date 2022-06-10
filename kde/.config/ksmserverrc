@@ -1,0 +1,56 @@
+[$Version]
+update_info=ksmserver_update_loginMode_value.upd:ksmserver_update_loginMode_value_default_enum
+
+[General]
+loginMode=emptySession
+
+[LegacySession: saved at previous logout]
+count=0
+
+[Session: saved at previous logout]
+clientId1=104c4f4b49000158767192900000011720004
+clientId2=104c4f4b49000162586075400000014080004
+clientId3=104c4f4b49000162586347300000013120007
+clientId4=104c4f4b49000162586347300000013120009
+clientId5=104c4f4b49000162586091700000014080015
+clientId6=104c4f4b49000162586188600000014080025
+count=6
+discardCommand1[$e]=rm,$HOME/.config/session/kwin_104c4f4b49000158767192900000011720004_1625866683_754749
+discardCommand5[$e]=rm,$HOME/.config/session/yakuake_104c4f4b49000162586091700000014080015_1625866683_731249
+discardCommand6[$e]=rm,$HOME/.config/session/konsole_104c4f4b49000162586188600000014080025_1625866683_730481
+program1=/usr/bin/kwin_x11
+program2=/usr/bin/latte-dock
+program3=/usr/lib/x86_64-linux-gnu/libexec/DiscoverNotifier
+program4=pulseaudio
+program5=yakuake
+program6=konsole
+restartCommand1=/usr/bin/kwin_x11,-session,104c4f4b49000158767192900000011720004_1625866683_754749
+restartCommand2=/usr/bin/latte-dock,-session,104c4f4b49000162586075400000014080004_1625866683_731465
+restartCommand3=/usr/lib/x86_64-linux-gnu/libexec/DiscoverNotifier,-session,104c4f4b49000162586347300000013120007_1625866683_730421
+restartCommand4=
+restartCommand5=yakuake,-session,104c4f4b49000162586091700000014080015_1625866683_731249
+restartCommand6=konsole,-session,104c4f4b49000162586188600000014080025_1625866683_730481,-name,konsole
+restartStyleHint1=0
+restartStyleHint2=0
+restartStyleHint3=0
+restartStyleHint4=0
+restartStyleHint5=0
+restartStyleHint6=0
+userId1=hbery
+userId2=hbery
+userId3=hbery
+userId4=hbery
+userId5=hbery
+userId6=hbery
+wasWm1=true
+wasWm2=false
+wasWm3=false
+wasWm4=false
+wasWm5=false
+wasWm6=false
+
+[SubSession: 0201bb9c-de5a-4122-9b00-c041653b4faa]
+count=0
+
+[SubSession: 86578805-0644-4c19-8f91-7c3d2ad495b3]
+count=0

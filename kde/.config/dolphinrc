@@ -1,0 +1,72 @@
+Height 1080=764
+MenuBar=Disabled
+State=AAAA/wAAAAD9AAAAAwAAAAAAAACrAAAC1vwCAAAAAvsAAAAWAGYAbwBsAGQAZQByAHMARABvAGMAawAAAAAmAAAAlgAAAF0BAAAD+wAAABQAcABsAGEAYwBlAHMARABvAGMAawEAAAAmAAAC1gAAAF0BAAADAAAAAQAAAAAAAAAA/AIAAAAB+wAAABAAaQBuAGYAbwBEAG8AYwBrAAAAAAD/////AAAACgEAAAMAAAADAAAFVAAAANn8AQAAAAH7AAAAGAB0AGUAcgBtAGkAbgBhAGwARABvAGMAawAAAAAAAAAFVAAAAJEBAAADAAAEqAAAAtYAAAAEAAAABAAAAAgAAAAI/AAAAAEAAAACAAAAAQAAABYAbQBhAGkAbgBUAG8AbwBsAEIAYQByAQAAAAD/////AAAAAAAAAAA=
+Width 1920=1364
+
+[CompactMode]
+FontWeight=50
+IconSize=48
+MaximumTextWidthIndex=1
+PreviewSize=32
+
+[Desktop Entry]
+DefaultProfile=Profile 3.profile
+
+[DetailsMode]
+ExpandableFolders=false
+FontWeight=50
+IconSize=22
+PreviewSize=22
+
+[DownloadDialog Settings]
+Height 1080=508
+Width 1920=700
+
+[Favorite Profiles]
+Favorites=
+
+[General]
+BrowseThroughArchives=true
+EditableUrl=true
+FilterBar=true
+ShowFullPath=true
+ShowFullPathInTitlebar=true
+ShowSelectionToggle=false
+ShowZoomSlider=false
+UseTabForSwitchingSplitView=true
+Version=200
+ViewPropsTimestamp=2021,3,5,22,17,13
+
+[IconsMode]
+FontWeight=50
+MaximumTextLines=1
+
+[KPropertiesDialog]
+Height 1080=527
+Width 1920=425
+
+[MainWindow]
+Height 1080=1048
+Height 1440=1016
+Height 2160=2128
+MenuBar=Disabled
+State=AAAA/wAAAAD9AAAAAwAAAAAAAACuAAAD8vwCAAAAAvsAAAAWAGYAbwBsAGQAZQByAHMARABvAGMAawAAAAAA/////wAAAAwBAAAF+wAAABQAcABsAGEAYwBlAHMARABvAGMAawEAAAAmAAAD8gAAAFQBAAAFAAAAAQAAAAAAAAAA/AIAAAAB+wAAABAAaQBuAGYAbwBEAG8AYwBrAAAAAAD/////AAAADAEAAAUAAAADAAAAAAAAAAD8AQAAAAH7AAAAGAB0AGUAcgBtAGkAbgBhAGwARABvAGMAawAAAAAA/////wAAAAwBAAAFAAADBwAAA/IAAAAEAAAABAAAAAgAAAAI/AAAAAEAAAACAAAAAQAAABYAbQBhAGkAbgBUAG8AbwBsAEIAYQByAQAAAAD/////AAAAAAAAAAA=
+ToolBarsMovable=Disabled
+Width 1920=952
+Width 2560=952
+Width 3840=952
+
+[Open-with settings]
+CompletionMode=1
+History=
+
+[PreviewSettings]
+Plugins=audiothumbnail,blenderthumbnail,comicbookthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,opendocumentthumbnail,gsthumbnail,rawthumbnail,svgthumbnail,ffmpegthumbs
+
+[SettingsDialog]
+Height 1080=482
+Width 1920=540
+
+[ViewPropertiesDialog]
+Height 1080=543
+Width 1920=316

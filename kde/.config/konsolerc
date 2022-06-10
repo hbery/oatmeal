@@ -1,0 +1,32 @@
+[Desktop Entry]
+DefaultProfile=Profile 2.profile
+
+[Favorite Profiles]
+Favorites=
+
+[FileDialogSize]
+Height 1440=599
+Width 2560=980
+
+[KFileDialog Settings]
+detailViewIconSize=0
+
+[MainWindow]
+Height 1080=1048
+Height 1440=1376
+Height 768=1080
+Height 900=508
+MenuBar=Disabled
+State=AAAA/wAAAAD9AAAAAAAAB4AAAAP+AAAABAAAAAQAAAAIAAAACPwAAAAA
+ToolBarsMovable=Disabled
+Width 1024=1016
+Width 1600=1024
+Width 1920=952
+Width 2560=1272
+Window-Maximized 1080x1920=true
+Window-Maximized 1440x2560=true
+Window-Maximized 768x1024=true
+
+[TabBar]
+CloseTabOnMiddleMouseButton=true
+ExpandTabWidth=true

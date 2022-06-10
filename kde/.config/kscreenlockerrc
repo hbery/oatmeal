@@ -1,0 +1,13 @@
+[$Version]
+update_info=kscreenlocker.upd:0.1-autolock
+
+[Daemon]
+Autolock=true
+LockGrace=15
+Timeout=10
+
+[Greeter]
+Theme=Ant-Dark
+
+[Greeter][Wallpaper][org.kde.image][General]
+Image=file:///home/hbery/Pictures/coffeebreak_suspend_mod.png
