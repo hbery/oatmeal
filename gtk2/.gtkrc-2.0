@@ -1,0 +1,19 @@
+gtk-theme-name="WhiteSur-dark-solid"
+
+gtk-enable-animations=1
+
+gtk-primary-button-warps-slider=0
+
+gtk-toolbar-style=GTK_TOOLBAR_BOTH_HORIZ
+
+gtk-menu-images=1
+
+gtk-button-images=1
+
+gtk-cursor-theme-name="Qogir-cursors"
+
+gtk-icon-theme-name="Tela-circle-ubuntu-dark"
+
+gtk-font-name="Roboto,  10"
+
+gtk-modules=appmenu-gtk-module
