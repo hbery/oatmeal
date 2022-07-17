@@ -39,6 +39,7 @@ _tagMap[base]="sys xdefaults bash shell zsh vim nvim tmux screen git htop starsh
 _tagMap[base-gui]="screenlayout alacritty xterm urxvt gtk2 gtk3 mpv pcmanfm firefox"
 _tagMap[add-gui]="mypaint vscode brave spacefm"
 _tagMap[kde]="kde konsole yakuake latte rofi"
+_tagMap[scripts]="scripts"
 _tagMap[xfce]="xfce plank rofi"
 _tagMap[qtile]="qtilewm dunst rofi nitrogen"
 _tagMap[awesome]="awesomewm dunst rofi nitrogen"
@@ -68,7 +69,7 @@ usage: $(basename "$0") [-h] [-a] [-t TAGS] [-I] [-F] [-P] [-w] [-W] [-S]
   -h       Show this help.
   -a       Install all things that this script provides. Specifically:
              (dotfiles[tags:all], icons, fonts, packages, wallpapers[git])
-  -T TAGS  Install specific tags, comma separated list.
+  -t TAGS  Install specific tags, comma separated list.
   -I       [WIP] Install icons. (_icons/install-icons.sh)
   -F       Install fonts. (_fonts/install-fonts.sh)
   -P       [WIP] Install packages specific to the distribution/package manager.
@@ -88,6 +89,7 @@ do
 done
 )
 _EOH1
+  echo -e "  * ${_grnClr}custom${_norClr}: ${_graClr}what_do_you_want; format \`-t custom:dir1,dir2,..\`${_norClr}"
 }
 ## . END _usageFn }
 
@@ -152,11 +154,13 @@ _installPackagesFn () {
 _installDotfilesFn () {
   local _stow_description_dir="$(dirname "$0")"
   local _stow_destination_dir="${HOME}"
+  local _tags_to_install="${@}"
 
   ${_stowBinary} \
+    --verbose=5 \
     --dir="${_stow_description_dir}" \
     --target="${_stow_destination_dir}" \
-    --stow
+    --stow ${_tags_to_install}
 }
 ## . END _installDotfilesFn }
 
@@ -199,7 +203,7 @@ _getAndInstallWallpapersFn () {
   local _wallpapers_direcory="${1:-}"
 
   _hedMsg "Linking brought WALLPAPERS to ${_wallpapers_direcory}."
-  ln -s "$(dirname "$0")/_images/*.jpg" "$(realpath "${_wallpapers_direcory}")/"
+  ln -s "$(find $(dirname "$0")/_images -name *.{jpg,png} | xargs)" "$(realpath "${_wallpapers_direcory}")/"
 }
 ## . END _getAndInstallWallpapersFn }
 
@@ -265,7 +269,8 @@ _applySystemChangesFn () {
 ## BEGIN _cleanupFn {
 _cleanupFn () {
   # TODO 2022-06-10: implement cleanup functionality
-  true
+  [ -d "/tmp/fonts-tmp" ] && rm -rfv "/tmp/fonts-tmp"
+  [ -d "/tmp/icons-tmp" ] && rm -rfv "/tmp/icons-tmp"
 }
 ## . END _cleanupFn }
 
@@ -286,10 +291,19 @@ _mainFn () {
   then
     _infMsg "Installing TAGS .."
     declare -a _tag_list
-    for _tag in ${_install_tags}
-    do
-      _tag_list+=(${_tagMap[${_tag}]})
-    done
+    case "${_install_tags}" in
+      "custom:"*)
+        _infMsg "Using CUSTOM tags"
+        _tag_list=($(printf "${_install_tags##*:}" | sed 's/,/ /g'))
+        ;;
+      *)
+        for _tag in ${_install_tags}
+        do
+          _tag_list+=(${_tagMap[${_tag}]})
+        done
+        ;;
+    esac
+    _infMsg "TAGS to install: ${_tag_list[*]}"
     _installDotfilesFn "${_tag_list[@]}"
   fi
 
@@ -297,6 +311,7 @@ _mainFn () {
   if [ "${_install_icons}" ] || [ "${_install_all}" ]
   then
     _infMsg "Installing ICONS .."
+    [ ! -d "/tmp/icons-tmp" ] && mkdir -pv "/tmp/icons-tmp"
     _installIconsFn "/tmp/icons-tmp" "${HOME}/.local/share/icons"
   fi
 
@@ -304,6 +319,7 @@ _mainFn () {
   if [ "${_install_fonts}" ] || [ "${_install_all}" ]
   then
     _infMsg "Installing FONTS .."
+    [ ! -d "/tmp/fonts-tmp" ] && mkdir -pv "/tmp/fonts-tmp"
     _installFontsFn "/tmp/fonts-tmp" "${HOME}/.local/share/fonts"
   fi
 
@@ -311,14 +327,14 @@ _mainFn () {
   if [ "${_install_wallpapers}" ] || [ "${_install_all}" ]
   then
     _infMsg "Installing WALLPAPERS .."
-    _getAndInstallWallpapersFn
+    _getAndInstallWallpapersFn "${HOME}/Pictures"
   fi
 
   # install GIT WALLPAPERS
   if [ "${_install_git_wallpapers}" ] || [ "${_install_all}" ]
   then
     _infMsg "Installing GIT WALLPAPERS .."
-    _getAndInstallGitWallpapersFn
+    _getAndInstallGitWallpapersFn "${HOME}/Pictures/dt-wallpapers"
   fi
 
   # apply SYSTEM changes
@@ -335,7 +351,9 @@ _mainFn () {
   fi
 
   # cleanup
+  _infMsg "Cleaning up .."
   _cleanupFn
+  _endMsg "End of Script."
 }
 ## . END _mainFn }
 ### . END: FUNCTION_SECTION }
