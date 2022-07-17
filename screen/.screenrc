@@ -1,0 +1,41 @@
+# .screenrc
+
+shell /bin/bash
+escape ^a^a
+
+attrcolor b ".I"
+# General settings
+autodetach on
+startup_message off
+defscrollback 10000
+
+# Termcapinfo for xterm
+termcapinfo xterm* Z0=\E[?3h:Z1=\E[?3l:is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l   # Do not resize window
+termcapinfo xterm* OL=1000                                                    # Increase output buffer for speed
+termcapinfo xterm 'Co#256:AB=\E[48;5;%d,:AF=\E[38;5;%dm'
+
+term xterm-256color
+
+# Remove various keyboard bindings
+bind x    # Do not lock screen
+bind ^x   # Idem
+bind h    # Do not write out copy of screen to disk
+bind ^h   # Idem
+bind ^\   # Do not kill all windows/exit screen
+bind .    # Disable dumptermcap
+
+# Add keyboard bindings
+bind } history
+bind x kill
+
+hardstatus alwaysfirstline 
+# Very nice tabbed colored hardstatus line
+hardstatus string '%{-s}[ %H ] %-= %S %-= %D %M %d %Y %c%{-}'
+
+# change command character from ctrl-a to ctrl-b (emacs users may want this)
+#escape ^Bb
+
+# Hide hardstatus: ctrl-a f 
+bind f eval "hardstatus ignore"
+# Show hardstatus: ctrl-a F
+bind F eval "hardstatus alwaysfirstline"
