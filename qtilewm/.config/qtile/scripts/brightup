@@ -1,0 +1,2 @@
+#!/bin/sh
+brightnessctl set +10% && $(dirname $(realpath "$0"))/brightness_notify
