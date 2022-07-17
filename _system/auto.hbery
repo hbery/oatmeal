@@ -1,0 +1,10 @@
+# autofs mounting file
+# mounts network cifs drives
+#
+# add entry in /etc/auto.master:
+#     /mnt  /etc/auto.<USER>  --timeout=180
+#
+# by hbery
+
+DOM1  -fstype=cifs   pioke4n0s.local:/DOM_share
+DOM2  -fstype=cifs   pioke4n0s.local:/MyBook
