@@ -1,0 +1,37 @@
+{
+    "com.github.ulauncher.ulauncher-timer": {
+        "id": "com.github.ulauncher.ulauncher-timer",
+        "url": "https://github.com/ulauncher/ulauncher-timer",
+        "updated_at": "2021-07-09T20:42:23.483040",
+        "last_commit": "4262fc24db08610d01ea311d2e12f22588c98886",
+        "last_commit_time": "2020-11-03T07:21:30"
+    },
+    "com.github.molnarmark.ulauncher-subl-projects": {
+        "id": "com.github.molnarmark.ulauncher-subl-projects",
+        "url": "https://github.com/molnarmark/ulauncher-subl-projects",
+        "updated_at": "2021-07-09T20:42:24.788228",
+        "last_commit": "2f962d0e8235d1b48cf5429d85d65abd213e8266",
+        "last_commit_time": "2020-10-21T12:29:26"
+    },
+    "com.github.iboyperson.ulauncher-system": {
+        "id": "com.github.iboyperson.ulauncher-system",
+        "url": "https://github.com/iboyperson/ulauncher-system",
+        "updated_at": "2021-07-09T20:42:27.158818",
+        "last_commit": "639facd8be9208afde0371def31913b0804709e8",
+        "last_commit_time": "2021-06-01T14:45:38"
+    },
+    "com.github.nastuzzisamy.ulauncher-custom-scripts": {
+        "id": "com.github.nastuzzisamy.ulauncher-custom-scripts",
+        "url": "https://github.com/NastuzziSamy/ulauncher-custom-scripts",
+        "updated_at": "2021-09-19T20:49:20.985947",
+        "last_commit": "8249528fbaeb5210b063994149d85fc00146dc5e",
+        "last_commit_time": "2021-04-16T11:45:26"
+    },
+    "com.github.elken.terminal-runner": {
+        "id": "com.github.elken.terminal-runner",
+        "url": "https://github.com/elken/Terminal-Runner",
+        "updated_at": "2021-09-19T20:52:28.963716",
+        "last_commit": "6807ebe6047462bcce6063c63228eddcb8c6b481",
+        "last_commit_time": "2020-02-22T23:04:04"
+    }
+}
