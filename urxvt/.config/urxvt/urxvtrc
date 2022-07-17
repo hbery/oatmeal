@@ -1,0 +1,143 @@
+! ~~~
+!                            __           
+!     __  ________  ___   __/ /___________
+!    / / / / ___/ |/_/ | / / __/ ___/ ___/
+!  _/ /_/ / /  _>  < | |/ / /_/ /  / /__  
+! (_)__,_/_/  /_/|_| |___/\__/_/   \___/  
+!                                         
+! by hbery
+! ~~~
+! ----------------------------------------
+! Reload with `xrdb -merge ~/.Xresources`
+! ----------------------------------------
+
+! General Settings
+urxvt.saveLines:           50000
+urxvt.termName:            xterm-256color
+urxvt.urgentOnBell:        false
+urxvt.visualBell:          false
+urxvt.iso14755:            false
+urxvt.iso14755_52:         false
+urxvt.meta8:               false
+urxvt.metaSendsEscape:     true
+urxvt.iconFile:            /home/hbery/.local/share/icons/Tela-circle-ubuntu-dark/scalable/apps/urxvt.svg
+! debian~based
+urxvt.urlLauncher:         brave-browser
+! arch~based
+! urxvt.urlLauncher:         brave
+urxvt.underlineurLs:       false
+urxvt.urlButton:           1
+
+! Appearance
+urxvt.geometry:            200x50
+urxvt.depth:               0
+urxvt.transparent:         false
+urxvt.shading:             80 
+urxvt.underlineColor:      #4682B4
+urxvt.highlightColor:      #666666
+urxvt.throughColor:        #4682B4
+urxvt.scrollBar:           false
+urxvt.scrollTtyOutput:     false
+urxvt.scrollWithBuffer:    true
+urxvt.scrollTtyKeypress:   true
+urxvt.internalBorder:      0
+urxvt.externalBorder:      0
+urxvt.colorIT:             #4682B4
+urxvt.colorBD:             #F9F9F9
+urxvt.colorUL:             #87afd7
+
+!~~ BEGIN.SCHEME
+! using https://terminal.sexy
+
+! Special
+*.foreground:              #F9F9F9
+urxvt.background:          [80]#222222
+*.cursorColor:             #c8c8c8
+
+! Black
+*.color0:                  #3f3f3f
+*.color8:                  #545454
+
+! Red
+*.color1:                  #cc0000
+*.color9:                  #fc5454
+
+! Green
+*.color2:                  #4e9a06
+*.color10:                 #8ae234
+
+! Yellow
+*.color3:                  #c4a000
+*.color11:                 #fce94f
+
+! Blue
+*.color4:                  #3465a4
+*.color12:                 #94bff3
+
+! Magenta
+*.color5:                  #85678f
+*.color13:                 #b294bb
+
+! Cyan
+*.color6:                  #06989a
+*.color14:                 #93e0e3
+
+! White
+*.color7:                  #dcdccc
+*.color15:                 #ffffff
+
+!~~ END.SCHEME
+
+! Fonts
+! run :.!fc-list | grep <font-name>
+#define font1			   Dank Mono
+#define font2			   UbuntuMono Nerd Font Mono
+#define font3			   Noto Color Emoji
+
+urxvt.letterSpace: 	       0
+urxvt.font:                xft:font1:regular:pixelsize=14,xft:font2:regular,xft:font3:minspace=false
+urxvt.imFont:              xft:font1:regular:pixelsize=14,xft:font2:regular,xft:font3:minspace=false
+urxvt.italicFont:          xft:font1:italic:pixelsize=14,xft:font2:italic,xft:font3:minspace=false
+urxvt.boldFont:            xft:font1:bold:pixelsize=14,xft:font2:bold,xft:font3:minspace=false
+urxvt.boldItalicFont:      xft:font1:regular:pixelsize=14,xft:font2:regular,xft:font3:minspace=false
+
+! PERL extensions
+! You can install extra perl extensions you should add them here
+! TO CHOOSE FROM: background, bell-command, block-graphics-to-ascii, clipboard-osc, confirm-paste, digital-clock, 
+!  eval,example-refresh-hooks,font-size,keysym-list,kuake,matcher,option-popup,overlay-osc,
+!  readline,remote-clipboard,searchable-scrollback,selection,selection-autotransform,
+!  selection-pastebin,selection-popup,selection-to-clipboard,tabbed,urxvt-popup,xim-onthespot
+urxvt.perl-lib:            /home/hbery/.config/urxvt/ext/
+urxvt.perl-ext-common:     default,keyboard-select,fullscreen,font-size,selection-to-clipboard,matcher,eval
+
+! ext: font-size
+urxvt.font-size.step:      1
+urxvt.keysym.C-minus:      font-size:decrease
+urxvt.keysym.C-plus:       font-size:increase
+urxvt.keysym.C-equal:      font-size:reset
+urxvt.keysym.C-question:   font-size:show
+urxvt.keysym.C-Down:       font-size:decrease
+urxvt.keysym.C-Up:         font-size:increase
+
+! ext: keyboard-select, matcher
+urxvt.copyCommand:         xclip -i -selection "clipboard"
+urxvt.pasteCommand:        xclip -o -selection "clipboard"
+urxvt.keysym.M-Escape:     perl:keyboard-select:activate
+urxvt.keysym.M-s:          perl:keyboard-select:search
+urxvt.keysym.M-u:          matcher:select
+
+! ext: fullscreen
+urxvt.keysym.F11:          perl:fullscreen:switch
+
+! ext: tabbed
+urxvt.tabbed.tabbar-fg:    4
+urxvt.tabbed.tabbar-bg:    16
+urxvt.tabbed.tab-fg:       15
+urxvt.tabbed.tab-bg:       4
+urxvt.buffered:            false
+
+! ext: eval
+urxvt.keysym.C-S-v         eval:paste_clipboard
+urxvt.keysym.C-S-c         eval:selection_to_clipboard
+
+! vim: set syntax=xdefaults:
