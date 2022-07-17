@@ -1,0 +1,104 @@
+# vim: ft=sh : ts=4 : sw=4 :
+# send an notify-send alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# IMPORTANT => sudo run with USER env
+alias sudo='sudo -E'
+
+# grep aliases
+alias grep='grep --color=auto'
+alias fgrep='grep -F --color=auto'
+alias egrep='grep -E --color=auto'
+alias rgrep='rg --color=auto'
+
+# cp, mv, rm interactive
+alias cp='cp -i'
+alias mv='mv -i'
+alias rm='rm -i'
+
+# ls -> exa
+alias l='/bin/ls -F'
+alias ls='exa --color=always --group-directories-first'
+alias ll='exa -l --color=always --group-directories-first'
+alias la='exa -al --color=always --group-directories-first'
+
+# alias for Exchange Partition
+alias dbd='cd /mnt/DBD'
+alias dom1='cd /mnt/DOM1'
+alias dom2='cd /mnt/DOM2'
+
+# other programs
+alias nano='micro'
+alias v='/usr/bin/vim'
+alias vim='nvim'
+ # when Kubuntu
+# alias neofetch='neofetch --ascii_distro kubuntu'
+ # when Fedora
+alias neofetch='neofetch --ascii_distro fedora'
+alias cat='bat --plain'
+
+# apt package manager __aliases__ (Debian/Ubuntu based only)
+alias aupdt='sudo apt update'
+alias aupgd='sudo apt upgrade'
+
+# dnf package manager __aliases__ (Fedora/RHEL based only)
+alias dupdt='sudo dnf update'
+
+# pacman & Yay package manager __aliases__ (Arch based only)
+alias yupdt='yay -Syu'
+alias pupdt='sudo pacman -Syu'
+
+# conf
+alias strip_conf='grep -Ev "^#|^\s*$"'
+
+# git aliases
+alias gpl='git pull'
+alias gps='git push'
+alias gcl='git clone'
+alias gc='git commit -a -m'
+alias ga='git add -A'
+
+# docker aliases
+alias dps='docker ps'
+alias di='docker images'
+alias dip='docker image prune'
+alias dc='docker container ls'
+alias dcp='docker container prune'
+alias drmi='docker rmi'
+
+_drun () {
+    docker run $1
+}
+
+_drunit () {
+    docker run -it $1 /bin/sh
+}
+
+alias drun=_drun
+alias drunit=_drunit
+
+_dexec () {
+    docker exec $1 $2
+}
+
+_dexit () {
+    docker exec -it $1 /bin/sh
+}
+
+alias dexec=_dexec
+alias dexit=_dexit
+
+# qtile only
+alias qtilekb='qtile cmd-obj -o cmd -f display_kb'
+alias qlog='cat ~/.local/share/qtile/qtile.log'
+
+# dunst
+alias dunst_reload='killall dunst; notify-send -t 700 reload'
+
+# spotifyd
+alias sptstart="systemctl --user start spotifyd.service"
+alias sptstop="systemctl --user stop spotifyd.service"
+alias sptstat="systemctl --user status spotifyd.service"
+
+# fun
+alias pipes='~/scripts/pipes -t "double"'

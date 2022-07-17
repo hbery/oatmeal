@@ -1,0 +1,13 @@
+# vim: ft=sh : ts=4 : sw=4 :
+# Perl environmental variables
+
+export PERL_LOCAL_LIB_ROOT="${PERL_LOCAL_LIB_ROOT}:${HOME}/.local/share/perl";
+export PERL_MB_OPT="--install_base ${HOME}/.local/share/perl";
+export PERL_MM_OPT="INSTALL_BASE=${HOME}/.local/share/perl";
+export PERL5LIB="${HOME}/.local/share/perl/lib/perl5:${PERL5LIB}";
+
+# append to PATH
+case ":${PATH}:" in
+    *":${HOME}/.local/share/perl/bin:"*) ;;
+    *) export PATH="${HOME}/.local/share/perl/bin:${PATH}" ;;
+esac
