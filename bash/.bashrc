@@ -13,9 +13,12 @@ export HISTCONTROL=ignoredups:erasedups
 export EDITOR=vim
 export PAGER=less
 export BROWSER=brave-browser
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+# export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export MANPAGER="less -s -M +Gg"
 export STARSHIP_CONFIG=~/.config/starship/starship.toml
 export TMUX_PLUGIN_MANAGER_PATH=$HOME/.config/tmux/plugins
+
+source ~/.config/shell/less_termcap
 
 # `pfetch` vars
 export PF_INFO="ascii title os host kernel shell uptime pkgs editor memory"
@@ -41,7 +44,7 @@ function nonzero_return() {
     [ $RETVAL -ne 0 ] && echo "$RETVAL "
 }
 
-export PS1="\[\e[35m\]\`nonzero_return\`\[\e[m\]\[\e[31m\][\[\e[m\]\[\e[34m\]\A\[\e[m\] \[\e[33m\]\u\[\e[m\]\[\e[32m\]@\[\e[m\]\[\e[36m\]\h\[\e[m\] \[\e[35m\]\w\[\e[m\]\[\e[31m\]]\[\e[m\]\\$  "
+export PS1="\[\e[35m\]\`nonzero_return\`\[\e[m\]\[\e[31m\][\[\e[m\]\[\e[34m\]\A\[\e[m\] \[\e[33m\]\u\[\e[m\]\[\e[32m\]@\[\e[m\]\[\e[36m\]\h\[\e[m\] \[\e[35m\]\w\[\e[m\]\[\e[31m\]]\[\e[m\]\\$ "
 
 # Invoke aliases
 [ -f ~/.config/shell/aliasrc ] && source ~/.config/shell/aliasrc
