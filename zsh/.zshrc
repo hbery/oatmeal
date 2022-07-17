@@ -41,7 +41,7 @@ compinit
 _comp_options+=(globdots)
 
 # Syntax highlightning
-source /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh 2>/dev/null
+source ${HOME}/.local/share/zsh/plugins/fast-syntax-highlighting/F-Sy-H.plugin.zsh 2>/dev/null
 
 # Invoke aliases
 [ -f ~/.config/shell/aliasrc ] && source ~/.config/shell/aliasrc
