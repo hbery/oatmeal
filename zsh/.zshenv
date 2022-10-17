@@ -1,5 +1,10 @@
+#!/bin/zsh
 # Env variables
-export TERM=xterm-256color
+if [ -n "${TMUX+1}" ]; then
+    export TERM=tmux-256color
+else
+    export TERM=xterm-256color
+fi
 export HISTCONTROL=ignoredups:erasedups
 export EDITOR=nvim
 export PAGER=less

@@ -22,7 +22,10 @@ stty stop undef
 # setopt interactive_comments
 
 # bindings
+bindkey -e
 bindkey "^[." insert-last-word
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
 
 # History settings
 HISTSIZE=10000000
