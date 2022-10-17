@@ -1,6 +1,7 @@
 require("hbery.telescope")
+require("hbery.lsp")
 require("hbery.treesitter")
-require("hbery.startup")
+-- require("hbery.startup")
 require("hbery.neorg")
 
 P = function(v)

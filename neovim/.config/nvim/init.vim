@@ -165,6 +165,7 @@ endif
     "" informational
     Plug 'tpope/vim-commentary'
     Plug 'vimwiki/vimwiki'
+    Plug 'preservim/vim-markdown'
     Plug 'liuchengxu/vim-which-key'
 
     "" style
@@ -352,6 +353,9 @@ let g:rainbow_active = 1
 
 " Python settings
 let g:python_highlight_all = 1
+
+" vim-markdown settings
+let g:vim_markdown_folding_disabled = 0
 
 "=!= ALE settings (inactive when LSP is on)
 if !has('nvim')
