@@ -94,6 +94,7 @@ _EOH1
 ## . END _usageFn }
 
 ## BEGIN _parseArgumentsFn {
+ # parse commandline arguments for script to run
 _parseArgumentsFn () {
   while getopts ':hat:IFwWPS' _option
   do
@@ -129,6 +130,8 @@ _parseArgumentsFn () {
 ## . END _parseArgumentsFn }
 
 ## BEGIN _checkErrCodeAndPrintFn {
+ # wrapper for error checking whether certain action returned success or errors
+ # and print it for the user
 _checkErrCodeAndPrintFn () {
   local _errcode="${1:-}"
   local _msg_on_error="${2:-}"
@@ -151,6 +154,7 @@ _installPackagesFn () {
 ## . END _installPackagesFn }
 
 ## BEGIN _installDotfilesFn {
+ # install TAGS from accompaning directory to HOME directory
 _installDotfilesFn () {
   local _stow_description_dir="$(dirname "$0")"
   local _stow_destination_dir="${HOME}"
