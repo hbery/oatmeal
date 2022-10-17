@@ -44,9 +44,10 @@ fi
 export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_LOCAL_SHARE_HOME="${HOME}/.local/share"
 
-# source Language specific vars (Perl5,Golang,Rust,Python3)
+# source Language specific vars (Perl5,Golang,Rust,Python3,NodeJS)
 source "${XDG_CONFIG_HOME}/shell/perl5vars"
 source "${XDG_CONFIG_HOME}/shell/govars"
 source "${XDG_CONFIG_HOME}/shell/rustvars"
 source "${XDG_CONFIG_HOME}/shell/python3vars"
+source "${XDG_CONFIG_HOME}/shell/nodevars"
 
