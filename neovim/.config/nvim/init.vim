@@ -450,6 +450,14 @@ nnoremap <silent> <leader>/ :let @/=""<CR>
 " Y do as D and C (should be in neovim-core, so just to match it in vim)
 nnoremap Y y$
 
+" Yank to system clipboard
+nnoremap <leader>y \"+y
+vnoremap <leader>y \"+y
+nnoremap <leader>Y \"+Y
+
+nnoremap <leader>d \"_d
+vnoremap <leader>d \"_d
+
 " Keep me centered
 nnoremap n nzzzv
 nnoremap N Nzzzv
@@ -476,6 +484,9 @@ else
     inoremap <A-k> <esc>:m .-2<CR>==gi
     inoremap <A-j> <esc>:m .+1<CR>==gi
 endif
+
+" Persist yank text in paste buffer
+xnoremap <leader>p \"_dP
 
 " Open currently edited file in the default program
 nmap <leader>x :!xdg-open %<CR><CR>
