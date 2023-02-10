@@ -7,7 +7,8 @@
 #   and engage install-scripts for icons
 # ~~~
 
-_iconInstallDirectory="${HOME}/.local/share/icons"
+_iconInstallDirectory="${ICON_INSTALLDIR:-"${HOME}/.local/share/icons"}"
+_iconTmpDirectory="${ICON_TMPDIR:-"/tmp"}"
 
 ### BEGIN: FUNCTION_SECTION {
 ## BEGIN _installTelaCircleIconsFn {

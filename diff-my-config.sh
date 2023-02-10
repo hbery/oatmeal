@@ -3,7 +3,7 @@
 # ~~~
 # Date: 2022
 # Author: Adam Twardosz (github.com/hbery)
-# Purpose: Compare changes between configs in home and this dotfiles dir.
+# Purpose: Compare changes between configs in home and this dotfiles directory.
 #   Skip links as they are the same.
 # ~~~
 

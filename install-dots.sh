@@ -158,13 +158,13 @@ _installPackagesFn () {
 _installDotfilesFn () {
     local _stow_description_dir="$(dirname "$0")"
     local _stow_destination_dir="${HOME}"
-    local _tags_to_install="${@}"
+    declare -a _tags_to_install=("${@}")
 
     ${_stowBinary} \
         --verbose=5 \
         --dir="${_stow_description_dir}" \
         --target="${_stow_destination_dir}" \
-        --stow ${_tags_to_install}
+        --stow "${_tags_to_install[@]}"
 }
 ## . END _installDotfilesFn }
 
@@ -192,7 +192,8 @@ _installIconsFn () {
     local _dest_icons_directory="${2:-}"
 
     _hedMsg "Starting ICONS installation."
-    $(dirname "$0")/_icons/install-icons.sh
+    ICON_TMPDIR="${_tmp_icons_directory}" ICON_INSTALLDIR="${_dest_icons_directory}" \
+        "$(dirname "$0")/_icons/install-icons.sh"
     local _errcode="$?"
     _endMsg "Ended ICONS installation."
     _checkErrCodeAndPrintFn "${_errcode}" \
@@ -207,7 +208,7 @@ _getAndInstallWallpapersFn () {
     local _wallpapers_direcory="${1:-}"
 
     _hedMsg "Linking brought WALLPAPERS to ${_wallpapers_direcory}."
-    ln -s "$(find $(dirname "$0")/_images -name *.{jpg,png} | xargs)" "$(realpath "${_wallpapers_direcory}")/"
+    ln -s "$(find "$(dirname "$0")/_images" -name "*.{jpg,png}" | xargs)" "$(realpath "${_wallpapers_direcory}")/"
 }
 ## . END _getAndInstallWallpapersFn }
 
@@ -231,11 +232,11 @@ _getAndInstallGitWallpapersFn () {
 
 ## BEGIN _applyQtKdeChangesFn {
 _applyQtKdeChangesFn () {
-    local _tmp_dir="${1:-}"
-    local _dest_dir="${2:-}"
+    # local _tmp_dir="${1:-}"
+    # local _dest_dir="${2:-}"
 
     _hedMsg "Applying QT/KDE themes."
-    $(dirname "$0")/_installation_scripts/install-kde-themes.sh
+    "$(dirname "$0")/_installation_scripts/install-kde-themes.sh"
     local _errcode="$?"
     _endMsg "Ended QT/KDE theme application."
 
@@ -248,11 +249,11 @@ _applyQtKdeChangesFn () {
 
 ## BEGIN _applyGtkXfceCahngesFn {
 _applyGtkXfceChangesFn () {
-    local _tmp_dir="${1:-}"
-    local _dest_dir="${2:-}"
+    # local _tmp_dir="${1:-}"
+    # local _dest_dir="${2:-}"
 
     _hedMsg "Applying GTK/XFCE themes."
-    $(dirname "$0")/_installation_scripts/install-xfce-themes.sh
+    "$(dirname "$0")/_installation_scripts/install-xfce-themes.sh"
     local _errcode="$?"
     _endMsg "Ended GTK/XFCE theme application."
 
@@ -298,12 +299,12 @@ _mainFn () {
         case "${_install_tags}" in
             "custom:"*)
                 _infMsg "Using CUSTOM tags"
-                _tag_list=($(printf "${_install_tags##*:}" | sed 's/,/ /g'))
+                while IFS=',' read -r _line; do _tag_list+=("${_line}"); done <<<"${_install_tags##*:}"
                 ;;
             *)
                 for _tag in ${_install_tags}
                 do
-                    _tag_list+=(${_tagMap[${_tag}]})
+                  while IFS=' ' read -r _line; do _tag_list+=("${_line}"); done <<<"${_tagMap[${_tag}]}"
                 done
                 ;;
         esac
