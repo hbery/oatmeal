@@ -26,6 +26,15 @@ bindkey -e
 bindkey "^[." insert-last-word
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
+bindkey "^[[3~" delete-char-or-list
+bindkey "^[[3;5~" delete-word
+bindkey "^U" backward-kill-line
+bindkey "^[^U" kill-whole-line
+bindkey "^X^E" edit-command-line
+
+autoload -z edit-command-line
+zle -N edit-command-line
+bindkey "^X^E" edit-command-line
 
 # History settings
 HISTSIZE=10000000
