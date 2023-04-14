@@ -1,0 +1,5 @@
+require('hbery.plugins-d.autoformat')
+require('hbery.plugins-d.debug')
+require('hbery.plugins-d.telescope')
+require('hbery.plugins-d.treesitter')
+require('hbery.plugins-d.nerdtree')
