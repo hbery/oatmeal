@@ -47,13 +47,11 @@ o.list = true
 o.ttyfast = true
 
 o.signcolumn = 'yes'
-o.colorcolumn = 80
+o.colorcolumn = '80'
 o.cursorline = true
 
--- vim.api.nvim_set_hl(0, 'ColorColumn', { ctermbg=lightgray, guibg=nil })
-hi(0, 'ColorColumn', { ctermbg=lightgray, guibg=nil })
--- vim.api.nvim_set_hl(0, 'ColorLine', { ctermbg=lightgray, guibg=nil })
-hi(0, 'ColorLine', { ctermbg=lightgray, guibg=nil })
+hi(0, 'ColorColumn', { ctermbg = 'lightgray', guibg = nil })
+hi(0, 'ColorLine', { ctermbg = 'lightgray', guibg = nil })
 
 -- Mouse mode
 -- vim.o.mouse = 'nicr'
@@ -97,7 +95,7 @@ require('hbery')
 -- }}}
 
 --!! ---------------------------------------------- * Colorscheme * {{{
-o.background=dark
+o.background = 'dark'
 
 -- let g:onedark_terminal_italics = 1
 -- let g:vim_monokai_tasty_italic = 1
@@ -120,12 +118,9 @@ g.sonokai_enable_italic = 1
 --     sonokai {'default', 'atlantis', 'andromeda', 'shusia', 'maia', 'espresso'}
 --]]
 vim.cmd.colorscheme 'sonokai'
--- vim.api.nvim_set_hl(0, 'Normal', { guibg=nil })
-hi(0, 'Normal', { guibg=nil })
--- vim.api.nvim_set_hl(0, 'EndOfBuffer', { guibg=nil })
-hi(0, 'EndOfBuffer', { guibg=nil })
--- vim.api.nvim_set_hl(0, 'Folded', { guibg=nil })
-hi(0, 'Folded', { guibg=nil })
+hi(0, 'Normal', { guibg = nil })
+hi(0, 'EndOfBuffer', { guibg = nil })
+hi(0, 'Folded', { guibg = nil })
 -- }}}
 
 --!! ---------------------------------------- * All-mighty REMAPS * {{{
@@ -192,14 +187,8 @@ vim.keymap.set('n', '<leader>x', ':!xdg-open %<CR><CR>')
 vim.keymap.set('c', 'w!!', '%!sudo tee > /dev/null %')
 
 vim.api.nvim_create_user_command('MyWipeRegisters',
-    function(opts)
+    function()
         for i = 34, 122, 1 do
-            vim.fn.setreg(char(i), nil)
+            vim.fn.setreg(string.char(i), nil)
         end
     end, {})
-
--- Wipe registers
--- command! MyWipeRegisters for i in range(34,122)
---             \ | silent! call setreg(nr2char(i), [])
---             \ | endfor
--- }}}
