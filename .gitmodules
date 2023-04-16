@@ -1,0 +1,3 @@
+[submodule "scripts/scripts"]
+	path = scripts/scripts
+	url = git@github.com:hbery/scripts.git
