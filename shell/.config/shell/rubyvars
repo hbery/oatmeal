@@ -1,0 +1,11 @@
+#!/bin/sh
+# vim: ft=sh : ts=4 : sw=4 :
+# Ruby and Gem environmental variables
+
+export GEM_PATH="${HOME}/.local/share/gem"
+export GEM_BIN="${GEMPATH}/bin"
+
+case ":${PATH}:" in
+    *":${GEM_BIN}:"*) ;;
+    *) export PATH="${GEM_BIN}:${PATH}" ;;
+esac
