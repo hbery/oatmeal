@@ -20,7 +20,7 @@ require('lazy').setup({
 
   -- From the plain old vim : better edition plugins
   'tpope/vim-surround',
-  'jiangmiao/auto-pairs',
+  'windwp/nvim-autopairs',
   'sheerun/vim-polyglot',
 
   'preservim/nerdtree',
