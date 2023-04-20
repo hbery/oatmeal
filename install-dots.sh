@@ -10,7 +10,8 @@
 ### . END: SCRIPT_OPTIONS }
 
 ### BEGIN: GLOBAL_SECTION {
-_stowBinary="/usr/bin/stow"
+_stowDetected="$(which stow)"
+_stowBinary="${_stowDetected:-"/usr/bin/stow"}"
 ### . END: GLOBAL_SECTION }
 
 ### BEGIN: COLOR_PALETTE {
@@ -83,8 +84,7 @@ usage: $(basename "$0") [-h] [-a] [-t TAGS] [-I] [-F] [-P] [-w] [-W] [-S]
 
 List of available TAGS:
 $(
-for _tag in "${!_tagMap[@]}"
-do
+for _tag in "${!_tagMap[@]}"; do
   echo -e "  * ${_grnClr}${_tag}${_norClr}: ${_graClr}${_tagMap[${_tag}]}${_norClr}"
 done
 )
