@@ -50,4 +50,5 @@ source "${XDG_CONFIG_HOME}/shell/govars"
 source "${XDG_CONFIG_HOME}/shell/rustvars"
 source "${XDG_CONFIG_HOME}/shell/python3vars"
 source "${XDG_CONFIG_HOME}/shell/nodevars"
+source "${XDG_CONFIG_HOME}/shell/rubyvars
 

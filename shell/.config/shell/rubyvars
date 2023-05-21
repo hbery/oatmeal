@@ -3,7 +3,7 @@
 # Ruby and Gem environmental variables
 
 export GEM_PATH="${HOME}/.local/share/gem"
-export GEM_BIN="${GEMPATH}/bin"
+export GEM_BIN="${GEM_PATH}/bin"
 
 case ":${PATH}:" in
     *":${GEM_BIN}:"*) ;;
