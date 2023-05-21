@@ -1,7 +1,4 @@
 # vim: ft=sh : ts=4 : sw=4 :
-# send an notify-send alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
 # IMPORTANT => sudo run with USER env
 alias sudo='sudo -E'
 
@@ -22,41 +19,15 @@ alias ls='exa --color=always --group-directories-first'
 alias ll='exa -l --color=always --group-directories-first'
 alias la='exa -al --color=always --group-directories-first'
 
-# alias for Exchange Partition
-alias dbd='cd /mnt/DBD'
-alias dom1='cd /mnt/DOM1'
-alias dom2='cd /mnt/DOM2'
-
 # other programs
 alias nano='micro'
 alias v='/usr/bin/vim'
 alias vim='nvim'
- # when Kubuntu
-# alias neofetch='neofetch --ascii_distro kubuntu'
- # when Fedora
-alias neofetch='neofetch --ascii_distro fedora'
+alias mux='tmuxer'
 alias cat='bat --plain'
-
-# apt package manager __aliases__ (Debian/Ubuntu based only)
-alias aupdt='sudo apt update'
-alias aupgd='sudo apt upgrade'
-
-# dnf package manager __aliases__ (Fedora/RHEL based only)
-alias dupdt='sudo dnf update'
-
-# pacman & Yay package manager __aliases__ (Arch based only)
-alias yupdt='yay -Syu'
-alias pupdt='sudo pacman -Syu'
 
 # conf
 alias strip_conf='grep -Ev "^#|^\s*$"'
-
-# git aliases
-alias gpl='git pull'
-alias gps='git push'
-alias gcl='git clone'
-alias gc='git commit -a -m'
-alias ga='git add -A'
 
 # docker aliases
 alias dps='docker ps'
