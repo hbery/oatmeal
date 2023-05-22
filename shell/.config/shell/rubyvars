@@ -2,7 +2,8 @@
 # vim: ft=sh : ts=4 : sw=4 :
 # Ruby and Gem environmental variables
 
-export GEM_PATH="${HOME}/.local/share/gem"
+export GEM_HOME="${HOME}/.local/share/gem"
+export GEM_PATH="${GEM_HOME}/gems"
 export GEM_BIN="${GEM_PATH}/bin"
 
 case ":${PATH}:" in
