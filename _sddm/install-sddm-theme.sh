@@ -12,8 +12,9 @@ _downloadThemeFn () {
 }
 
 _setupSDDMThemeFn () {
-    _dst_bg="$(sed -rn '/^Background=(.*)/\1/p' "${_tmp_dir}/${_theme_name}/theme.conf" | tr -d '"')"
-    cp "$(dirname "$0")/login_bg.jpg" "${_tmp_dir}/${_theme_name}/${_dst_bg}"
+    mkdir "${_tmp_dir}/${_theme_name}/backgrounds"
+    cp "$(dirname "$0")/login_bg.jpg" "${_tmp_dir}/${_theme_name}/Backgrounds/login_bg.jpg"
+    sed -ri 's#^Background=.*#Background="backgrounds/login_bg.jpg"#' "${_tmp_dir}/${_theme_name}/theme.conf"
 
     mv "${_tmp_dir}/${_theme_name}" "/usr/share/sddm/themes"
 
