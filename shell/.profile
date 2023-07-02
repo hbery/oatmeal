@@ -34,6 +34,11 @@ case ":${PATH}:" in
    *) export PATH="${HOME}/.local/bin:${PATH}" ;;
 esac
 
+case ":${PATH}:" in
+   *":${HOME}/.local/sbin:"*) ;;
+   *) export PATH="${HOME}/.local/sbin:${PATH}" ;;
+esac
+
 if [ -d "/usr/local/go/bin" ]; then
     case ":${PATH}:" in
         *":/usr/local/go/bin:"*) ;;
