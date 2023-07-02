@@ -17,6 +17,7 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
+  'voldikss/vim-floaterm',
 
   -- From the plain old vim : better edition plugins
   'tpope/vim-surround',
@@ -24,6 +25,7 @@ require('lazy').setup({
   'sheerun/vim-polyglot',
 
   'preservim/nerdtree',
+  'stevearc/oil.nvim',
   -- Still prefer to use NERDTree over Nvim-tree
   -- {
   --   'nvim-tree/nvim-tree.lua',
