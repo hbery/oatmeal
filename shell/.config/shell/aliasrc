@@ -72,4 +72,4 @@ alias sptstop="systemctl --user stop spotifyd.service"
 alias sptstat="systemctl --user status spotifyd.service"
 
 # fun
-alias pipes='~/scripts/pipes -t "double"'
+alias pipes='~/scripts/not_mine/pipes -t "double"'
