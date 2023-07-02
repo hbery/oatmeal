@@ -3,12 +3,17 @@
 # Perl environmental variables
 
 export PERL_MY_HOME="${HOME}/.local/share/perl";
-export PERL_CPANM_HOME="${HOME}/.local/share/.cpanm";
+
+export PERL_CPANM_HOME="${PERL_MY_HOME}/.cpanm";
 export PERL_LOCAL_LIB_ROOT="${PERL_LOCAL_LIB_ROOT}:${PERL_MY_HOME}";
-export PERL_MB_OPT="--install_base ${HOME}/.local/share/perl";
-export PERL_MM_OPT="INSTALL_BASE=${HOME}/.local/share/perl";
-export PERL5LIB="${HOME}/.local/share/perl/lib/perl5:${PERL5LIB}";
+
+export PERL_MB_OPT="--install_base ${PERL_MY_HOME}";
+export PERL_MM_OPT="INSTALL_BASE=${PERL_MY_HOME}";
+export PERL5LIB="${PERL_MY_HOME}/lib/perl5:${PERL5LIB}";
 export PERL_MY_BIN="${PERL_MY_HOME}/bin";
+
+export PERLBREW_ROOT="${PERL_MY_HOME}/perlbrew"
+export PERLBREW_HOME="${XDG_CONFIG_HOME}/.perlbrew"
 
 # append to PATH
 case ":${PATH}:" in
