@@ -46,7 +46,6 @@ local servers = {
   gopls = {},
   pyright = {},
   rust_analyzer = {},
-  perlnavigator = {},
   -- tsserver = {},
 
   lua_ls = {
@@ -57,12 +56,26 @@ local servers = {
   },
 }
 
+local local_servers = {
+  perlpls = {},
+}
+
 -- Setup neovim lua configuration
 require('neodev').setup()
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+-- Setup local LSP Servers
+for server_name, server_config in pairs(local_servers) do
+  require('lspconfig')[server_name].setup {
+      capabilities = capabilities,
+      on_attach = on_attach,
+      settings = server_config,
+  }
+end
+
 
 -- Setup mason so it can manage external tooling
 require('mason').setup()

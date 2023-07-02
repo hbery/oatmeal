@@ -123,5 +123,7 @@ require('lazy').setup({
       pcall(require('nvim-treesitter.install').update { with_sync = true })
     end,
   },
+
+  'ThePrimeagen/vim-be-good',
 }, {})
 
