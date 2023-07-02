@@ -132,6 +132,15 @@ vim.keymap.set('n', '<C-j>', '<C-w>j', { remap = false })
 vim.keymap.set('n', '<C-k>', '<C-w>k', { remap = false })
 vim.keymap.set('n', '<C-l>', '<C-w>l', { remap = false })
 
+-- Filesystem navigation `oil.nvim`
+vim.keymap.set("n", "-", require("oil").open, { desc = "Open parent directory" })
+
+-- Terminal toggling
+vim.keymap.set("n", "<leader>T", ':FloatermToggle<CR>', { silent = true, remap = false, desc = "Toggle Floating terminal" })
+vim.keymap.set("n", "<leader>tt", ':terminal<CR>', { silent = true, remap = false, desc = "Open terminal in current window" })
+vim.keymap.set("n", "<leader>tb", ':split<CR><C-w>j:terminal<CR>', { silent = true, remap = false, desc = "Open terminal down from current window" })
+vim.keymap.set("n", "<leader>tv", ':vsplit<CR><C-w>l:terminal<CR>', { silent = true, remap = false, desc = "Open terminal next to current window" })
+
 -- Keep block selected after indent
 vim.keymap.set('v', '<', '<gv', { remap = false })
 vim.keymap.set('v', '>', '>gv', { remap = false })
