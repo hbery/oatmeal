@@ -1,3 +1,5 @@
+-- [[ CURRENTLY UNUSED ]]
+
 local function open_nvim_tree(data)
   -- buffer is a [No Name]
   local no_name = data.file == "" and vim.bo[data.buf].buftype == ""

@@ -1,3 +1,5 @@
+-- [[ Plugins List ]]
+
 -- Install package manager if not installed
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -6,7 +8,7 @@ if not vim.loop.fs_stat(lazypath) then
     'clone',
     '--filter=blob:none',
     'https://github.com/folke/lazy.nvim.git',
-    '--branch=stable', -- latest stable release
+    '--branch=stable',
     lazypath,
   }
 end
@@ -24,8 +26,9 @@ require('lazy').setup({
   { 'windwp/nvim-autopairs', opts = {} },
   'sheerun/vim-polyglot',
 
-  'preservim/nerdtree',
+  -- 'preservim/nerdtree',
   'stevearc/oil.nvim',
+
   -- Still prefer to use NERDTree over Nvim-tree
   -- {
   --   'nvim-tree/nvim-tree.lua',
@@ -45,7 +48,7 @@ require('lazy').setup({
     dependencies = {
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
-      { 'j-hui/fidget.nvim', opts = {} },
+      { 'j-hui/fidget.nvim', opts = {}, tag = 'legacy' },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -78,7 +81,8 @@ require('lazy').setup({
 
   -- Lovely colorschemes
   { 'navarasu/onedark.nvim' },
-  { 'tomasr/molokai' },
+  { 'folke/tokyonight.nvim' },
+  { "catppuccin/nvim", name = "catppuccin" },
   { 'sainnhe/sonokai', priority = 1000 },
   { 'gruvbox-community/gruvbox' },
 
@@ -94,7 +98,7 @@ require('lazy').setup({
     },
   },
 
-  { -- Add indentation guides even on blank lines
+  {
     'lukas-reineke/indent-blankline.nvim',
     opts = {
       char = '┊',
@@ -102,10 +106,8 @@ require('lazy').setup({
     },
   },
 
-  -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
-  -- Fuzzy Finder (files, lsp, etc)
   { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
 
   {
@@ -116,7 +118,7 @@ require('lazy').setup({
     end,
   },
 
-  { -- Highlight, edit, and navigate code
+  {
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
@@ -126,6 +128,7 @@ require('lazy').setup({
     end,
   },
 
+  -- Little practice
   'ThePrimeagen/vim-be-good',
 }, {})
 

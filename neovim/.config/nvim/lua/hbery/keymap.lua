@@ -1,3 +1,5 @@
+-- [[ Configure Keymaps ]]
+
 -- Keymaps for better default experience
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 

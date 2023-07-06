@@ -15,7 +15,6 @@
 -- Set variables
 local g = vim.g
 local o = vim.o
--- local hi = vim.highlight
 local hi = vim.api.nvim_set_hl
 
 -- Leader
@@ -47,7 +46,7 @@ o.list = true
 o.ttyfast = true
 
 o.signcolumn = 'yes'
-o.colorcolumn = '80'
+o.colorcolumn = '120'
 o.cursorline = true
 
 hi(0, 'ColorColumn', { ctermbg = 'lightgray', guibg = nil })
@@ -105,19 +104,13 @@ g.sonokai_style = 'andromeda'
 g.sonokai_enable_italic = 1
 
 --[[ colorscheme:
---     gruvbox
---     vim-monokai-tasty
---     monokai_pro
---     onedark
---     onehalfdark
---     xcodedarkhc
---     hybrid
---     molokai
---     iceberg
---     spacegray-dark
---     sonokai {'default', 'atlantis', 'andromeda', 'shusia', 'maia', 'espresso'}
+--      onedark { 'dark', 'darker', 'cool', 'deep', 'warm', 'warmer', 'light' }
+--      tokyonight { '-night', '-storm', '-day', '-moon' }
+--      catppuccin { '-latte', '-frappe', '-macchiato', '-mocha' }
+--      sonokai { 'default', 'atlantis', 'andromeda', 'shusia', 'maia', 'espresso' }
+--      gruvbox -- { tooooo many! } --
 --]]
-vim.cmd.colorscheme 'sonokai'
+vim.cmd.colorscheme 'catppuccin-macchiato'
 hi(0, 'Normal', { guibg = nil })
 hi(0, 'EndOfBuffer', { guibg = nil })
 hi(0, 'Folded', { guibg = nil })

@@ -1,3 +1,5 @@
+-- [[ Configure LSP ]]
+
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
   local nmap = function(keys, func, desc)
@@ -36,28 +38,34 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
--- Enable the following language servers
---  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
---
---  Add any additional override configuration in the following tables. They will be passed to
---  the `settings` field of the server config. You must look up that documentation yourself.
+-- [[ Mason-installed LSP Servers ]]
 local servers = {
-  clangd = {},
-  gopls = {},
-  pyright = {},
-  rust_analyzer = {},
-  -- tsserver = {},
-
-  lua_ls = {
+  -- Coding LSPs
+  bashls = {},                                  -- Bash
+  clangd = {},                                  -- C/C++
+  gopls = {},                                   -- Golang
+  pyright = {},                                 -- Python
+  rust_analyzer = {},                           -- Rust
+  lua_ls = {                                    -- Lua
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
     },
   },
+
+  -- Writing LSPs
+  marksman = {},                                -- Markdown
+  texlab = {},                                  -- LaTeX
+
+  -- Config LSPs
+  terraformls = {},                             -- Terraform
+  yamlls = {},                                  -- YAML
+  ansiblels = {},                               -- Ansible
 }
 
+-- [[ Locally-installed LSP Servers ]]
 local local_servers = {
-  perlpls = {},
+  perlpls = {},                                 -- Perl
 }
 
 -- Setup neovim lua configuration
@@ -81,7 +89,7 @@ end
 require('mason').setup()
 
 -- Ensure the servers above are installed
-local mason_lspconfig = require 'mason-lspconfig'
+local mason_lspconfig = require('mason-lspconfig')
 
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
@@ -98,8 +106,8 @@ mason_lspconfig.setup_handlers {
 }
 
 -- nvim-cmp setup
-local cmp = require 'cmp'
-local luasnip = require 'luasnip'
+local cmp = require('cmp')
+local luasnip = require('luasnip')
 
 luasnip.config.setup {}
 
