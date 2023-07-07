@@ -1,4 +1,4 @@
--- [[ AU Groups ]]
+-- [[ Configure AU Groups|Commands ]]
 
 vim.cmd([[
   augroup salt_syn

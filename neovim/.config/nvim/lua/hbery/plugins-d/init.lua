@@ -1,5 +1,6 @@
 -- [[ INIT:plugins-d ]]
 
+require('hbery.plugins-d.augroups')
 require('hbery.plugins-d.autoformat')
 require('hbery.plugins-d.debug')
 require('hbery.plugins-d.telescope')
