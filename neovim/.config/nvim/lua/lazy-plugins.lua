@@ -64,6 +64,9 @@ require('lazy').setup({
     },
   },
 
+  { 'saltstack/salt-vim' },
+  { 'stephpy/vim-yaml' },
+
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
   { -- Adds git releated signs to the gutter, as well as utilities for managing changes
