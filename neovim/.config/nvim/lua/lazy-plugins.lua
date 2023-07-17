@@ -17,17 +17,29 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugins installation
 require('lazy').setup({
   -- Git related plugins
-  'tpope/vim-fugitive',
-  'tpope/vim-rhubarb',
-  'voldikss/vim-floaterm',
+  { 'tpope/vim-fugitive', },
+  { 'tpope/vim-rhubarb', },
+  { 'voldikss/vim-floaterm', },
 
   -- From the plain old vim : better edition plugins
-  'tpope/vim-surround',
-  { 'windwp/nvim-autopairs', opts = {} },
-  'sheerun/vim-polyglot',
+  { 'tpope/vim-surround', },
+  {
+    'windwp/nvim-autopairs',
+    opts = {},
+  },
+  { 'sheerun/vim-polyglot', },
 
-  -- 'preservim/nerdtree',
-  'stevearc/oil.nvim',
+  -- {
+  --   'preservim/nerdtree',
+  --   opts = {},
+  --   dependencies = { 'ryanoasis/vim-devicons' },
+  -- },
+
+  {
+    'stevearc/oil.nvim',
+    opts = {},
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+  },
 
   -- Still prefer to use NERDTree over Nvim-tree
   -- {
@@ -48,7 +60,11 @@ require('lazy').setup({
     dependencies = {
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
-      { 'j-hui/fidget.nvim', opts = {}, tag = 'legacy' },
+      {
+        'j-hui/fidget.nvim',
+        opts = {},
+        tag = 'legacy'
+      },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -132,6 +148,6 @@ require('lazy').setup({
   },
 
   -- Little practice
-  'ThePrimeagen/vim-be-good',
+  { 'ThePrimeagen/vim-be-good', },
 }, {})
 
