@@ -1,0 +1,15 @@
+#!/bin/bash
+
+[ ! "$1" ] && exit
+
+_ps="$(ps -t "${1}" -o "user=,command=" )"
+
+_ssh="$(echo "${_ps}" | grep " ssh ")"
+[ "${_ssh}" != "" ] \
+    && {
+        _toprint=$(echo "${_ssh}" | $([ "$(uname -s)" = "Darwin" ] && echo -n "ggrep" || echo -n "grep") -Pow "\b([a-zA-Z0-9]+)@(.+)\b") \
+        || _toprint=$(echo "${_ssh}"| head -1 | awk '{print $1"@"$NF}')
+    } \
+    || _toprint="$(echo "${_ps}" | tail -1 | awk '{print $1}')@$(hostname -s)";
+
+[ "${_toprint}" != "" ] && echo "${_toprint}" || echo "-@-"
