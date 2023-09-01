@@ -47,7 +47,12 @@ if [ -d "/usr/local/go/bin" ]; then
 fi
 
 export XDG_CONFIG_HOME="${HOME}/.config"
-export XDG_LOCAL_SHARE_HOME="${HOME}/.local/share"
+export XDG_DATA_HOME="${HOME}/.local/share"
+export XDG_STATE_HOME="${HOME}/.local/state"
+export XDG_CACHE_HOME="${HOME}/.cache"
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export XDG_LOCAL_SHARE_HOME="${XDG_DATA_HOME}"
+export XDG_LOCAL_BIN="${HOME}/.local/bin"
 
 # source Language specific vars (Perl5,Golang,Rust,Python3,NodeJS)
 source "${XDG_CONFIG_HOME}/shell/perl5vars"
@@ -55,5 +60,5 @@ source "${XDG_CONFIG_HOME}/shell/govars"
 source "${XDG_CONFIG_HOME}/shell/rustvars"
 source "${XDG_CONFIG_HOME}/shell/python3vars"
 source "${XDG_CONFIG_HOME}/shell/nodevars"
-source "${XDG_CONFIG_HOME}/shell/rubyvars
+source "${XDG_CONFIG_HOME}/shell/rubyvars"
 
