@@ -4,7 +4,7 @@
 
 export GEM_HOME="${HOME}/.local/share/gem"
 export GEM_PATH="${GEM_HOME}/gems"
-export GEM_BIN="${GEM_PATH}/bin"
+export GEM_BIN="${GEM_HOME}/bin"
 
 case ":${PATH}:" in
     *":${GEM_BIN}:"*) ;;
