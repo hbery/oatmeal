@@ -1,24 +1,6 @@
 #!/bin/sh
-# ~/.profile: executed by the command interpreter for login shells.
-# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
-# exists.
-# see /usr/share/doc/bash/examples/startup-files for examples.
-# the files are located in the bash-doc package.
-
-# the default umask is set in /etc/profile; for setting the umask
-# for ssh logins, install and configure the libpam-umask package.
+#
 #umask 022
-
-# if running bash
-if [ -n "${BASH_VERSION}" ]; then
-    # include .bashrc if it exists
-    [ -f "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
-fi
-
-if [ -n "${ZSH_VERSION}" ]; then
-    # include .zshrc if it exists
-    [ -f "${HOME}/.zshrc" ] && . "${HOME}/.zshrc"
-fi
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "${HOME}/bin" ]; then
@@ -50,9 +32,11 @@ export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_DATA_HOME="${HOME}/.local/share"
 export XDG_STATE_HOME="${HOME}/.local/state"
 export XDG_CACHE_HOME="${HOME}/.cache"
-export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 export XDG_LOCAL_SHARE_HOME="${XDG_DATA_HOME}"
 export XDG_LOCAL_BIN="${HOME}/.local/bin"
+if [ "$(uname)" = "Linux" ]; then
+    export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+fi
 
 # source Language specific vars (Perl5,Golang,Rust,Python3,NodeJS)
 source "${XDG_CONFIG_HOME}/shell/perl5vars"
@@ -62,3 +46,15 @@ source "${XDG_CONFIG_HOME}/shell/python3vars"
 source "${XDG_CONFIG_HOME}/shell/nodevars"
 source "${XDG_CONFIG_HOME}/shell/rubyvars"
 
+# if running bash
+if [ -n "${BASH_VERSION}" ]; then
+    # include .bashrc if it exists
+    [ -f "${HOME}/.bashrc" ] && source "${HOME}/.bashrc"
+fi
+
+if [ "$(uname)" = "Linux" ] && [ -n "${ZSH_VERSION}" ]; then
+    # include .zshrc if it exists
+    [ -f "${HOME}/.zshrc" ] && source "${HOME}/.zshrc"
+fi
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

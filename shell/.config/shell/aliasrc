@@ -25,9 +25,17 @@ alias v='/usr/bin/vim'
 alias vim='nvim'
 alias mux='tmuxer'
 alias cat='bat --plain'
+alias wormhole='wormhole-williams'
 
 # conf
 alias strip_conf='grep -Ev "^#|^\s*$"'
+
+# git aliases
+alias gpl='git pull'
+alias gps='git push'
+alias gcl='git clone'
+alias gc='git commit -a -m'
+alias ga='git add -A'
 
 # docker aliases
 alias dps='docker ps'

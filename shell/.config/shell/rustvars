@@ -2,7 +2,7 @@
 # vim: ft=sh : ts=4 : sw=4 :
 # Rustlang and Cargo package manager specific variables
 
-export CARGO_HOME="${HOME}/.local/share/.cargo"
+export CARGO_HOME="${HOME}/.local/share/cargo"
 export CARGO_BIN="${CARGO_HOME}/bin"
 
 case ":${PATH}:" in
