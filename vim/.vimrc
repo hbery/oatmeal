@@ -1,5 +1,5 @@
 " -*- coding: utf-8 -*-
-" vim: :
+" vim: ts=4 : sts=4 : sw=4 : et :
 " ~~~
 "           _                        __   _       _ __        _
 "    _   __(_)___ ___  __________   / /  (_)___  (_) /__   __(_)___ ___
@@ -98,14 +98,19 @@ endif
 " }}}
 
 "!! ----------------------------------- * Autoinstall `vim-plug` * {{{
+if !has('nvim')
+    set runtimepath^=~/.config/vim
+endif
+
 let data_dir = has('nvim') ? '~/.config/nvim' : '~/.config/vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 " }}}
 
 "!! -------------------------------------------------- * Plugins * {{{
+
 if !has('nvim')
 call plug#begin("~/.config/vim/plugged")
 else
@@ -113,28 +118,12 @@ call plug#begin("~/.config/nvim/plugged")
 endif
 
     "" file manager / finder
-    Plug 'scrooloose/nerdtree'
-    Plug 'voldikss/vim-floaterm'
-    if !has('nvim')
-        Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-        Plug 'junegunn/fzf.vim'
-    endif
+    " Plug 'scrooloose/nerdtree'
+    Plug 'tpope/vim-vinegar'
 
-    if has('nvim')
-        Plug 'wbthomason/packer.nvim'
-        Plug 'nvim-treesitter/nvim-treesitter'
-        Plug 'nvim-treesitter/playground'
-        Plug 'nvim-telescope/telescope.nvim'
-        " for telescope :/
-        Plug 'nvim-lua/popup.nvim'
-        Plug 'nvim-lua/plenary.nvim'
-        Plug 'nvim-telescope/telescope-fzy-native.nvim'
-        Plug 'ThePrimeagen/git-worktree.nvim'
-    endif
-    " nvim remote edit (nah, thought it was different)
-    " has('nvim')
-    "   Plug 'chipsenkbeil/distant.nvim'
-    " endif
+    Plug 'voldikss/vim-floaterm'
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf.vim'
 
     "" statusline / startup / additional look
     Plug 'itchyny/lightline.vim'
@@ -145,28 +134,13 @@ endif
 
     "" editor
     Plug 'tpope/vim-surround'
-    Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+    Plug 'mg979/vim-visual-multi', { 'branch': 'master' }
     Plug 'frazrepo/vim-rainbow'
     Plug 'jiangmiao/auto-pairs'
     Plug 'sheerun/vim-polyglot'
 
-    "" git 
-    " Plug 'airblade/vim-gitgutter'
-    Plug 'jreybert/vimagit'
+    "" git
     Plug 'tpope/vim-fugitive'
-
-    "" engines / engine-related
-    " Plug 'w0rp/ale'
-    Plug 'davidhalter/jedi-vim'
-
-    if has('nvim')
-        Plug 'neovim/nvim-lspconfig'
-        Plug 'hrsh7th/cmp-nvim-lsp'
-        Plug 'hrsh7th/cmp-buffer'
-        Plug 'hrsh7th/nvim-cmp'
-        Plug 'prabirshrestha/vim-lsp'
-        Plug 'mattn/vim-lsp-settings'
-    endif
 
     "" informational
     Plug 'tpope/vim-commentary'
@@ -177,10 +151,6 @@ endif
     Plug 'junegunn/goyo.vim'
     Plug 'junegunn/limelight.vim'
 
-    if has('nvim')
-        Plug 'startup-nvim/startup.nvim'
-    endif
-
     "" tmux
     Plug 'tmux-plugins/vim-tmux'
 
@@ -189,37 +159,12 @@ endif
     Plug 'vim-python/python-syntax'
     Plug 'rust-lang/rust.vim'
     Plug 'fatih/vim-go'
-    Plug 'momota/cisco.vim'
-    Plug 'lervag/vimtex'
-    " Plug 'vim-latex/vim-latex'
-    " Plug 'tbastos/vim-lua'
     Plug 'ap/vim-css-color'
-
-    " if has('nvim')
-    "     Plug 'nvim-neorg/neorg'
-    " endif
 
     "" colorschemes
     Plug 'gruvbox-community/gruvbox'
-    Plug 'patstockwell/vim-monokai-tasty'
-    Plug 'arzg/vim-colors-xcode'
-    Plug 'joshdick/onedark.vim'
-    Plug 'w0ng/vim-hybrid'
     Plug 'sainnhe/sonokai'
-    Plug 'cocopon/iceberg.vim'
-    Plug 'sainnhe/gruvbox-material'
-    Plug 'sonph/onehalf', {'rtp': 'vim/'}
-    Plug 'tomasr/molokai'
-    Plug 'yuttie/sublimetext-spacegray.vim'
-
-    if has('nvim')
-        Plug 'tanvirtin/monokai.nvim'
-    endif
-
-    "" lemme play with it
-    if has('nvim')
-        Plug 'ThePrimeagen/vim-be-good'
-    endif
+    Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 
 call plug#end()
 " }}}
@@ -228,27 +173,15 @@ call plug#end()
 
 set background=dark
 
-" let g:onedark_terminal_italics = 1
-" let g:vim_monokai_tasty_italic = 1
-let g:gruvbox_material_background = 'soft'
-let g:gruvbox_material_enable_italic = 1
 let g:sonokai_style = 'andromeda'
 let g:sonokai_enable_italic = 1
 
 " colorscheme:
 "  \ gruvbox
-"  \ vim-monokai-tasty
-"  \ monokai_pro
-"  \ onedark
-"  \ onehalfdark
-"  \ xcodedarkhc
-"  \ hybrid
-"  \ molokai
-"  \ iceberg
-"  \ spacegray-dark
 "  \ sonokai {'default', 'atlantis', 'andromeda', 'shusia', 'maia', 'espresso'}
+"  \ catppuccin_ {'macchiato', 'mocha', 'frappe', 'latte'}
 if !has('nvim')
-    colorscheme gruvbox-material
+    colorscheme catppuccin_macchiato
     highlight Normal guibg=NONE
     highlight EndOfBuffer guibg=NONE
 else
@@ -346,81 +279,19 @@ endif
 "}}}
 
 "=!= NerdTree settings
-map <C-t> :NERDTreeToggle<CR>
-let g:NERDTreeDirArrowExpandable='►'
-let g:NERDTreeDirArrowCollapsible='▼'
-let NERDTreeShowLineNumbers=1
-let NERDTreeShowHidden=1
-let NERDTreeMinimalUI=1
-let g:NERDTreeWinSize=35
+" map <C-t> :NERDTreeToggle<CR>
+" let g:NERDTreeDirArrowExpandable='►'
+" let g:NERDTreeDirArrowCollapsible='▼'
+" let NERDTreeShowLineNumbers=1
+" let NERDTreeShowHidden=1
+" let NERDTreeMinimalUI=1
+" let g:NERDTreeWinSize=35
 
 " Rainbow plugin settings
 let g:rainbow_active = 1
 
 " Python settings
 let g:python_highlight_all = 1
-
-"=!= ALE settings (inactive when LSP is on)
-if !has('nvim')
-    let g:ale_lint_on_save = 1
-    let g:ale_linters = {"python": ['flake8']}
-    let g:ale_fixers = {'*': [], 'python':['black']}
-endif
-
-if has('nvim')
-    " WhichKey
-    set timeoutlen=500
-
-    "=!= Load LUA plugins and configs
-    lua require('packer-plugins')
-    lua require('hbery')
-
-    "=!= LSP settings {{{
-    if executable('pyls')
-        au User lsp_setup call lsp#register_server({
-            \ 'name': 'pyls',
-            \ 'cmd': {server_info->['pyls']},
-            \ 'allowlist': ['python'],
-            \ 'settings': {
-            \    'pyls':
-            \        {'configurationSources': ['flake8', 'pycodestyle'],
-            \         'plugins': {'flake8': {'enabled': v:true},
-            \                     'pyflakes': {'enabled': v:false},
-            \                     'pycodestyle': {'enabled': v:true},
-            \                    }
-            \       }
-            \ }})
-    endif
-
-    function! s:on_lsp_buffer_enabled() abort
-        setlocal omnifunc=lsp#complete
-        setlocal signcolumn=yes
-        if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-        nmap <buffer> gd <plug>(lsp-definition)
-        nmap <buffer> gs <plug>(lsp-document-symbol-search)
-        nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
-        nmap <buffer> gr <plug>(lsp-references)
-        nmap <buffer> gi <plug>(lsp-implementation)
-        nmap <buffer> gt <plug>(lsp-type-definition)
-        nmap <buffer> <leader>rn <plug>(lsp-rename)
-        nmap <buffer> [g <plug>(lsp-previous-diagnostic)
-        nmap <buffer> ]g <plug>(lsp-next-diagnostic)
-        nmap <buffer> K <plug>(lsp-hover)
-        inoremap <buffer> <expr><c-f> lsp#scroll(+4)
-        inoremap <buffer> <expr><c-d> lsp#scroll(-4)
-
-        let g:lsp_format_sync_timeout = 1000
-        autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
-    endfunction
-
-    augroup lsp_install
-        au!
-        autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-    augroup END
-" }}}
-
-endif
-
 " }}}
 
 "!! ---------------------------------------- * All-mighty REMAPS * {{{
