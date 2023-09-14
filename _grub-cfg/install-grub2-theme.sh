@@ -18,19 +18,22 @@ _cloneRepoFn () {
 
 ## BEGIN _installGrub2ThemeFn
 _installGrub2ThemeFn () {
-  local _boot_theme_dir="${1:-}"
+  local _boot_theme_dir
+  _boot_theme_dir="${1:-}"
 
   [ ! -d "${_boot_theme_dir}" ] \
     && sudo mkdir "${_boot_theme_dir}"
 
-  cd "${_tmpRepoDir}"
+  cd "${_tmpRepoDir}" || exit 1
   sudo ./install.sh --theme stylish --screen 1080p --icon white --boot "${_boot_theme_dir}"
+  cd "${OLDPWD}" || exit 1
 }
 ## . END _installGrub2ThemeFn }
 
 ## BEGIN _updateGrub2Fn {
 _updateGrub2Fn () {
-  local _boot_config_dir="${1:-}"
+  local _boot_config_dir
+  _boot_config_dir="${1:-}"
 
   sudo grub2-mkconfig -o "${_boot_config_dir}"
 }
@@ -38,12 +41,13 @@ _updateGrub2Fn () {
 
 ## BEGIN _mainFn {
 _mainFn () {
-  [ ! $2 ] \
+  [ ! "$2" ] \
     && echo "usage: $(basename "$0") PATH_TO_GRUB_BOOT_CONFIG PATH_TO_BOOT_THEMES" \
     && exit 1
 
-  local _boot_config_dir="${1:-}"
-  local _boot_themes_dir="${2:-}"
+  local _boot_config_dir _boot_themes_dir
+  _boot_config_dir="${1:-}"
+  _boot_themes_dir="${2:-}"
 
   _cloneRepoFn
   _installGrub2ThemeFn "${_boot_themes_dir}"
@@ -60,8 +64,7 @@ _mainFn () {
 
 
 ### BEGIN: MAIN_SECTION {
-if [ "${BASH_SOURCE[0]}" = "$0" ]
-then
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
   _mainFn "$@"
 fi
 ### . END: MAIN_SECTION }
