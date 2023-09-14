@@ -1,6 +1,6 @@
 picom
 nitrogen
 xfce4-clipman
-playerctl 
+playerctl
 pulseaudio-ctl
 bat

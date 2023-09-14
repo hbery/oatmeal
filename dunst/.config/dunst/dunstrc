@@ -40,7 +40,7 @@
     close_all = ctrl+shift+space
     history = ctrl+shift+h
     context = ctrl+shift+period
-    
+
 [nord_low]
     msg_urgency = low
     background = "#4c566a"
@@ -50,7 +50,7 @@
     msg_urgency = normal
     background = "#222222"
     foreground = "#dfdfdf"
-    
+
 [nord_critical]
     msg_urgency = critical
     background = "#bf616a"
