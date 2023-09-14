@@ -1,5 +1,5 @@
 #!/bin/bash
-# vim: ts=4 : sw=4 : et :
+# vim: ft=bash : ts=4 : sts=4 : sw=2 : et :
 # ~~~
 # Date: 2022
 # Author: Adam Twardosz (github.com/hbery)
@@ -30,6 +30,7 @@ _norClr="\e[m"
 declare -A _tagMap
 
  # base tags
+ # shellcheck disable=SC2038
 _tagMap[all]="$(find "$(dirname "$0")" \
                   -maxdepth 1 \
                   -type d \
@@ -64,23 +65,23 @@ _usageFn () {
     cat << _EOH1
 usage: $(basename "$0") [-h] [-a] [-t TAGS] [-I] [-F] [-P] [-w] [-W] [-S]
 
-  Install dotfiles from this directory. Also ICONS, FONTS, PACKAGES,
-    WALLPAPERS can be installed in the right place.
+    Install dotfiles from this directory. Also ICONS, FONTS, PACKAGES,
+      WALLPAPERS can be installed in the right place.
 
-  -h       Show this help.
-  -a       Install all things that this script provides. Specifically:
-             (dotfiles[tags:all], icons, fonts, packages, wallpapers[git])
-  -t TAGS  Install specific tags, comma separated list.
-  -I       [WIP] Install icons. (_icons/install-icons.sh)
-  -F       Install fonts. (_fonts/install-fonts.sh)
-  -P       [WIP] Install packages specific to the distribution/package manager.
-             (_packages/install-packages.sh)
-  -w       Install wallpapers shipped with this repository
-             (_images/*) in ${HOME}/Pictures directory.
-  -W       Install beautiful wallpapers from DistroTube's repository
-             into ${HOME}/Pictures directory.
-             (https://gitlab.com/dwt1/wallpapers.git)
-  -S       [WIP] Install system tweaks. (Outside of ${HOME} directory)
+    -h       Show this help.
+    -a       Install all things that this script provides. Specifically:
+               (dotfiles[tags:all], icons, fonts, packages, wallpapers[git])
+    -t TAGS  Install specific tags, comma separated list.
+    -I       [WIP] Install icons. (_icons/install-icons.sh)
+    -F       Install fonts. (_fonts/install-fonts.sh)
+    -P       [WIP] Install packages specific to the distribution/package manager.
+               (_packages/install-packages.sh)
+    -w       Install wallpapers shipped with this repository
+               (_images/*) in ${HOME}/Pictures directory.
+    -W       Install beautiful wallpapers from DistroTube's repository
+               into ${HOME}/Pictures directory.
+               (https://gitlab.com/dwt1/wallpapers.git)
+    -S       [WIP] Install system tweaks. (Outside of ${HOME} directory)
 
 List of available TAGS:
 $(
@@ -96,20 +97,19 @@ _EOH1
 ## BEGIN _parseArgumentsFn {
  # parse commandline arguments for script to run
 _parseArgumentsFn () {
-    while getopts ':hat:IFwWPS' _option
-    do
+    while getopts ':hat:IFwWPS' _option; do
         case "${_option}" in
             h)
                 _usageFn
                 exit
                 ;;
-            t) _install_tags="${OPTARG}"            ;;
-            I) _install_icons="set"                     ;;
-            F) _install_fonts="set"                     ;;
-            w) _install_wallpapers="set"            ;;
-            W) _install_git_wallpapers="set"    ;;
-            P) _install_packages="set"                ;;
-            S) _install_system="set"                    ;;
+            t) _install_tags="${OPTARG}" ;;
+            I) _install_icons="set" ;;
+            F) _install_fonts="set" ;;
+            w) _install_wallpapers="set" ;;
+            W) _install_git_wallpapers="set" ;;
+            P) _install_packages="set" ;;
+            S) _install_system="set" ;;
             a)
                 _install_all="set"
                 _install_tags="all"
@@ -133,12 +133,13 @@ _parseArgumentsFn () {
  # wrapper for error checking whether certain action returned success or errors
  # and print it for the user
 _checkErrCodeAndPrintFn () {
-    local _errcode="${1:-}"
-    local _msg_on_error="${2:-}"
-    local _msg_on_success="${3:-}"
+    local _errcode _msg_on_error _msg_on_success
 
-    if [ "${_errcode}" -ne 0 ]
-    then
+    _errcode="${1:-}"
+    _msg_on_error="${2:-}"
+    _msg_on_success="${3:-}"
+
+    if [ "${_errcode}" -ne 0 ]; then
         _errMsg "${_msg_on_error}"
     else
         _sucMsg "${_msg_on_success}"
@@ -156,9 +157,12 @@ _installPackagesFn () {
 ## BEGIN _installDotfilesFn {
  # install TAGS from accompaning directory to HOME directory
 _installDotfilesFn () {
-    local _stow_description_dir="$(dirname "$0")"
-    local _stow_destination_dir="${HOME}"
-    declare -a _tags_to_install=("${@}")
+    local _stow_description_dir _stow_destination_dir
+    declare -a _tags_to_install
+
+    _stow_description_dir="$(dirname "$0")"
+    _stow_destination_dir="${HOME}"
+    _tags_to_install=("${@}")
 
     ${_stowBinary} \
         --verbose=5 \
@@ -170,91 +174,110 @@ _installDotfilesFn () {
 
 ## BEGIN _installFontsFn {
 _installFontsFn () {
-    local _tmp_fonts_directory="${1:-}"
-    local _dest_fonts_directory="${2:-}"
+    local _tmp_fonts_directory _dest_fonts_directory _errcode
+
+    _tmp_fonts_directory="${1:-}"
+    _dest_fonts_directory="${2:-}"
 
     _hedMsg "Starting FONTS installation."
-    $(dirname "$0")/_fonts/install-fonts.sh -a \
+    "$(dirname "$0")/_fonts/install-fonts.sh" -a \
         -t "${_tmp_fonts_directory}" \
         -d "${_dest_fonts_directory}"
-    local _errcode="$?"
+    _errcode="$?"
     _endMsg "Ended FONTS installation."
     _checkErrCodeAndPrintFn "${_errcode}" \
         "FONTS installation failed." \
         "FONTS installation succeeded."
+
     return ${_errcode}
 }
 ## . END _installFontsFn }
 
 ## BEGIN _installIconsFn {
 _installIconsFn () {
-    local _tmp_icons_directory="${1:-}"
-    local _dest_icons_directory="${2:-}"
+    local _tmp_icons_directory _dest_icons_directory _errcode
+
+    _tmp_icons_directory="${1:-}"
+    _dest_icons_directory="${2:-}"
 
     _hedMsg "Starting ICONS installation."
     ICON_TMPDIR="${_tmp_icons_directory}" ICON_INSTALLDIR="${_dest_icons_directory}" \
         "$(dirname "$0")/_icons/install-icons.sh"
-    local _errcode="$?"
+    _errcode="$?"
     _endMsg "Ended ICONS installation."
+
     _checkErrCodeAndPrintFn "${_errcode}" \
         "ICONS installation failed." \
         "ICONS installation succeeded."
+
     return ${_errcode}
 }
 ## . END _installIconsFn }
 
 ## BEGIN _getAndInstallWallpapersFn {
 _getAndInstallWallpapersFn () {
-    local _wallpapers_direcory="${1:-}"
+    local _wallpapers_direcory
+
+    _wallpapers_direcory="${1:-}"
 
     _hedMsg "Linking brought WALLPAPERS to ${_wallpapers_direcory}."
-    ln -s "$(find "$(dirname "$0")/_images" -name "*.{jpg,png}" | xargs)" "$(realpath "${_wallpapers_direcory}")/"
+    while read -r _image; do
+      ln -s "$(realpath "${_image}")" "$(realpath "${_wallpapers_direcory}")/${_image}"
+    done <<<"$(find "$(dirname "$0")/_images" -type f -regextype posix-extended -regex ".*(jpg|png)" -print)"
 }
 ## . END _getAndInstallWallpapersFn }
 
 ## BEGIN _getAndInstallGitWallpapersFn {
 _getAndInstallGitWallpapersFn () {
-    local _dest_wallpapers_directory="${1:-}"
+    local _dest_wallpapers_directory _errcode
+
+    _dest_wallpapers_directory="${1:-}"
 
     _hedMsg "Downloading GIT WALLPAPERS (https://gitlab.com/dwt1/wallpapers.git) into ${_dest_wallpapers_directory}"
     git clone --quiet \
         "https://gitlab.com/dwt1/wallpapers.git" \
         "${_dest_wallpapers_directory}"
-    local _errcode="$?"
+    _errcode="$?"
     _endMsg "Ended GIT WALLPAPERS download."
 
     _checkErrCodeAndPrintFn "${_errcode}" \
         "GIT WALLPAPERS download failed." \
         "GIT WALLPAPERS download succeded."
+
     return ${_errcode}
 }
 ## . END _getAndInstallGitWallpapersFn }
 
 ## BEGIN _applyQtKdeChangesFn {
 _applyQtKdeChangesFn () {
+    local _errcode
+
     # local _tmp_dir="${1:-}"
     # local _dest_dir="${2:-}"
 
     _hedMsg "Applying QT/KDE themes."
     "$(dirname "$0")/_installation_scripts/install-kde-themes.sh"
-    local _errcode="$?"
+    _errcode="$?"
     _endMsg "Ended QT/KDE theme application."
 
     _checkErrCodeAndPrintFn "${_errcode}" \
         "QT/KDE THEMES application failed." \
         "QT/KDE THEMES application succeded."
+
     return ${_errcode}
 }
 ## . END _applyQtKdeChangesFn }
 
 ## BEGIN _applyGtkXfceCahngesFn {
 _applyGtkXfceChangesFn () {
+    local _errcode
+
     # local _tmp_dir="${1:-}"
     # local _dest_dir="${2:-}"
 
     _hedMsg "Applying GTK/XFCE themes."
     "$(dirname "$0")/_installation_scripts/install-xfce-themes.sh"
-    local _errcode="$?"
+    _errcode="$?"
     _endMsg "Ended GTK/XFCE theme application."
 
     _checkErrCodeAndPrintFn "${_errcode}" \
@@ -267,7 +290,7 @@ _applyGtkXfceChangesFn () {
 ## BEGIN _applySystemChangesFn {
 _applySystemChangesFn () {
     # TODO 2022-06-10: implement applying System changes
-    true
+    /bin/true
 }
 ## . END _applySystemChangesFn }
 
@@ -285,66 +308,60 @@ _mainFn () {
     _parseArgumentsFn "$@"
 
     # install PACKAGES
-    if [ "${_install_packages}" ] || [ "${_install_all}" ]
-    then
+    if [ "${_install_packages}" ] || [ "${_install_all}" ]; then
         _infMsg "Installing PACKAGES .."
         _installPackagesFn
     fi
 
     # install TAGS
-    if [ "${_install_tags}" ] || [ "${_install_all}" ]
-    then
+    if [ "${_install_tags}" ] || [ "${_install_all}" ]; then
         _infMsg "Installing TAGS .."
         declare -a _tag_list
+
         case "${_install_tags}" in
             "custom:"*)
                 _infMsg "Using CUSTOM tags"
-                while IFS=',' read -r _line; do _tag_list+=("${_line}"); done <<<"${_install_tags##*:}"
+                IFS=',' read -r -a _tag_list <<<"${_install_tags/custom:/}"
                 ;;
             *)
-                for _tag in ${_install_tags}
-                do
+                for _tag in ${_install_tags}; do
                   while IFS=' ' read -r _line; do _tag_list+=("${_line}"); done <<<"${_tagMap[${_tag}]}"
                 done
                 ;;
         esac
+
         _infMsg "TAGS to install: ${_tag_list[*]}"
         _installDotfilesFn "${_tag_list[@]}"
     fi
 
     # install ICONS
-    if [ "${_install_icons}" ] || [ "${_install_all}" ]
-    then
+    if [ "${_install_icons}" ] || [ "${_install_all}" ]; then
         _infMsg "Installing ICONS .."
         [ ! -d "/tmp/icons-tmp" ] && mkdir -pv "/tmp/icons-tmp"
         _installIconsFn "/tmp/icons-tmp" "${HOME}/.local/share/icons"
     fi
 
     # install FONTS
-    if [ "${_install_fonts}" ] || [ "${_install_all}" ]
-    then
+    if [ "${_install_fonts}" ] || [ "${_install_all}" ]; then
         _infMsg "Installing FONTS .."
         [ ! -d "/tmp/fonts-tmp" ] && mkdir -pv "/tmp/fonts-tmp"
         _installFontsFn "/tmp/fonts-tmp" "${HOME}/.local/share/fonts"
     fi
 
     # install WALLPAPERS
-    if [ "${_install_wallpapers}" ] || [ "${_install_all}" ]
-    then
+    if [ "${_install_wallpapers}" ] || [ "${_install_all}" ]; then
         _infMsg "Installing WALLPAPERS .."
         _getAndInstallWallpapersFn "${HOME}/Pictures"
     fi
 
     # install GIT WALLPAPERS
-    if [ "${_install_git_wallpapers}" ] || [ "${_install_all}" ]
-    then
+    if [ "${_install_git_wallpapers}" ] || [ "${_install_all}" ]; then
         _infMsg "Installing GIT WALLPAPERS .."
         _getAndInstallGitWallpapersFn "${HOME}/Pictures/dt-wallpapers"
     fi
 
     # apply SYSTEM changes
-    if [ "${_install_system}" ] || [ "${_install_all}" ]
-    then
+    if [ "${_install_system}" ] || [ "${_install_all}" ]; then
         _infMsg "Applying QT themes/changes .."
         _applyQtKdeChangesFn
 
@@ -364,8 +381,7 @@ _mainFn () {
 ### . END: FUNCTION_SECTION }
 
 ### BEGIN: MAIN_SECTION {
-if [ "${BASH_SOURCE[0]}" = "$0" ]
-then
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
     _mainFn "$@"
 fi
 ### . END: MAIN_SECTION }

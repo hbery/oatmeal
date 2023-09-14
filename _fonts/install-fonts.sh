@@ -68,8 +68,7 @@ _EOH1
 
 ## BEGIN _parseArgumentsFn {
 _parseArgumentsFn () {
-  while getopts ':hd:t:aMNGLC:' _option
-  do
+  while getopts ':hd:t:aMNGLC:' _option; do
     case "${_option}" in
       h)
         _usageFn
@@ -100,12 +99,12 @@ _parseArgumentsFn () {
 
 ## BEGIN _checkErrCodeAndPrintFn {
 _checkErrCodeAndPrintFn () {
-  local _errcode="${1:-}"
-  local _msg_on_error="${2:-}"
-  local _msg_on_success="${3:-}"
+  local _errcode _msg_on_error _msg_on_success
+  _errcode="${1:-}"
+  _msg_on_error="${2:-}"
+  _msg_on_success="${3:-}"
 
-  if [ "${_errcode}" -ne 0 ]
-  then
+  if [ "${_errcode}" -ne 0 ]; then
     _errMsg "${_msg_on_error}"
   else
     _sucMsg "${_msg_on_success}"
@@ -115,9 +114,10 @@ _checkErrCodeAndPrintFn () {
 
 ## BEGIN _downloadFontFn {
 _downloadFontFn () {
-  local _font_url="${1:-}"
-  local _font_name="${2:-}"
-  local _zip_file_location="${3:-}"
+  local _font_url _font_name _zip_file_location
+  _font_url="${1:-}"
+  _font_name="${2:-}"
+  _zip_file_location="${3:-}"
 
   wget \
     --show-progress --quiet \
@@ -128,9 +128,10 @@ _downloadFontFn () {
 
 ## BEGIN _unpackFontFn {
 _unpackFontFn () {
-  local _tmp_location="${1:-}"
-  local _font_name="${2:-}"
-  local _font_destination="${3:-}"
+  local _tmp_location _font_name _font_destination
+  _tmp_location="${1:-}"
+  _font_name="${2:-}"
+  _font_destination="${3:-}"
 
   [ ! -d "${_font_destination}/${_font_name}" ] \
     && mkdir -p "${_font_destination}/${_font_name}"
@@ -142,10 +143,11 @@ _unpackFontFn () {
 
 ## BEGIN _installFontFn {
 _installNerdFontFn () {
-  local _font_name="${1:-}"
-  local _font_url="${2:-}/${1:-}.zip"
-  local _tmp_location="${3:-}"
-  local _font_destination="${4:-}"
+  local _font_name _font_url _tmp_location _font_destination
+  _font_name="${1:-}"
+  _font_url="${2:-}/${1:-}.zip"
+  _tmp_location="${3:-}"
+  _font_destination="${4:-}"
 
   _prgMsg "Installing font: ${_font_name}"
   _downloadFontFn "${_font_url}" "${_font_name}" "${_tmp_location}"
@@ -155,10 +157,11 @@ _installNerdFontFn () {
 
 ## BEGIN _installNerdFontFn {
 _installOtherFontFn () {
-  local _font_name="${1%%;*}"
-  local _font_url="${1##*;}"
-  local _tmp_location="${2:-}"
-  local _font_destination="${3:-}"
+  local _font_name _font_url _tmp_location _font_destination
+  _font_name="${1%%;*}"
+  _font_url="${1##*;}"
+  _tmp_location="${2:-}"
+  _font_destination="${3:-}"
 
   _prgMsg "Installing font: ${_font_name}"
   _downloadFontFn "${_font_url}" "${_font_name}" "${_tmp_location}"
@@ -168,8 +171,9 @@ _installOtherFontFn () {
 
 ## BEGIN _installNerdFontFn {
 _installShippedFontFn () {
-  local _font_name="${1:-}"
-  local _font_destination="${2:-}"
+  local _font_name _font_destination
+  _font_name="${1:-}"
+  _font_destination="${2:-}"
 
   _prgMsg "Installing font: ${_font_name}"
   cp -rv "$(dirname "$0")/${_font_name}" "${_font_destination}/"
@@ -178,11 +182,12 @@ _installShippedFontFn () {
 
 ## BEGIN _installMicrosoftFontsFn {
 _installMicrosoftFontsFn () {
-  local _font_destination="${1:-}"
+  local _font_destination _errcode
+  _font_destination="${1:-}"
 
   _prgMsg "Installing: Microsoft Fonts"
-  $(dirname "$0")/install-microsoft-fonts.sh "${_font_destination}"
-  local _errcode="$?"
+  "$(dirname "$0")/install-microsoft-fonts.sh" "${_font_destination}"
+  _errcode="$?"
 
   _checkErrCodeAndPrintFn "${_errcode}" \
     "Microsoft fonts installation has failed!" \
@@ -194,16 +199,19 @@ _installMicrosoftFontsFn () {
 
 ## BEGIN _installCustomFontsFn {
 _installCustomFontsFn () {
-  local _font_name="${1:-}"
-  local _font_destination="${2:-}"
+  local _font_name _font_destination
+  _font_name="${1:-}"
+  _font_destination="${2:-}"
 
+  _skpMsg "[ WIP ] Not yet implemented"
   true
 }
 ## . END _installCustomFontsFn }
 
 ## BEGIN _updateCacheFn {
 _updateCacheFn () {
-  local _font_directory="${1:-}"
+  local _font_directory
+  _font_directory="${1:-}"
 
   fc-cache -fv "${_font_directory}"
 }
@@ -216,64 +224,54 @@ _mainFn () {
   [ "${_chosen_install_dir}" ] \
     && _localFontDirectory="${_chosen_install_dir}"
 
-  _temporary_files_location="${_chosen_tmp_dir:-/tmp/fonts}"
+  _temporary_files_location="${_chosen_tmp_dir:-"/tmp/fonts"}"
 
-  if [ ! -d "${_localFontDirectory}" ]
-  then
+  if [ ! -d "${_localFontDirectory}" ]; then
     mkdir -p "${_localFontDirectory}"
   fi
 
   # install NerdFonts
-  if [ "${_install_nerd_fonts}" ] || [ "${_install_all}" ]
-  then
+  if [ "${_install_nerd_fonts}" ] || [ "${_install_all}" ]; then
     _hedMsg "Starting NerdFonts installation"
     _infMsg "Fonts to be installed: ${_nerdFontList}"
-    for _font_name in ${_nerdFontList}
-    do
+    for _font_name in ${_nerdFontList}; do
       _installNerdFontFn "${_font_name}" "${_nerdFontLink}" "${_temporary_files_location}" "${_localFontDirectory}"
     done
     _endMsg "End of NerdFonts installation"
   fi
 
   # install other Fonts
-  if [ "${_install_google_chosen_fonts}" ] || [ "${_install_all}" ]
-  then
+  if [ "${_install_google_chosen_fonts}" ] || [ "${_install_all}" ]; then
     _hedMsg "Starting other fonts installation"
     _infMsg "Fonts to be installed: $(for _i in ${_otherFontList}; do echo "${_i%%;*}"; done | xargs)"
-    for _font_combo in ${_otherFontList}
-    do
+    for _font_combo in ${_otherFontList}; do
       _installOtherFontFn "${_font_combo}" "${_temporary_files_location}" "${_localFontDirectory}"
     done
     _endMsg "End of other font installation"
   fi
 
   # install shipped with this script Fonts
-  if [ "${_install_local_fonts}" ] || [ "${_install_all}" ]
-  then
+  if [ "${_install_local_fonts}" ] || [ "${_install_all}" ]; then
     _hedMsg "Starting shipped fonts installation"
     _infMsg "Fonts to be installed: ${_shippedFontList}"
-    for _font_name in ${_shippedFontList}
-    do
+    for _font_name in ${_shippedFontList}; do
       _installShippedFontFn "${_font_name}" "${_localFontDirectory}"
     done
     _endMsg "End of shipped fonts installation"
   fi
 
   # install Microsoft Fonts
-  if [ "${_install_microsoft_fonts}" ] || [ "${_install_all}" ]
-  then
+  if [ "${_install_microsoft_fonts}" ] || [ "${_install_all}" ]; then
     _hedMsg "Starting Microsoft fonts installation"
     _installMicrosoftFontsFn "${_localFontDirectory}"
     _endMsg "End of Microsoft fonts installation"
   fi
 
-  if [ "${_install_custom_fonts}" ] || [ "${_install_all}" ]
-  then
+  if [ "${_install_custom_fonts}" ] || [ "${_install_all}" ]; then
     _hedMsg "Starting custom fonts installation"
-    _chopped_custom_fonts="$(echo "${_install_custom_fonts}" | sed 's/,/ /g')"
+    _chopped_custom_fonts="${_install_custom_fonts//,/ }"
     _infMsg "Fonts to be installed: ${_chopped_custom_fonts}"
-    for _font_name in ${_chopped_custom_fonts}
-    do
+    for _font_name in ${_chopped_custom_fonts}; do
       _installCustomFontsFn "${_font_name}" "${_localFontDirectory}"
     done
     _endMsg "End of shipped fonts installation"
@@ -288,8 +286,7 @@ _mainFn () {
 
 
 ### BEGIN: MAIN_SECTION {
-if [ "${BASH_SOURCE[0]}" = "$0" ]
-then
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
   _mainFn "$@"
 fi
 ### . END: MAIN_SECTION }
