@@ -147,6 +147,8 @@ require('lazy').setup({
     end,
   },
 
+  require('hbery.plugins-d.debug'),
+
   -- Little practice
   { 'ThePrimeagen/vim-be-good', },
 }, {})
