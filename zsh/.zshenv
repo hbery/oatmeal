@@ -11,8 +11,8 @@ export PAGER=less
 export BROWSER=brave-browser
 # export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export MANPAGER="less -R -s -M +Gg"
-export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"
-export TMUX_PLUGIN_MANAGER_PATH="$HOME/.local/share/tmux/plugins"
+export STARSHIP_CONFIG="${HOME}/.config/starship/starship.toml"
+export TMUX_PLUGIN_MANAGER_PATH="${XDG_DATA_HOME:-"${HOME}/.local/share"}/tmux/plugins"
 
 export PF_INFO="ascii title os host kernel shell uptime pkgs editor memory"
 
