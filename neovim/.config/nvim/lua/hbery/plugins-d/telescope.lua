@@ -1,4 +1,6 @@
 -- [[ Configure Telescope ]]
+require('telescope').load_extension('harpoon')
+require('telescope').load_extension('git_worktree')
 
 require('telescope').setup {
   defaults = {
@@ -6,6 +8,8 @@ require('telescope').setup {
       i = {
         ['<C-u>'] = false,
         ['<C-d>'] = false,
+        ["<C-j>"] = require('telescope.actions').move_selection_next,
+        ["<C-k>"] = require('telescope.actions').move_selection_previous,
       },
     },
   },
@@ -25,8 +29,16 @@ vim.keymap.set('n', '<leader>/', function()
 
 end, { desc = '[/] Fuzzily search in current buffer' })
 
-vim.keymap.set('n', '<leader>pf', require('telescope.builtin').find_files, { desc = '[P]rompt-search [F]iles' })
-vim.keymap.set('n', '<leader>ph', require('telescope.builtin').help_tags, { desc = '[P]rompt-search [H]elp' })
-vim.keymap.set('n', '<leader>pw', require('telescope.builtin').grep_string, { desc = '[P]rompt-search current [W]ord' })
-vim.keymap.set('n', '<leader>pg', require('telescope.builtin').live_grep, { desc = '[P]rompt-search by [G]rep' })
-vim.keymap.set('n', '<leader>pd', require('telescope.builtin').diagnostics, { desc = '[P]rompt-search [D]iagnostics' })
+vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
+vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
+vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>sS', require('telescope.builtin').git_status, { desc = '[S]how Git [S]tatus' })
+
+vim.keymap.set('n', '<leader>hm', require('telescope').extensions.harpoon.marks, { desc = '[H]arpoon [M]arks' })
+
+vim.keymap.set("n", "<Leader>gl", require('telescope').extensions.git_worktree.git_worktrees, { desc = "[G]it-worktree [L]ist", silent = true })
+vim.keymap.set("n", "<Leader>gC", require('telescope').extensions.git_worktree.create_git_worktree, { desc = "[G]it-worktree [C]reate worktree", silent = true })
+
+vim.keymap.set("n", "<Leader>sn", require('telescope').extensions.notify.notify, { desc = "[S]how [N]otifications", silent = true })

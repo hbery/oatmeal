@@ -59,7 +59,7 @@ local servers = {
 
   -- Config LSPs
   terraformls = {},                             -- Terraform
-  yamlls = {},                                  -- YAML
+  -- yamlls = {},                                  -- YAML
   ansiblels = {},                               -- Ansible
 }
 

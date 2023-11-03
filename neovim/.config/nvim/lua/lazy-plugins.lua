@@ -127,9 +127,32 @@ require('lazy').setup({
     },
   },
 
+  {
+    'rcarriga/nvim-notify',
+    opts = {
+      background_colour = "#000000",
+    },
+  },
+
+  { 'folke/noice.nvim',
+    dependencies = {
+      'MunifTanjim/nui.nvim',
+      'rcarriga/nvim-notify',
+    },
+    opts = {
+      cmdline = {
+        format = {
+          search_down = { kind = "search", pattern = "^/", icon = "   ", lang = "regex" },
+          search_up = { kind = "search", pattern = "^%?", icon = "   ", lang = "regex" },
+        },
+      },
+    },
+  },
+
   { 'numToStr/Comment.nvim', opts = {} },
 
   { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
+  { 'nvim-telescope/telescope-symbols.nvim' },
 
   {
     'nvim-telescope/telescope-fzf-native.nvim',
@@ -137,6 +160,20 @@ require('lazy').setup({
     cond = function()
       return vim.fn.executable 'make' == 1
     end,
+  },
+
+  {
+    'ThePrimeagen/git-worktree.nvim',
+    dependencies = {
+      'nvim-telescope/telescope.nvim',
+    },
+    opts = {},
+  },
+
+  { 'ThePrimeagen/harpoon',
+    dependencies= {
+      'nvim-lua/plenary.nvim',
+    },
   },
 
   {
