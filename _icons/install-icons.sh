@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # vim: ft=bash : ts=2 : sw=2 :
 # ~~~
 # Date: 2022

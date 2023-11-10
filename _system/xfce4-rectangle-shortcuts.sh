@@ -1,9 +1,11 @@
 #!/bin/bash
 
+_scriptsDir="${XDG_DATA_HOME:-"${HOME}/.local"}/sbin"
+
 # ---------------------------------------------------- * default applications *
 echo "*** Setting Application shortcuts"
 xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/commands/custom/<Super>Enter" -t string -s "exo-open --launch TerminalEmulator"
-xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/commands/custom/<Super>Space" -t string -s "rofi -no-lazy-grab -show drun -modi run,drun,window -theme /home/at/.config/rofi/launcher/spotlight-dark"
+xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/commands/custom/<Super>Space" -t string -s "rofi -no-lazy-grab -show drun -modi run,drun,window -theme ${XDG_CONFIG_HOME:-"${HOME}/.config"}/rofi/launcher/spotlight-dark"
 xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/commands/custom/<Super>b" -t string -s "exo-open --launch WebBrowser"
 
 # ------------------------------------------------------------------ * tiling *
@@ -32,10 +34,10 @@ xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/xfwm4/custom/<Super><Shift><Pr
 xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/xfwm4/custom/<Super><Shift><Primary>Left" -t string -s "move_window_left_key"
 
 # create functions which do not exist
-mkdir -p "${HOME}/.xfce_scripts"
+mkdir -p "${_scriptsDir}"
 
 echo "*** Setting tiling center shortcut"
-cat << _EOH1 > "${HOME}/.xfce_scripts/tile_center_key"
+cat << _EOH1 > "${_scriptsDir}/xfce4_tile_center_key"
 #!/bin/bash
 
 IFS='x' read _screen_width _screen_height < <(xdpyinfo | grep dimensions | grep -o '[0-9x]*' | head -n1)
@@ -49,11 +51,11 @@ _new_position_y=\$((_screen_height/2-_window_height/2))
 xdotool getactivewindow windowmove "\${_new_position_x}" "\${_new_position_y}"
 _EOH1
 
-chown ${USER}:${USER} "${HOME}/.xfce_scripts/tile_center_key"
-chmod 755 "${HOME}/.xfce_scripts/tile_center_key"
-xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/commands/custom/<Primary><Alt>c" -t string -s "${HOME}/.xfce_scripts/tile_center_key"
+chown ${USER}:${USER} "${_scriptsDir}/xfce4_tile_center_key"
+chmod 755 "${_scriptsDir}/xfce4_tile_center_key"
+xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/commands/custom/<Primary><Alt>c" -t string -s "${_scriptsDir}/xfce4_tile_center_key"
 echo "*** Setting resize shortcuts"
-cat << _EOH2 > "${HOME}/.xfce_scripts/tile_resize_key"
+cat << _EOH2 > "${_scriptsDir}/xfce4_tile_resize_key"
 #!/bin/bash
 
 IFS='x' read _screen_width _screen_height < <(xdpyinfo | grep dimensions | grep -o '[0-9x]*' | head -n1)
@@ -74,7 +76,7 @@ fi
 xdotool getactivewindow windowsize "\${_new_window_width}" "\${_new_window_height}"
 _EOH2
 
-chown ${USER}:${USER} "${HOME}/.xfce_scripts/tile_resize_key"
-chmod 755 "${HOME}/.xfce_scripts/tile_resize_key"
-xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/commands/custom/<Primary><Alt>minus" -t string -s "${HOME}/.xfce_scripts/tile_resize_key down"
-xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/commands/custom/<Primary><Alt>equal" -t string -s "${HOME}/.xfce_scripts/tile_resize_key up"
+chown ${USER}:${USER} "${_scriptsDir}/xfce4_tile_resize_key"
+chmod 755 "${_scriptsDir}/xfce4_tile_resize_key"
+xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/commands/custom/<Primary><Alt>minus" -t string -s "${_scriptsDir}/xfce4_tile_resize_key down"
+xfconf-query -c xfce4-keyboard-shortcuts -nv -p "/commands/custom/<Primary><Alt>equal" -t string -s "${_scriptsDir}/xfce4_tile_resize_key up"

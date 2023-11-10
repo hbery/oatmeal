@@ -8,8 +8,8 @@
 
 ### BEGIN: SCRIPT_OPTIONS {
 _localFontDirectory="${HOME}/.local/share/fonts"
-_nerdFontLink="https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0"
-_nerdFontList="FantasqueSansMono FiraCode FiraMono Go-Mono Hack Inconsolata InconsolataGo Meslo RobotoMono SourceCodePro CascadiaCode JetBrainsMono ComicMono VictorMono"
+_nerdFontLink="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2"
+_nerdFontList="FantasqueSansMono FiraCode FiraMono Go-Mono Hack Inconsolata InconsolataGo Meslo RobotoMono SourceCodePro CascadiaCode JetBrainsMono ComicShannsMono VictorMono"
 _otherFontList="Roboto;https://fonts.google.com/download?family=Roboto
                 Montserrat;https://fonts.google.com/download?family=Montserrat
                 Noto-Emoji;https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf

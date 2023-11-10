@@ -35,7 +35,6 @@ o.hidden = true
 o.backup = false
 o.swapfile = false
 o.errorbells = false
-o.t_Co = 256
 o.number = true
 o.relativenumber = true
 o.clipboard = 'unnamedplus'

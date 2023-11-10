@@ -8,8 +8,6 @@
 # by hbery
 # ~~~
 
-# . ~/.cargo/env
-
 # Load colors
 autoload -U colors && colors
 
