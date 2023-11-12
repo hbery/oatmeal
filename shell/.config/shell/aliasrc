@@ -25,7 +25,7 @@ alias v='/usr/bin/vim'
 alias vim='nvim'
 alias mux='tmuxer'
 alias cat='bat --plain'
-alias wormhole='wormhole-williams'
+alias wormhole='wormhole-william'
 
 # conf
 alias strip_conf='grep -Ev "^#|^\s*$"'
