@@ -15,9 +15,15 @@ alias rm='rm -i'
 
 # ls -> exa
 alias l='/bin/ls -F'
-alias ls='exa --color=always --group-directories-first'
-alias ll='exa -l --color=always --group-directories-first'
-alias la='exa -al --color=always --group-directories-first'
+if command -v exa; then
+    alias ls='exa --color=always --group-directories-first'
+    alias la='exa -al --color=always --group-directories-first'
+    alias ll='exa -l --color=always --group-directories-first'
+else
+    alias ls='ls --color=always --group-directories-first'
+    alias la='ls -Al --color=always --group-directories-first'
+    alias ll='ls -l --color=always --group-directories-first'
+fi
 
 # other programs
 alias nano='micro'
@@ -29,6 +35,7 @@ alias wormhole='wormhole-william'
 
 # conf
 alias strip_conf='grep -Ev "^#|^\s*$"'
+alias pea='source $("$HOME/scripts/python_environment_activate")/bin/activate'
 
 # git aliases
 alias gpl='git pull'

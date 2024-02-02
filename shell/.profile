@@ -36,6 +36,8 @@ export XDG_LOCAL_SHARE_HOME="${XDG_DATA_HOME}"
 export XDG_LOCAL_BIN="${HOME}/.local/bin"
 if [ "$(uname)" = "Linux" ]; then
     export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+elif [ "$(uname)" = "Darwin" ]; then
+    export XDG_RUNTIME_DIR="/Users/${USER}/Library/Caches/TemporaryItems"
 fi
 
 # source Language specific vars (Perl5,Golang,Rust,Python3,NodeJS)
