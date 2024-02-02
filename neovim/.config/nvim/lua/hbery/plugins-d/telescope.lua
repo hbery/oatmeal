@@ -41,4 +41,4 @@ vim.keymap.set('n', '<leader>hm', require('telescope').extensions.harpoon.marks,
 vim.keymap.set("n", "<Leader>gl", require('telescope').extensions.git_worktree.git_worktrees, { desc = "[G]it-worktree [L]ist", silent = true })
 vim.keymap.set("n", "<Leader>gC", require('telescope').extensions.git_worktree.create_git_worktree, { desc = "[G]it-worktree [C]reate worktree", silent = true })
 
-vim.keymap.set("n", "<Leader>sn", require('telescope').extensions.notify.notify, { desc = "[S]how [N]otifications", silent = true })
+-- vim.keymap.set("n", "<Leader>sn", require('telescope').extensions.notify.notify, { desc = "[S]how [N]otifications", silent = true })

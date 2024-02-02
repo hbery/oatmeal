@@ -16,6 +16,7 @@
 local g = vim.g
 local o = vim.o
 local hi = vim.api.nvim_set_hl
+local kms = vim.keymap.set
 
 -- Leader
 g.mapleader = ' '
@@ -117,75 +118,75 @@ hi(0, 'Folded', { guibg = nil })
 
 --!! ---------------------------------------- * All-mighty REMAPS * {{{
 -- Split keys remap
-vim.keymap.set('n', '<leader>v', ':vsplit<CR><C-w>l', { silent = true })
-vim.keymap.set('n', '<leader>b', ':split<CR><C-w>j', { silent = true })
-vim.keymap.set('n', '<C-h>', '<C-w>h', { remap = false })
-vim.keymap.set('n', '<C-j>', '<C-w>j', { remap = false })
-vim.keymap.set('n', '<C-k>', '<C-w>k', { remap = false })
-vim.keymap.set('n', '<C-l>', '<C-w>l', { remap = false })
+kms('n', '<leader>v', ':vsplit<CR><C-w>l', { silent = true })
+kms('n', '<leader>b', ':split<CR><C-w>j', { silent = true })
+kms('n', '<C-h>', '<C-w>h', { remap = false })
+kms('n', '<C-j>', '<C-w>j', { remap = false })
+kms('n', '<C-k>', '<C-w>k', { remap = false })
+kms('n', '<C-l>', '<C-w>l', { remap = false })
 
 -- Filesystem navigation `oil.nvim`
-vim.keymap.set("n", "-", require("oil").open, { desc = "Open parent directory" })
+kms("n", "-", require("oil").open, { desc = "Open parent directory" })
 
 -- Terminal toggling
-vim.keymap.set("n", "<leader>T", ':FloatermToggle<CR>', { silent = true, remap = false, desc = "Toggle Floating terminal" })
-vim.keymap.set("n", "<leader>tt", ':terminal<CR>', { silent = true, remap = false, desc = "Open terminal in current window" })
-vim.keymap.set("n", "<leader>tb", ':split<CR><C-w>j:terminal<CR>', { silent = true, remap = false, desc = "Open terminal down from current window" })
-vim.keymap.set("n", "<leader>tv", ':vsplit<CR><C-w>l:terminal<CR>', { silent = true, remap = false, desc = "Open terminal next to current window" })
+kms("n", "<leader>T", ':FloatermToggle<CR>', { silent = true, remap = false, desc = "Toggle Floating terminal" })
+kms("n", "<leader>tt", ':terminal<CR>', { silent = true, remap = false, desc = "Open terminal in current window" })
+kms("n", "<leader>tb", ':split<CR><C-w>j:terminal<CR>', { silent = true, remap = false, desc = "Open terminal down from current window" })
+kms("n", "<leader>tv", ':vsplit<CR><C-w>l:terminal<CR>', { silent = true, remap = false, desc = "Open terminal next to current window" })
 
 -- Keep block selected after indent
-vim.keymap.set('v', '<', '<gv', { remap = false })
-vim.keymap.set('v', '>', '>gv', { remap = false })
+kms('v', '<', '<gv', { remap = false })
+kms('v', '>', '>gv', { remap = false })
 
 -- Maintain the cursor position when yanking a visual selection
-vim.keymap.set('v', 'y', 'myy`y', { remap = false })
-vim.keymap.set('v', 'TY', 'myY`y', { remap = false })
+kms('v', 'y', 'myy`y', { remap = false })
+kms('v', 'TY', 'myY`y', { remap = false })
 
 -- Search for visually selected text
-vim.keymap.set('v', '//', "y/<C-R>=escape(@\",'/\')<CR><CR>", { remap = false })
-vim.keymap.set('v', '<leader>R', "y:%s/<C-R>=escape(@\",'/\')<CR>/", { remap = false })
+kms('v', '//', "y/<C-R>=escape(@\",'/\')<CR><CR>", { remap = false })
+kms('v', '<leader>R', "y:%s/<C-R>=escape(@\",'/\')<CR>/", { remap = false })
 
 -- Clear search buffer
-vim.keymap.set('n', '<leader>/', ':let @/=""<CR>', { remap = false, silent = true })
+kms('n', '<leader>/', ':let @/=""<CR>', { remap = false, silent = true })
 
 -- Y do as D and C (should be in neovim-core, so just to match it in vim)
--- vim.keymap.set('n', 'Y', 'y$', {remap = false})
+-- kms('n', 'Y', 'y$', {remap = false})
 
 -- Yank to system clipboard
-vim.keymap.set('n', '<leader>y', '\"+y', { remap = false })
-vim.keymap.set('v', '<leader>y', '\"+y', { remap = false })
-vim.keymap.set('n', '<leader>Y', '\"+Y', { remap = false })
+kms('n', '<leader>y', '\"+y', { remap = false })
+kms('v', '<leader>y', '\"+y', { remap = false })
+kms('n', '<leader>Y', '\"+Y', { remap = false })
 
-vim.keymap.set('n', '<leader>d', '\"_d', { remap = false })
-vim.keymap.set('v', '<leader>d', '\"_d', { remap = false })
+kms('n', '<leader>d', '\"_d', { remap = false })
+kms('v', '<leader>d', '\"_d', { remap = false })
 
 -- Keep me centered
-vim.keymap.set('n', 'n', 'nzzzv', { remap = false })
-vim.keymap.set('n', 'N', 'Nzzzv', { remap = false })
-vim.keymap.set('n', 'J', 'mzJ`z', { remap = false })
+kms('n', 'n', 'nzzzv', { remap = false })
+kms('n', 'N', 'Nzzzv', { remap = false })
+kms('n', 'J', 'mzJ`z', { remap = false })
 
 -- Fix the syntax highlighting (if broken)
-vim.keymap.set('n', '<leader>s', ':syntax off<CR>:syntax on<CR>', { remap = false, silent = true })
+kms('n', '<leader>s', ':syntax off<CR>:syntax on<CR>', { remap = false, silent = true })
 
 -- Move text as intended
 --  in VISUAL
-vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { remap = false, silent = true })
-vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { remap = false, silent = true })
+kms('v', 'K', ":m '<-2<CR>gv=gv", { remap = false, silent = true })
+kms('v', 'J', ":m '>+1<CR>gv=gv", { remap = false, silent = true })
 --  in NORMAL
-vim.keymap.set('n', '<leader>mk', ':m .-2<CR>==', { remap = false, silent = true })
-vim.keymap.set('n', '<leader>mj', ':m .+1<CR>==', { remap = false, silent = true })
+kms('n', '<leader>mk', ':m .-2<CR>==', { remap = false, silent = true })
+kms('n', '<leader>mj', ':m .+1<CR>==', { remap = false, silent = true })
 
-vim.keymap.set('i', '<A-k>', '<esc>:m .-2<CR>==gi', { remap = false, silent = true })
-vim.keymap.set('i', '<A-j>', '<esc>:m .+1<CR>==gi', { remap = false, silent = true })
+kms('i', '<A-k>', '<esc>:m .-2<CR>==gi', { remap = false, silent = true })
+kms('i', '<A-j>', '<esc>:m .+1<CR>==gi', { remap = false, silent = true })
 
 -- Persist yank text in paste buffer
-vim.keymap.set('x', '<leader>p', '\"_dP', { remap = false })
+kms('x', '<leader>p', '\"_dP', { remap = false })
 
 -- Open currently edited file in the default program
-vim.keymap.set('n', '<leader>x', ':!xdg-open %<CR><CR>')
+kms('n', '<leader>x', ':!xdg-open %<CR><CR>')
 
 -- Write as sudo
-vim.keymap.set('c', 'w!!', '%!sudo tee > /dev/null %')
+kms('c', 'w!!', '%!sudo tee > /dev/null %')
 
 vim.api.nvim_create_user_command('MyWipeRegisters',
     function()

@@ -23,11 +23,9 @@ require('lazy').setup({
 
   -- From the plain old vim : better edition plugins
   { 'tpope/vim-surround', },
-  {
-    'windwp/nvim-autopairs',
-    opts = {},
-  },
+  { 'windwp/nvim-autopairs', opts = {} },
   { 'sheerun/vim-polyglot', },
+  { 'preservim/vim-pencil' },
 
   -- {
   --   'preservim/nerdtree',
@@ -71,6 +69,8 @@ require('lazy').setup({
     },
   },
 
+  { 'sindrets/diffview.nvim' },
+
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
     dependencies = {
@@ -78,6 +78,13 @@ require('lazy').setup({
       'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
     },
+  },
+
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = function() vim.fn["mkdp#util#install"]() end,
   },
 
   { 'saltstack/salt-vim' },
@@ -96,6 +103,13 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
+  },
+
+  -- Show me TODOs and stuff, so I can see them
+  {
+    "folke/todo-comments.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    opts = {},
   },
 
   -- Lovely colorschemes
@@ -127,17 +141,9 @@ require('lazy').setup({
     },
   },
 
-  {
-    'rcarriga/nvim-notify',
-    opts = {
-      background_colour = "#000000",
-    },
-  },
-
   { 'folke/noice.nvim',
     dependencies = {
       'MunifTanjim/nui.nvim',
-      'rcarriga/nvim-notify',
     },
     opts = {
       cmdline = {
@@ -146,8 +152,23 @@ require('lazy').setup({
           search_up = { kind = "search", pattern = "^%?", icon = "   ", lang = "regex" },
         },
       },
+      notify = {
+        view = 'cmdline',
+      },
+      messages = {
+        view = 'notify',
+      },
+      lsp = {
+        message = {
+          view = 'cmdline',
+        },
+      },
     },
   },
+
+  { "folke/twilight.nvim", opts = {} },
+
+  { "folke/zen-mode.nvim", opts = {} },
 
   { 'numToStr/Comment.nvim', opts = {} },
 
