@@ -10,12 +10,13 @@ fi
 _hyprlandDir="${HOME}/git_apps/hyprland-build"
 
 # TODO: For newer `hyprland` versions debian needs `gcc-13`
-_hyprlandVersion="${HYPRLAND_VERSION:-"0.28.0"}"
-_waylandProtocolsVersion="${WAYLAND_PROTOCOLS_VERSION:-"1.32"}"
-_waylandVersion="${WAYLAND_VERSION:-"1.22.0"}"
-_libdisplayInfoVersion="${LIBDISPLAY_INFO_VERSION:-"0.1.1"}"
-_libinputVersion="${LIBINPUT_VERSION:-"1.23.0"}" # TODO: there is also newer `1.24.0`
-_libliftoffVersion="${LIBLIFTOFF_VERSION:-"0.4.1"}"
+_hyprlandVersion="${HYPRINSTALL_HYPRLAND_VERSION:-"0.28.0"}"
+_waylandProtocolsVersion="${HYPRINSTALL_WAYLAND_PROTOCOLS_VERSION:-"1.32"}"
+_waylandVersion="${HYPRINSTALL_WAYLAND_VERSION:-"1.22.0"}"
+_libdisplayInfoVersion="${HYPERINSTALL_LIBDISPLAY_INFO_VERSION:-"0.1.1"}"
+_libinputVersion="${HYPRINSTALL_LIBINPUT_VERSION:-"1.23.0"}" # TODO: there is also newer `1.24.0`
+_libliftoffVersion="${HYPRINSTALL_LIBLIFTOFF_VERSION:-"0.4.1"}"
+_sddmVersion="${HYPRINSTALL_SDDM_VERSION:-"0.20.0"}"
 
 if [[ "$1" && "$1" =~ "-h"|"--help" ]]; then
     cat << _EOH1
@@ -87,31 +88,48 @@ sudo apt-get install -y \
     libgtk-3-dev \
     libsystemd-dev \
     edid-decode \
+    extra-cmake-modules \
+    libpam0g-dev \
+    qtbase5-dev \
+    qtdeclarative5-dev \
+    qttools5-dev \
+    python3-docutils \
     check
 
 mkdir -p "${_hyprlandDir}"
 pushd "${_hyprlandDir}" || exit 1
 
 ##--- download sources ---##
-wget "https://github.com/hyprwm/Hyprland/releases/download/v${_hyprlandVersion}/source-v${_hyprlandVersion}.tar.gz"
+wget "https://github.com/hyprwm/Hyprland/releases/download/v${_hyprlandVersion}/source-v${_hyprlandVersion}.tar.gz" \
+    -O "source-v${_hyprlandVersion}.tar.gz" && \
 tar -xvzf "source-v${_hyprlandVersion}.tar.gz"
 
 if [ -z "${_noDeps}" ]; then
-    # deps
-    wget "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/${_waylandProtocolsVersion}/downloads/wayland-protocols-${_waylandProtocolsVersion}.tar.xz"
+    #-- deps --#
+    wget "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/${_waylandProtocolsVersion}/downloads/wayland-protocols-${_waylandProtocolsVersion}.tar.xz" \
+        -O "wayland-protocols-${_waylandProtocolsVersion}.tar.xz" && \
     tar -xvJf "wayland-protocols-${_waylandProtocolsVersion}.tar.xz"
 
-    wget "https://gitlab.freedesktop.org/wayland/wayland/-/releases/${_waylandVersion}/downloads/wayland-${_waylandVersion}.tar.xz"
+    wget "https://gitlab.freedesktop.org/wayland/wayland/-/releases/${_waylandVersion}/downloads/wayland-${_waylandVersion}.tar.xz" \
+        -O "wayland-${_waylandVersion}.tar.xz" && \
     tar -xvJf "wayland-${_waylandVersion}.tar.xz"
 
-    wget "https://gitlab.freedesktop.org/emersion/libdisplay-info/-/releases/${_libdisplayInfoVersion}/downloads/libdisplay-info-${_libdisplayInfoVersion}.tar.xz"
+    wget "https://gitlab.freedesktop.org/emersion/libdisplay-info/-/releases/${_libdisplayInfoVersion}/downloads/libdisplay-info-${_libdisplayInfoVersion}.tar.xz" \
+        -O "libdisplay-info-${_libdisplayInfoVersion}.tar.xz" && \
     tar -xvJf "libdisplay-info-${_libdisplayInfoVersion}.tar.xz"
 
-    wget "https://gitlab.freedesktop.org/libinput/libinput/-/archive/${_libinputVersion}/libinput-${_libinputVersion}.tar.gz"
+    wget "https://gitlab.freedesktop.org/libinput/libinput/-/archive/${_libinputVersion}/libinput-${_libinputVersion}.tar.gz" \
+        -O "libinput-${_libinputVersion}.tar.gz" && \
     tar -xvzf "libinput-${_libinputVersion}.tar.gz"
 
-    wget "https://gitlab.freedesktop.org/emersion/libliftoff/-/archive/v${_libliftoffVersion}/libliftoff-v${_libliftoffVersion}.tar.gz"
+    wget "https://gitlab.freedesktop.org/emersion/libliftoff/-/archive/v${_libliftoffVersion}/libliftoff-v${_libliftoffVersion}.tar.gz" \
+        -O "libliftoff-v${_libliftoffVersion}.tar.gz" && \
     tar -xvzf "libliftoff-v${_libliftoffVersion}.tar.gz"
+
+    #-- sddm --#
+    wget "https://github.com/sddm/sddm/archive/refs/tags/v${_sddmVersion}.tar.gz" \
+        -O "sddm-v${_sddmVersion}.tar.gz" && \
+    tar -xvzf "sddm-v${_sddmVersion}.tar.gz"
 
     ##--- build deps ---##
 
@@ -154,6 +172,31 @@ if [ -z "${_noDeps}" ]; then
 
     meson setup --prefix=/usr --buildtype=release build/ && ninja -C build/
     sudo ninja -C build/ install
+
+    popd || exit 1
+
+    #-- build sddm
+    mkdir "sddm-${_sddmVersion}/build/" && \
+    pushd "sddm-${_sddmVersion}/build/" || exit 7
+
+    cmake .. \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DENABLE_JOURNALD=ON \
+        -DBUILD_MAN_PAGES=ON
+
+    make \
+        && sudo make install
+
+    if [ -z "$(getent passwd sddm)" ]; then
+        sudo useradd \
+            --system \
+            --create-home \
+            --shell "/sbin/nologin" \
+            --home-dir "/var/lib/sddm" \
+            --comment "Simple Desktop Display Manager" \
+            sddm
+    fi
 
     popd || exit 1
 fi
