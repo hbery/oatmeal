@@ -18,27 +18,31 @@ require('telescope').setup {
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
-vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
-vim.keymap.set('n', '<leader>/', function()
+local tbuiltin = require('telescope.builtin')
+local kms = vim.keymap.set
 
-  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+kms('n', '<leader>?', tbuiltin.oldfiles, { desc = '[?] Find recently opened files' })
+kms('n', '<leader><space>', tbuiltin.buffers, { desc = '[ ] Find existing buffers' })
+kms('n', '<leader>/', function()
+
+  tbuiltin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
     winblend = 10,
     previewer = false,
   })
 
 end, { desc = '[/] Fuzzily search in current buffer' })
+kms('n', '<leader>sw', tbuiltin.grep_string, { desc = '[S]earch current [W]ord' })
+kms('n', '<leader>sg', tbuiltin.live_grep, { desc = '[S]earch by [G]rep' })
 
-vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
-vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
-vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
-vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
-vim.keymap.set('n', '<leader>sS', require('telescope.builtin').git_status, { desc = '[S]how Git [S]tatus' })
+kms('n', '<leader>sf', tbuiltin.find_files, { desc = '[S]earch [F]iles' })
+kms('n', '<leader>sG', tbuiltin.git_files, { desc = '[S]earch [G]it Files' })
+kms('n', '<leader>sh', tbuiltin.help_tags, { desc = '[S]earch [H]elp' })
+kms('n', '<leader>sd', tbuiltin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+kms('n', '<leader>sS', tbuiltin.git_status, { desc = '[S]how Git [S]tatus' })
 
-vim.keymap.set('n', '<leader>hm', require('telescope').extensions.harpoon.marks, { desc = '[H]arpoon [M]arks' })
+kms('n', '<leader>hm', require('telescope').extensions.harpoon.marks, { desc = '[H]arpoon [M]arks' })
 
-vim.keymap.set("n", "<Leader>gl", require('telescope').extensions.git_worktree.git_worktrees, { desc = "[G]it-worktree [L]ist", silent = true })
-vim.keymap.set("n", "<Leader>gC", require('telescope').extensions.git_worktree.create_git_worktree, { desc = "[G]it-worktree [C]reate worktree", silent = true })
+kms("n", "<Leader>gl", require('telescope').extensions.git_worktree.git_worktrees, { desc = "[G]it-worktree [L]ist", silent = true })
+kms("n", "<Leader>gC", require('telescope').extensions.git_worktree.create_git_worktree, { desc = "[G]it-worktree [C]reate worktree", silent = true })
 
--- vim.keymap.set("n", "<Leader>sn", require('telescope').extensions.notify.notify, { desc = "[S]how [N]otifications", silent = true })
+-- kms("n", "<Leader>sn", require('telescope').extensions.notify.notify, { desc = "[S]how [N]otifications", silent = true })

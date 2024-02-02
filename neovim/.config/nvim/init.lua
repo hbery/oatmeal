@@ -118,8 +118,8 @@ hi(0, 'Folded', { guibg = nil })
 
 --!! ---------------------------------------- * All-mighty REMAPS * {{{
 -- Split keys remap
-kms('n', '<leader>v', ':vsplit<CR><C-w>l', { silent = true })
-kms('n', '<leader>b', ':split<CR><C-w>j', { silent = true })
+kms('n', '<leader>v', ':vsplit<CR><C-w>l', { silent = true, desc = "Split buffer vertically" })
+kms('n', '<leader>b', ':split<CR><C-w>j', { silent = true, desc = "Split buffer horizontally" })
 kms('n', '<C-h>', '<C-w>h', { remap = false })
 kms('n', '<C-j>', '<C-w>j', { remap = false })
 kms('n', '<C-k>', '<C-w>k', { remap = false })
@@ -143,19 +143,19 @@ kms('v', 'y', 'myy`y', { remap = false })
 kms('v', 'TY', 'myY`y', { remap = false })
 
 -- Search for visually selected text
-kms('v', '//', "y/<C-R>=escape(@\",'/\')<CR><CR>", { remap = false })
-kms('v', '<leader>R', "y:%s/<C-R>=escape(@\",'/\')<CR>/", { remap = false })
+kms('v', '//', "y/<C-R>=escape(@\",'/\')<CR><CR>", { remap = false, desc = "Search for visually selected string" })
+kms('v', '<leader>R', "y:%s/<C-R>=escape(@\",'/\')<CR>/", { remap = false, desc = "Replace visually selected word" })
 
 -- Clear search buffer
-kms('n', '<leader>/', ':let @/=""<CR>', { remap = false, silent = true })
+kms('n', '<leader>S', ':let @/=""<CR>', { remap = false, silent = true, desc = "Clear search buffer" })
 
 -- Y do as D and C (should be in neovim-core, so just to match it in vim)
 -- kms('n', 'Y', 'y$', {remap = false})
 
 -- Yank to system clipboard
-kms('n', '<leader>y', '\"+y', { remap = false })
-kms('v', '<leader>y', '\"+y', { remap = false })
-kms('n', '<leader>Y', '\"+Y', { remap = false })
+kms('n', '<leader>y', '\"+yy', { remap = false, desc = "Yank line to clipboard" })
+kms('v', '<leader>y', '\"+y', { remap = false, desc = "Yank selection to clipboard" })
+kms('n', '<leader>Y', '\"+Y', { remap = false, desc = "Yank till the end of the line to clipboard" })
 
 kms('n', '<leader>d', '\"_d', { remap = false })
 kms('v', '<leader>d', '\"_d', { remap = false })
@@ -166,27 +166,28 @@ kms('n', 'N', 'Nzzzv', { remap = false })
 kms('n', 'J', 'mzJ`z', { remap = false })
 
 -- Fix the syntax highlighting (if broken)
-kms('n', '<leader>s', ':syntax off<CR>:syntax on<CR>', { remap = false, silent = true })
+kms('n', '<leader>s', ':syntax off<CR>:syntax on<CR>', { remap = false, silent = true, desc = "Retoggle syntax" })
 
 -- Move text as intended
 --  in VISUAL
 kms('v', 'K', ":m '<-2<CR>gv=gv", { remap = false, silent = true })
 kms('v', 'J', ":m '>+1<CR>gv=gv", { remap = false, silent = true })
 --  in NORMAL
-kms('n', '<leader>mk', ':m .-2<CR>==', { remap = false, silent = true })
-kms('n', '<leader>mj', ':m .+1<CR>==', { remap = false, silent = true })
+kms('n', '<leader>mk', ':m .-2<CR>==', { remap = false, silent = true, desc = "Move this currently highlighted line UP" })
+kms('n', '<leader>mj', ':m .+1<CR>==', { remap = false, silent = true, desc = "Move this currently highlighted line DOWN" })
 
 kms('i', '<A-k>', '<esc>:m .-2<CR>==gi', { remap = false, silent = true })
 kms('i', '<A-j>', '<esc>:m .+1<CR>==gi', { remap = false, silent = true })
 
 -- Persist yank text in paste buffer
-kms('x', '<leader>p', '\"_dP', { remap = false })
+kms('x', '<leader>p', '\"_dP', { remap = false, desc = "Paste yanked text from buffer, don't replace" })
 
 -- Open currently edited file in the default program
-kms('n', '<leader>x', ':!xdg-open %<CR><CR>')
+kms('n', '<leader>x', ':!xdg-open %<CR><CR>', { silent = true, desc = "Open with xdg-open" })
+kms("n", "<leader>X", '<cmd>!chmod u+x %<CR>', { silent = true, desc = "Chmod the current file to be executable" })
 
 -- Write as sudo
-kms('c', 'w!!', '%!sudo tee > /dev/null %')
+kms('c', 'w!!', '%!sudo tee > /dev/null %', { silent = true, desc = "Save this file as sudo" })
 
 vim.api.nvim_create_user_command('MyWipeRegisters',
     function()

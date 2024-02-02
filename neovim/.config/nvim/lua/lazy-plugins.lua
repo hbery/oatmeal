@@ -104,6 +104,7 @@ require('lazy').setup({
       },
     },
   },
+  { 'mbbill/undotree' },
 
   -- Show me TODOs and stuff, so I can see them
   {
