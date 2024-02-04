@@ -15,7 +15,7 @@ alias rm='rm -i'
 
 # ls -> exa
 alias l='/bin/ls -F'
-if command -v exa; then
+if command -v exa >/dev/null 2>&1; then
     alias ls='exa --color=always --group-directories-first'
     alias la='exa -al --color=always --group-directories-first'
     alias ll='exa -l --color=always --group-directories-first'
@@ -28,7 +28,9 @@ fi
 # other programs
 alias nano='micro'
 alias v='/usr/bin/vim'
-alias vim='nvim'
+if command -v nvim >/dev/null 2>&1; then
+    alias vim='nvim'
+fi
 alias mux='tmuxer'
 alias cat='bat --plain'
 alias wormhole='wormhole-william'
