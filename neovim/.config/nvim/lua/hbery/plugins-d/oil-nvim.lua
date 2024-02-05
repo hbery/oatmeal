@@ -29,7 +29,7 @@ require("oil").setup({
   default_file_explorer = true,
   restore_win_options = true,
   skip_confirm_for_simple_edits = false,
-  delete_to_trash = false,
+  delete_to_trash = true,
   trash_command = "trash-put",
   prompt_save_on_select_new_entry = true,
 
