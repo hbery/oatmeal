@@ -154,7 +154,7 @@ require('lazy').setup({
         },
       },
       notify = {
-        view = 'cmdline',
+        view = 'notify',
       },
       messages = {
         view = 'notify',
@@ -168,7 +168,6 @@ require('lazy').setup({
   },
 
   { "folke/twilight.nvim", opts = {} },
-
   { "folke/zen-mode.nvim", opts = {} },
 
   { 'numToStr/Comment.nvim', opts = {} },
