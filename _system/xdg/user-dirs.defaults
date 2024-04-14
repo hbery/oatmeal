@@ -1,0 +1,8 @@
+DESKTOP=sys/desktop
+DOWNLOAD=dlns
+TEMPLATES=sys/tmpls
+PUBLICSHARE=sys/pub
+DOCUMENTS=docs
+MUSIC=docs/music
+PICTURES=docs/pics
+VIDEOS=docs/vids
