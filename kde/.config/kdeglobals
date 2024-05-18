@@ -137,7 +137,7 @@ ForegroundVisited=120,120,120
 
 [DirSelect Dialog]
 DirSelectDialog Size=840,596
-History Items[$e]=file:///media/hbery/Extreme SSD/VBoxes,file:$HOME/Pictures,file:$HOME/Documents/Coding/KDevelop_projects
+History Items[$e]=
 
 [Emoticons]
 emoticonsTheme=GoogleEmojiComplete
@@ -149,8 +149,8 @@ ColorScheme=McMojave
 Name=McMojave
 TerminalApplication=alacritty
 XftAntialias=true
-dbfile=/home/hbery/.mozilla/firefox/fvg98qpo.default/places.sqlite
-fixed=Dank Mono,10,-1,5,50,0,0,0,0,0
+dbfile=
+fixed=FantasqueSansMono NF,10,-1,5,50,0,0,0,0,0
 font=Roboto,10,-1,5,50,0,0,0,0,0
 menuFont=Roboto,10,-1,5,50,0,0,0,0,0
 shadeSortColumn=true

@@ -10,4 +10,4 @@ Timeout=10
 Theme=Ant-Dark
 
 [Greeter][Wallpaper][org.kde.image][General]
-Image=file:///home/hbery/Pictures/coffeebreak_suspend_mod.png
+Image=file://${XDG_PICTURES_DIR}/coffeebreak_suspend_mod.png
