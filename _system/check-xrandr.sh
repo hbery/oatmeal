@@ -1,14 +1,8 @@
 #!/bin/bash
 # vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
 #
-# Xsetup - run as root before the login dialog appears
+# list monitors for Xorg
 
-if [ -e /sbin/prime-offload ]; then
-    echo "*** Running NVIDIA Prime setup: /sbin/prime-offload"
-    /sbin/prime-offload
-fi
-
-# make sddm display login-screen on one monitor
 _num=$(xrandr --listmonitors | awk '{print $4}' | grep -c .)
  
 if [[ ${_num} -gt 1 ]]; then
@@ -17,7 +11,7 @@ if [[ ${_num} -gt 1 ]]; then
     _cnt=0
     for _disp in ${_cmd}; do
         if [ ${_cnt} -gt 0 ]; then
-            xrandr --output "${_disp}" --off
+            echo "${_disp}"
         fi
         _cnt=$(( _cnt + 1 ))
     done
