@@ -1,6 +1,6 @@
 # vim: ft=sh : ts=4 : sw=4 :
-# IMPORTANT => sudo run with USER env
-alias sudo='sudo -E'
+# sudo run with USER env
+# alias sudo='sudo -E'
 
 # grep aliases
 alias grep='grep --color=auto'
@@ -32,49 +32,12 @@ if command -v nvim >/dev/null 2>&1; then
     alias vim='nvim'
 fi
 alias mux='tmuxer'
-alias cat='bat --plain'
+alias cat='bat --no-pager --plain'
 alias wormhole='wormhole-william'
 
 # conf
 alias strip_conf='grep -Ev "^#|^\s*$"'
 alias pea='source $("$HOME/scripts/python_environment_activate")/bin/activate'
-
-# git aliases
-alias gpl='git pull'
-alias gps='git push'
-alias gcl='git clone'
-alias gc='git commit -a -m'
-alias ga='git add -A'
-
-# docker aliases
-alias dps='docker ps'
-alias di='docker images'
-alias dip='docker image prune'
-alias dc='docker container ls'
-alias dcp='docker container prune'
-alias drmi='docker rmi'
-
-_drun () {
-    docker run $1
-}
-
-_drunit () {
-    docker run -it $1 /bin/sh
-}
-
-alias drun=_drun
-alias drunit=_drunit
-
-_dexec () {
-    docker exec $1 $2
-}
-
-_dexit () {
-    docker exec -it $1 /bin/sh
-}
-
-alias dexec=_dexec
-alias dexit=_dexit
 
 # qtile only
 alias qtilekb='qtile cmd-obj -o cmd -f display_kb'
