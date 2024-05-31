@@ -1,6 +1,7 @@
 #!/bin/bash
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
 #
-# install SDDM theme
+# install AntDark SDDM theme
 
 _sddm_themes_dir="/usr/share/sddm/themes"
 _theme_name="Ant-Dark"
