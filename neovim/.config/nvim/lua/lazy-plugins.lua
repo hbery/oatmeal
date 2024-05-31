@@ -151,7 +151,9 @@ require('lazy').setup({
     },
   },
 
-  { 'folke/noice.nvim',
+  --[[ disable noice for now
+  {
+    'folke/noice.nvim',
     dependencies = {
       'MunifTanjim/nui.nvim',
     },
@@ -175,6 +177,7 @@ require('lazy').setup({
       },
     },
   },
+  --]]
 
   { "folke/twilight.nvim", opts = {} },
   { "folke/zen-mode.nvim", opts = {} },
