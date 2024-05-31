@@ -1,5 +1,3 @@
-# created by KDE Plasma, czw. lut 3 08:05:29 2022
-#
 style "default"
 {
   bg[NORMAL] = { 0.141, 0.141, 0.141 }
