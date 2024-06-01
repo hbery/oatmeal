@@ -8,13 +8,13 @@
 
 ### BEGIN: SCRIPT_OPTIONS {
 _localFontDirectory="${HOME}/.local/share/fonts"
-_nerdFontLink="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2"
-_nerdFontList="FantasqueSansMono FiraCode FiraMono Go-Mono Hack Inconsolata InconsolataGo Meslo RobotoMono SourceCodePro CascadiaCode JetBrainsMono ComicShannsMono VictorMono"
+_nerdFontLink="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1"
+_nerdFontList="FantasqueSansMono FiraCode FiraMono Go-Mono Hack Inconsolata InconsolataGo Meslo RobotoMono SourceCodePro CascadiaCode JetBrainsMono ComicShannsMono VictorMono Monaspace"
 _otherFontList="Roboto;https://fonts.google.com/download?family=Roboto
                 Montserrat;https://fonts.google.com/download?family=Montserrat
                 Noto-Emoji;https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf
                 Lato;https://www.latofonts.com/download/lato2ofl-zip/
-                font-awesome;https://use.fontawesome.com/releases/v6.1.1/fontawesome-free-6.1.1-desktop.zip"
+                font-awesome;https://use.fontawesome.com/releases/v6.5.2/fontawesome-free-6.5.2-desktop.zip"
 _shippedFontList="DankMono Liberata Bookerly"
 ### . END: SCRIPT_OPTIONS }
 
