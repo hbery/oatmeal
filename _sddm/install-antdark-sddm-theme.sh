@@ -22,9 +22,9 @@ _postCleanThemeDirFn () {
 _downloadThemeFn () {
     # svn export "${_repository}/trunk/${_rpath}" "${_tmp_dir}"
     git clone --no-checkout --depth 1 --sparse "${_repository}" "${_tmp_dir}" \
-    && cd "${_tmp_dir}" \
-    && git sparse-checkout set "${_rpath}" \
-    && git switch master
+        && cd "${_tmp_dir}" \
+        && git sparse-checkout set "${_rpath}" \
+        && git switch master
 
     _full_dir_path="${_tmp_dir}/${_rpath}/${_theme_name}"
 }
