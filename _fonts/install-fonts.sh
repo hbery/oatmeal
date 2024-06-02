@@ -10,14 +10,14 @@
 _localFontDirectory="${HOME}/.local/share/fonts"
 _tempFontDirectory="/tmp/fonts"
 _nerdFontLink="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1"
-_nerdFontList="FantasqueSansMono FiraCode FiraMono Go-Mono Hack Inconsolata InconsolataGo Meslo RobotoMono SourceCodePro CascadiaCode JetBrainsMono ComicShannsMono VictorMono Monaspace"
-_otherFontList="Roboto;https://fonts.google.com/download?family=Roboto
-                Montserrat;https://fonts.google.com/download?family=Montserrat
-                Noto-Emoji;https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf
+_nerdFontList=("FantasqueSansMono" "FiraCode" "FiraMono" "Go-Mono" "Hack" "Inconsolata" "InconsolataGo" "Meslo" "RobotoMono" "SourceCodePro" "CascadiaCode" "JetBrainsMono" "ComicShannsMono" "VictorMono" "Monaspace")
+_googleFontLink="https://github.com/google/fonts"
+_googleFontList=("Roboto" "Montserrat")
+_otherFontList="Noto-Emoji;https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf
                 Lato;https://www.latofonts.com/download/lato2ofl-zip/
                 font-awesome;https://use.fontawesome.com/releases/v6.5.2/fontawesome-free-6.5.2-desktop.zip"
 _shippedFontList="DankMono Liberata Bookerly"
-_necessaryPkgs=("unzip:unzip" "fc-cache:fontconfig" "wget:wget")
+_necessaryPkgs=("unzip:unzip" "fc-cache:fontconfig" "wget:wget" "file-rename:rename")
 ### . END: SCRIPT_OPTIONS }
 
 
@@ -61,16 +61,17 @@ usage: $(basename "$0") [-h] [-d DDIR] [-t TDIR] [-a]
   -M          Install only Microsoft fonts.
   -N          Install only Nerd Fonts.
   -G          Install only fonts from fonts.google.com
+  -O          Install fonts from other sources than Nerd Fonts or Google
   -L          Install locally brought fonts.
   -C FONT(s)  Install custom fonts, comma separated list.
-                (specify path to font directory)
+                (specify path to font directory) [WIP]
 _EOH1
 }
 ## . END _usageFn }
 
 ## BEGIN _parseArgumentsFn {
 _parseArgumentsFn () {
-    while getopts ':hd:t:aMNGLC:' _option; do
+    while getopts ':hd:t:aMNGOLC:' _option; do
         case "${_option}" in
             h)
                 _usageFn
@@ -82,6 +83,7 @@ _parseArgumentsFn () {
             M) _install_microsoft_fonts="set"       ;;
             N) _install_nerd_fonts="set"            ;;
             G) _install_google_chosen_fonts="set"   ;;
+            O) _install_other_fonts="set"           ;;
             L) _install_local_fonts="set"           ;;
             C) _install_custom_fonts="${OPTARG}"    ;;
             :)
@@ -139,6 +141,24 @@ _downloadFontFn () {
 }
 ## . END _downloadFontFn }
 
+## BEGIN _checkoutFontFromGitRepoFn {
+_checkoutFontFromGitRepoFn () {
+    local _font_name _repository _relative_path _tmp_dir
+    _font_name="${1:-}"
+    _repository="${2:-}"
+    _relative_path="${3:-}"
+    _tmp_dir="${4:-}"
+
+    git clone --quiet --no-checkout --depth 1 --filter=tree:0 --sparse "${_repository}" "${_tmp_dir}" \
+        && pushd "${_tmp_dir}" &>/dev/null \
+        && git sparse-checkout set "${_relative_path}" \
+        && git switch --quiet "$(git rev-parse --abbrev-ref origin/HEAD | sed 's,^origin/,,')" 2>/dev/null
+
+    popd &>/dev/null || exit 1
+    printf "%s" "${_tmp_dir}/${_relative_path}"
+}
+## . END _checkoutFontFromGitRepoFn }
+
 ## BEGIN _unpackFontFn {
 _unpackFontFn () {
     local _tmp_location _font_name _font_destination
@@ -154,7 +174,7 @@ _unpackFontFn () {
 }
 ## . END _unpackFontFn }
 
-## BEGIN _installFontFn {
+## BEGIN _installNerdFontFn {
 _installNerdFontFn () {
     local _font_name _font_url _tmp_location _font_destination
     _font_name="${1:-}"
@@ -166,9 +186,31 @@ _installNerdFontFn () {
     _downloadFontFn "${_font_url}" "${_font_name}" "${_tmp_location}"
     _unpackFontFn "${_tmp_location}" "${_font_name}" "${_font_destination}"
 }
-## . END _installFontFn }
+## . END _installNerdFontFn }
 
-## BEGIN _installNerdFontFn {
+## BEGIN _installGoogleFontFn {
+_installGoogleFontFn () {
+    local _font_name _repository _tmp_location _font_destination _path2font
+    _font_name="${1:-}"
+    _repository="${2:-}"
+    _tmp_location="${3:-}"
+    _font_destination="${4:-}"
+
+    _prgMsg "Installing font: ${_font_name}"
+    _path2font="$(_checkoutFontFromGitRepoFn \
+        "${_font_name}" \
+        "${_repository}" \
+        "ofl/${_font_name,,}" \
+        "${_tmp_location}/${_font_name}")"
+    [ ! -d "${_font_destination}/${_font_name}" ] \
+        && mkdir -p "${_font_destination}/${_font_name}"
+    cp -rv "${_path2font}/${_font_name}"* "${_font_destination}/${_font_name}/"
+    # shellcheck disable=SC2016
+    file-rename -v -E 's/(.*)(\[.*\])(.*)/$1$3/' "${_font_name}"*
+}
+## . END _installGoogleFontFn }
+
+## BEGIN _installOtherFontFn {
 _installOtherFontFn () {
     local _font_name _font_url _tmp_location _font_destination
     _font_name="${1%%;*}"
@@ -180,9 +222,9 @@ _installOtherFontFn () {
     _downloadFontFn "${_font_url}" "${_font_name}" "${_tmp_location}"
     _unpackFontFn "${_tmp_location}" "${_font_name}" "${_font_destination}"
 }
-## . END _installNerdFontFn }
+## . END _installOtherFontFn }
 
-## BEGIN _installNerdFontFn {
+## BEGIN _installShippedFontFn {
 _installShippedFontFn () {
     local _font_name _font_destination
     _font_name="${1:-}"
@@ -191,7 +233,7 @@ _installShippedFontFn () {
     _prgMsg "Installing font: ${_font_name}"
     cp -rv "$(dirname "$0")/${_font_name}" "${_font_destination}/"
 }
-## . END _installNerdFontFn }
+## . END _installShippedFontFn }
 
 ## BEGIN _installMicrosoftFontsFn {
 _installMicrosoftFontsFn () {
@@ -248,19 +290,40 @@ _mainFn () {
     # install NerdFonts
     if [ "${_install_nerd_fonts}" ] || [ "${_install_all}" ]; then
         _hedMsg "Starting NerdFonts installation"
-        _infMsg "Fonts to be installed: ${_nerdFontList}"
-        for _font_name in ${_nerdFontList}; do
-            _installNerdFontFn "${_font_name}" "${_nerdFontLink}" "${_temporary_files_location}" "${_local_font_location}"
+        _infMsg "Fonts to be installed: ${_nerdFontList[*]}"
+        for _font_name in "${_nerdFontList[@]}"; do
+            _installNerdFontFn \
+                "${_font_name}" \
+                "${_nerdFontLink}" \
+                "${_temporary_files_location}" \
+                "${_local_font_location}"
         done
         _endMsg "End of NerdFonts installation"
     fi
 
-    # install other Fonts
+    # install fonts from fonts.google.com
     if [ "${_install_google_chosen_fonts}" ] || [ "${_install_all}" ]; then
+        _hedMsg "Starting Google fonts installation"
+        _infMsg "Fonts to be installed: ${_googleFontList[*]}"
+        for _font_name in "${_googleFontList[@]}"; do
+            _installGoogleFontFn \
+                "${_font_name}" \
+                "${_googleFontLink}" \
+                "${_temporary_files_location}" \
+                "${_local_font_location}"
+        done
+        _endMsg "End of other font installation"
+    fi
+
+    # install other Fonts
+    if [ "${_install_other_fonts}" ] || [ "${_install_all}" ]; then
         _hedMsg "Starting other fonts installation"
         _infMsg "Fonts to be installed: $(for _i in ${_otherFontList}; do echo "${_i%%;*}"; done | xargs)"
         for _font_combo in ${_otherFontList}; do
-            _installOtherFontFn "${_font_combo}" "${_temporary_files_location}" "${_local_font_location}"
+            _installOtherFontFn \
+                "${_font_combo}" \
+                "${_temporary_files_location}" \
+                "${_local_font_location}"
         done
         _endMsg "End of other font installation"
     fi
