@@ -7,14 +7,13 @@ if [[ "$1" && "$1" == "--no-deps" ]]; then
     _noDeps="set"
 fi
 
-_hyprlandDir="${HOME}/git_apps/hyprland-build"
+_hyprlandDir="${HOME}/git/hyprland-build"
 
-# TODO: For newer `hyprland` versions debian needs `gcc-13`
-_hyprlandVersion="${HYPRINSTALL_HYPRLAND_VERSION:-"0.28.0"}"
+_hyprlandVersion="${HYPRINSTALL_HYPRLAND_VERSION:-"0.40.0"}"
 _waylandProtocolsVersion="${HYPRINSTALL_WAYLAND_PROTOCOLS_VERSION:-"1.32"}"
-_waylandVersion="${HYPRINSTALL_WAYLAND_VERSION:-"1.22.0"}"
+_waylandVersion="${HYPRINSTALL_WAYLAND_VERSION:-"1.23.0"}"
 _libdisplayInfoVersion="${HYPERINSTALL_LIBDISPLAY_INFO_VERSION:-"0.1.1"}"
-_libinputVersion="${HYPRINSTALL_LIBINPUT_VERSION:-"1.23.0"}" # TODO: there is also newer `1.24.0`
+_libinputVersion="${HYPRINSTALL_LIBINPUT_VERSION:-"1.24.0"}"
 _libliftoffVersion="${HYPRINSTALL_LIBLIFTOFF_VERSION:-"0.4.1"}"
 _sddmVersion="${HYPRINSTALL_SDDM_VERSION:-"0.20.0"}"
 
