@@ -1,0 +1,14 @@
+[Unit]
+Description=Mount Pioke4n0s DOM_share at /mnt/DOM1
+Requires=NetworkManager.service
+After=NetworkManager.service
+Wants=network-online.target
+
+[Mount]
+What=pioke4n0s.local:DOM_share
+Where=/mnt/DOM1
+Type=cifs
+Options=credentials=/home/hbery/.smbcredentials,comment=systemd.automount,iocharset=utf8,sec=ntlmssp,vers=3,uid=hbery,gid=hbery
+
+[Install]
+WantedBy=multi-user.target

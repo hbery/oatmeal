@@ -1,0 +1,14 @@
+[Unit]
+Description=Mount Pioke4n0s MyBook at /mnt/DOM2
+Requires=NetworkManager.service
+After=NetworkManager.service
+Wants=network-online.target
+
+[Mount]
+What=pioke4n0s.local:MyBook
+Where=/mnt/DOM2
+Type=cifs
+Options=credentials=/home/hbery/.smbcredentials,comment=systemd.automount,iocharset=utf8,sec=ntlmssp,vers=3,uid=hbery,gid=hbery
+
+[Install]
+WantedBy=multi-user.target
