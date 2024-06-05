@@ -3,21 +3,46 @@
 #
 # install hyprland + deps on debian 12
 
-if [[ "$1" && "$1" == "--no-deps" ]]; then
-    _noDeps="set"
-fi
+source /etc/os-release
 
 _hyprlandDir="${HOME}/git/hyprland-build"
 
-_hyprlandVersion="${HYPRINSTALL_HYPRLAND_VERSION:-"0.40.0"}"
-_waylandProtocolsVersion="${HYPRINSTALL_WAYLAND_PROTOCOLS_VERSION:-"1.32"}"
-_waylandVersion="${HYPRINSTALL_WAYLAND_VERSION:-"1.23.0"}"
-_libdisplayInfoVersion="${HYPERINSTALL_LIBDISPLAY_INFO_VERSION:-"0.1.1"}"
-_libinputVersion="${HYPRINSTALL_LIBINPUT_VERSION:-"1.24.0"}"
-_libliftoffVersion="${HYPRINSTALL_LIBLIFTOFF_VERSION:-"0.4.1"}"
-_sddmVersion="${HYPRINSTALL_SDDM_VERSION:-"0.20.0"}"
+if [ "${ID}" = "ubuntu" ]; then
+    _hyprlandVersion="${HYPRINSTALL_HYPRLAND_VERSION:-"0.40.0"}"
+    _waylandProtocolsVersion="${HYPRINSTALL_WAYLAND_PROTOCOLS_VERSION:-"1.32"}"
+    _waylandVersion="${HYPRINSTALL_WAYLAND_VERSION:-"1.23.0"}"
+    _libdisplayInfoVersion="${HYPERINSTALL_LIBDISPLAY_INFO_VERSION:-"0.1.1"}"
+    _libinputVersion="${HYPRINSTALL_LIBINPUT_VERSION:-"1.24.0"}"
+    _libliftoffVersion="${HYPRINSTALL_LIBLIFTOFF_VERSION:-"0.4.1"}"
+    _sddmVersion="${HYPRINSTALL_SDDM_VERSION:-"0.20.0"}"
 
-if [[ "$1" && "$1" =~ "-h"|"--help" ]]; then
+    _ubuntuSpecificPackages=("vulkan-utility-libraries-dev")
+elif [ "${ID}" = "debian" ]; then
+    _hyprlandVersion="${HYPRINSTALL_HYPRLAND_VERSION:-"0.28.0"}"
+    _waylandProtocolsVersion="${HYPRINSTALL_WAYLAND_PROTOCOLS_VERSION:-"1.32"}"
+    _waylandVersion="${HYPRINSTALL_WAYLAND_VERSION:-"1.22.0"}"
+    _libdisplayInfoVersion="${HYPERINSTALL_LIBDISPLAY_INFO_VERSION:-"0.1.1"}"
+    _libinputVersion="${HYPRINSTALL_LIBINPUT_VERSION:-"1.23.0"}"
+    _libliftoffVersion="${HYPRINSTALL_LIBLIFTOFF_VERSION:-"0.4.1"}"
+    _sddmVersion="${HYPRINSTALL_SDDM_VERSION:-"0.20.0"}"
+
+    _debianSpecificPackages=("vulkan-validationlayers-dev")
+else
+    exit 1
+fi
+
+_commonPackages=(
+    meson wget build-essential ninja-build cmake-extras cmake gettext gettext-base fontconfig libfontconfig-dev
+    libffi-dev libxml2-dev libdrm-dev libxkbcommon-x11-dev libxkbregistry-dev libxkbcommon-dev libpixman-1-dev
+    libudev-dev libseat-dev seatd libxcb-dri3-dev libvulkan-dev libvulkan-volk-dev libvkfft-dev libgulkan-dev
+    libegl-dev libgles2 libegl1-mesa-dev glslang-tools libinput-bin libinput-dev libxcb-composite0-dev libavutil-dev
+    libavcodec-dev libavformat-dev libxcb-ewmh2 libxcb-ewmh-dev libxcb-present-dev libxcb-icccm4-dev
+    libxcb-render-util0-dev libxcb-res0-dev libxcb-xinput-dev libgbm-dev xdg-desktop-portal-wlr hwdata
+    libgtk-3-dev libsystemd-dev edid-decode extra-cmake-modules libpam0g-dev qtbase5-dev qtdeclarative5-dev
+    qttools5-dev python3-docutils check
+)
+
+_usageFn () {
     cat << _EOH1
 usage: $(basename "$0") [-h|--help] [--no-deps]
 
@@ -33,67 +58,35 @@ environment variables:
     LIBINPUT_VERSION           = ${_libinputVersion}
     LIBLIFTOFF_VERSION         = ${_libliftoffVersion}
 _EOH1
-exit
-fi
+}
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --help|-h)
+            _usageFn
+            exit
+            ;;
+        --no-deps)
+            _noDeps="set"
+            shift
+            ;;
+        --no-sddm)
+            _noSddm="set"
+            shift
+            ;;
+        *)
+            echo >&2 "Unknown option: -$1"
+            _usageFn
+            exit 1
+            ;;
+    esac
+done
 
 ##--- install available deps in deb repos ---##
-sudo apt-get install -y \
-    meson \
-    wget \
-    build-essential \
-    ninja-build \
-    cmake-extras \
-    cmake \
-    gettext \
-    gettext-base \
-    fontconfig \
-    libfontconfig-dev \
-    libffi-dev \
-    libxml2-dev \
-    libdrm-dev \
-    libxkbcommon-x11-dev \
-    libxkbregistry-dev \
-    libxkbcommon-dev \
-    libpixman-1-dev \
-    libudev-dev \
-    libseat-dev \
-    seatd \
-    libxcb-dri3-dev \
-    libvulkan-dev \
-    libvulkan-volk-dev \
-    vulkan-validationlayers-dev \
-    libvkfft-dev \
-    libgulkan-dev \
-    libegl-dev \
-    libgles2 \
-    libegl1-mesa-dev \
-    glslang-tools \
-    libinput-bin \
-    libinput-dev \
-    libxcb-composite0-dev \
-    libavutil-dev \
-    libavcodec-dev \
-    libavformat-dev \
-    libxcb-ewmh2 \
-    libxcb-ewmh-dev \
-    libxcb-present-dev \
-    libxcb-icccm4-dev \
-    libxcb-render-util0-dev \
-    libxcb-res0-dev \
-    libxcb-xinput-dev \
-    libgbm-dev \
-    xdg-desktop-portal-wlr \
-    hwdata \
-    libgtk-3-dev \
-    libsystemd-dev \
-    edid-decode \
-    extra-cmake-modules \
-    libpam0g-dev \
-    qtbase5-dev \
-    qtdeclarative5-dev \
-    qttools5-dev \
-    python3-docutils \
-    check
+sudo apt-get install -y "${_commonPackages[@]}"
+[ "${ID}" = "ubuntu" ] && sudo apt-get install -yq "${_ubuntuSpecificPackages[@]}"
+[ "${ID}" = "debian" ] && sudo apt-get install -yq "${_debianSpecificPackages[@]}"
+
 
 mkdir -p "${_hyprlandDir}"
 pushd "${_hyprlandDir}" || exit 1
@@ -103,7 +96,7 @@ wget "https://github.com/hyprwm/Hyprland/releases/download/v${_hyprlandVersion}/
     -O "source-v${_hyprlandVersion}.tar.gz" && \
 tar -xvzf "source-v${_hyprlandVersion}.tar.gz"
 
-if [ -z "${_noDeps}" ]; then
+if [[ -z "${_noDeps}" ]]; then
     #-- deps --#
     wget "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/${_waylandProtocolsVersion}/downloads/wayland-protocols-${_waylandProtocolsVersion}.tar.xz" \
         -O "wayland-protocols-${_waylandProtocolsVersion}.tar.xz" && \
@@ -175,29 +168,31 @@ if [ -z "${_noDeps}" ]; then
     popd || exit 1
 
     #-- build sddm
-    mkdir "sddm-${_sddmVersion}/build/" && \
-    pushd "sddm-${_sddmVersion}/build/" || exit 7
+    if [[ -z "${_noSddm}" ]]; then
+        mkdir "sddm-${_sddmVersion}/build/" && \
+        pushd "sddm-${_sddmVersion}/build/" || exit 7
 
-    cmake .. \
-        -DCMAKE_INSTALL_PREFIX=/usr \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DENABLE_JOURNALD=ON \
-        -DBUILD_MAN_PAGES=ON
+        cmake .. \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DENABLE_JOURNALD=ON \
+            -DBUILD_MAN_PAGES=ON
 
-    make \
-        && sudo make install
+        make \
+            && sudo make install
 
-    if [ -z "$(getent passwd sddm)" ]; then
-        sudo useradd \
-            --system \
-            --create-home \
-            --shell "/sbin/nologin" \
-            --home-dir "/var/lib/sddm" \
-            --comment "Simple Desktop Display Manager" \
-            sddm
+        if [ -z "$(getent passwd sddm)" ]; then
+            sudo useradd \
+                --system \
+                --create-home \
+                --shell "/sbin/nologin" \
+                --home-dir "/var/lib/sddm" \
+                --comment "Simple Desktop Display Manager" \
+                sddm
+        fi
+
+        popd || exit 1
     fi
-
-    popd || exit 1
 fi
 
 ##--- build hyprland ---##
