@@ -1,5 +1,5 @@
 #!/bin/bash
-# vim: ft=bash : ts=2 : sw=2 :
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
 # ~~~
 # Date: 2022
 # Author: Adam Twardosz (github.com/hbery)
