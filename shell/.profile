@@ -1,6 +1,10 @@
 #!/bin/sh
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
+# shellcheck disable=SC1091,SC3046
 #
-#umask 022
+# umask 022
+
+_profile_uname="$(uname)"
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "${HOME}/bin" ]; then
@@ -21,6 +25,8 @@ case ":${PATH}:" in
    *) export PATH="${HOME}/.local/sbin:${PATH}" ;;
 esac
 
+# most Go installations put binaries in /usr/local/go/bin, unless
+# e.g. installed with _system/install-go-systemwide.sh
 if [ -d "/usr/local/go/bin" ]; then
     case ":${PATH}:" in
         *":/usr/local/go/bin:"*) ;;
@@ -34,9 +40,11 @@ export XDG_STATE_HOME="${HOME}/.local/state"
 export XDG_CACHE_HOME="${HOME}/.cache"
 export XDG_LOCAL_SHARE_HOME="${XDG_DATA_HOME}"
 export XDG_LOCAL_BIN="${HOME}/.local/bin"
-if [ "$(uname)" = "Linux" ]; then
+export XDG_LOCAL_SBIN="${HOME}/.local/sbin"
+if [ "${_profile_uname}" = "Linux" ]; then
+    # shellcheck disable=SC2155
     export XDG_RUNTIME_DIR="/run/user/$(id -u)"
-elif [ "$(uname)" = "Darwin" ]; then
+elif [ "${_profile_uname}" = "Darwin" ]; then
     export XDG_RUNTIME_DIR="/Users/${USER}/Library/Caches/TemporaryItems"
 fi
 
@@ -48,15 +56,12 @@ source "${XDG_CONFIG_HOME}/shell/python3vars"
 source "${XDG_CONFIG_HOME}/shell/nodevars"
 source "${XDG_CONFIG_HOME}/shell/rubyvars"
 
-# if running bash
 if [ -n "${BASH_VERSION}" ]; then
-    # include .bashrc if it exists
     [ -f "${HOME}/.bashrc" ] && source "${HOME}/.bashrc"
 fi
 
-if [ "$(uname)" = "Linux" ] && [ -n "${ZSH_VERSION}" ]; then
-    # include .zshrc if it exists
+if [ "${_profile_uname}" = "Linux" ] && [ -n "${ZSH_VERSION}" ]; then
     [ -f "${HOME}/.zshrc" ] && source "${HOME}/.zshrc"
 fi
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+[ -d "/home/linuxbrew" ] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
