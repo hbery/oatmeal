@@ -245,9 +245,9 @@ _getLatestOrValidateVersionFn () {
 
     if [[ -n "${_allLatest}" || "${_version}" == latest ]]; then
         printf "%s" "$(git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' "${_repository}" \
-            tail -1 | perl -pe 's/.*((\d+)\.(\d+)(?!\.(\d+))).*/$1/')"
+            tail -1 | perln -pe 's/.*((\d+)\.(\d+)(?!\.(\d+))).*/$1/')"
     else
-        if git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' "${_repository}" | grep -q "${_version}"; then
+        if git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' "${_repository}" | grep "${_version}" &>/dev/null; then
             printf "%s" "${_version}"
         else
             _errMsg "No such version (${_version}) in ${_repository}"
