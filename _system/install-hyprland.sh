@@ -10,6 +10,12 @@ _hyprinstallLogFile="/tmp/hyprinstall-$$.log"
 exec &> >(tee -i "${_hyprinstallLogFile}")
 _hyprinstallDir="${HOME}/git/hyprland-build"
 
+_noDeps=
+_noSddm=
+_allLatest=
+_noAddons=
+_noCleanup=
+
 _redClr="\e[1;31m"
 _grnClr="\e[1;32m"
 _yelClr="\e[1;33m"
