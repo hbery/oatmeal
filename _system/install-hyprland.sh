@@ -282,8 +282,11 @@ _getSourceTarballLinkFn () {
 _installPackageDependenciesFn () {
     _infMsg "Installing Package Dependencies..."
     sudo apt-get install -y "${_commonPackages[@]}"
-    [ "${ID}" = "ubuntu" ] && sudo apt-get install -yq "${_ubuntuSpecificPackages[@]}"
-    [ "${ID}" = "debian" ] && sudo apt-get install -yq "${_debianSpecificPackages[@]}"
+    case "${ID}" in
+        "ubuntu") sudo apt-get install -yq "${_ubuntuSpecificPackages[@]}" ;;
+        "debian") sudo apt-get install -yq "${_debianSpecificPackages[@]}" ;;
+        *) ;;
+    esac
 }
 
 _downloadSourceFn () {
