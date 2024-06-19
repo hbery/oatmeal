@@ -83,7 +83,7 @@ _linkGoBinariesFn () {
 exec "${_goHome}/bin/\${0##*/}" "\$@"
 _EOH1
         chmod 0755 "/usr/local/sbin/${_binary}"
-    done < <(find "${_goHome}" -type f -exec basename {} \;)
+    done < <(find "${_goHome}/bin" -type f -exec basename -a -- {} +)
 }
 
 _cleanupFn () {
