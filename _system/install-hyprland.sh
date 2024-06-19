@@ -224,7 +224,14 @@ _getVersionPartFn () {
     _part="${2:-}"
 
     case ":${_part}:" in
-        ":major:"|":minor:"|":patch:")
+        ":major:"|":minor:")
+            if [[ $(tr '.' ' ' <<<"${_version}" | wc -w) -eq 3 ]]; then
+                perl -spe 's/(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)/$+{$vpart}/' -- -vpart="${_part}" <<<"${_version}"
+            elif [[ $(tr '.' ' ' <<<"${_version}" | wc -w) -eq 2 ]]; then
+                perl -spe 's/(?<major>\d+)\.(?<minor>\d+)/$+{$vpart}/' -- -vpart="${_part}" <<<"${_version}"
+            fi
+            ;;
+        ":patch:")
             perl -spe 's/(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)/$+{$vpart}/' -- -vpart="${_part}" <<<"${_version}"
             ;;
         *) printf "%s" "${_version}" ;;
@@ -237,13 +244,14 @@ _getLatestOrValidateVersionFn () {
     _version="${2:-}"
 
     if [[ -n "${_allLatest}" || "${_version}" == latest ]]; then
-        git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' "${_repository}" \
-            tail -1 | perl -pe 's/.*((\d+)\.(\d+)\.(\d+)).*/$1/'
+        printf "%s" "$(git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' "${_repository}" \
+            tail -1 | perl -pe 's/.*((\d+)\.(\d+)(?!\.(\d+))).*/$1/')"
     else
         if git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' "${_repository}" | grep -q "${_version}"; then
             printf "%s" "${_version}"
         else
             _errMsg "No such version (${_version}) in ${_repository}"
+            exit 31
         fi
     fi
 }
