@@ -293,6 +293,7 @@ _downloadSourceFn () {
         _errMsg "Failed to download source tarball ${_srcd_name}"
         exit 1
     }
+
     case "${_comp_algo}" in
         gz)     _tar_opt="--gzip" ;;
         xz)     _tar_opt="--xz" ;;
@@ -352,6 +353,7 @@ _dbiGccFn () {
         -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
     sudo make install
 
+    popd || exit 1
     popd || exit 1
 }
 
@@ -604,7 +606,7 @@ _installDependenciesFn () {
         _dbiHyprwaylandScannerFn
     fi
 
-    if [ "$(gcc -dumpversion)" -lt 13 ]; then
+    if [[ "$(gcc -dumpversion)" -lt 13 ]]; then
         _dbiGccFn
     fi
 }
@@ -779,6 +781,7 @@ _dbiHyprlandPluginsFn () {
             | xargs | sed -nr 's/^build = \[ (.*) \]/\1/p')"
         if [[ -n "${_build_cmd}" ]]; then
             _prgMsg "Installing ${_plugin}"
+            _infMsg "Running command: ${_build_cmd}"
             eval "${_build_cmd}"
         else
             _wrnMsg "No such plugin like ${_plugin}. Continuing.."
@@ -842,11 +845,15 @@ _installAddonsFn () {
 }
 
 _cleanupFn () {
-    cd "${_hyprinstallDir}/../"
-    rm -rf "${_hyprinstallDir}"
+    if [ -z "${_noCleanup}" ]; then
+        cd "${_hyprinstallDir}/../"
+        rm -rf "${_hyprinstallDir}"
+    fi
 }
 
 _mainFn () {
+    _parseArgumentsFn "${@:-}"
+
     mkdir -p "${_hyprinstallDir}"
     trap _cleanupFn EXIT
     pushd "${_hyprinstallDir}" || exit 1
@@ -856,6 +863,9 @@ _mainFn () {
     [ -z "${_noSddm}" ] && _dbiSddmFn
     [ -z "${_noAddons}" ] && _installAddonsFn
     _dbiHyprlandFn
+
+    _dbiHyprlandPluginsFn
+    _dbiHyprlandContribFn
     popd || exit 1
 }
 
