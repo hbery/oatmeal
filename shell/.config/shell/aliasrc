@@ -53,3 +53,6 @@ alias sptstat="systemctl --user status spotifyd.service"
 
 # fun
 alias pipes='~/scripts/not_mine/pipes -t "double"'
+
+# aws
+alias awsc="${HOME}/.local/sbin/aws_shell"
