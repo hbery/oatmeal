@@ -259,11 +259,11 @@ _getLatestOrValidateVersionFn () {
 _getSourceLinkFn () {
     local _origin _path
     _origin="${1:-}"
-    _path="${2:-}"
+    _path="$(tr -d $'\n' <<<"$2")"
 
     case "${_origin}" in
-        "github")             printf "https://github.com/%s.git" "${_path//\\n/}"             ;;
-        "freedesktop-gitlab") printf "https://gitlab.freedesktop.org/%s.git" "${_path//\\n/}" ;;
+        "github")             printf "https://github.com/%s.git" "${_path}"             ;;
+        "freedesktop-gitlab") printf "https://gitlab.freedesktop.org/%s.git" "${_path}" ;;
         *) ;;
     esac
 }
@@ -271,7 +271,7 @@ _getSourceLinkFn () {
 _getSourceTarballLinkFn () {
     local _origin _path _version
     _origin="${1:-}"
-    _path="${2:-}"
+    _path="$(tr -d $'\n' <<<"$2")"
     _version="${3:-}"
 
     case "${_origin}" in
