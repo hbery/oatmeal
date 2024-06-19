@@ -305,7 +305,7 @@ _downloadSourceFn () {
 
     _prgMsg "Downloading ${_srcd_name}..."
 
-    wget --quiet --show-progress "${_link}" --output-file="/tmp/${_srcd_name}.tar.${_comp_algo}" || \
+    wget --quiet --show-progress "${_link}" --output-document="/tmp/${_srcd_name}.tar.${_comp_algo}" || \
     {
         _errMsg "Failed to download source tarball ${_srcd_name}"
         exit 1
