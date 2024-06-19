@@ -262,8 +262,8 @@ _getSourceLinkFn () {
     _path="${2:-}"
 
     case "${_origin}" in
-        "github")             printf "https://github.com/%s.git" "${_path}"             ;;
-        "freedesktop-gitlab") printf "https://gitlab.freedesktop.org/%s.git" "${_path}" ;;
+        "github")             printf "https://github.com/%s.git" "${_path//\\n/}"             ;;
+        "freedesktop-gitlab") printf "https://gitlab.freedesktop.org/%s.git" "${_path//\\n/}" ;;
         *) ;;
     esac
 }
