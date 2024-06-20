@@ -304,6 +304,7 @@ _downloadSourceFn () {
     _comp_algo="${_link##*.}"
 
     _prgMsg "Downloading ${_srcd_name}..."
+    _infMsg "  ..from ${_link}"
 
     wget --quiet --show-progress "${_link}" --output-document="/tmp/${_srcd_name}.tar.${_comp_algo}" || \
     {
@@ -345,7 +346,7 @@ _cloneSourceFn () {
 }
 
 _dbiGccFn () {
-    echo >&3 "[ WIP ] ${FUNCNAME[0]}"
+    _hedMsg "Starting \`gcc\` install from source, version: ${_gccVersion}"
     local _source_repo
     # NOTE: Consider using below sources to match ubuntu's noble numbat release
     # _patch_name="$(curl -s https://patches.ubuntu.com/g/gcc-13/ | perl -ne 's/.*<a href="(gcc-13.*\.patch)">.*/$1/ and print')"
@@ -372,9 +373,11 @@ _dbiGccFn () {
 
     popd || exit 1
     popd || exit 1
+    _endMsg "Finished \`gcc\` install from source"
 }
 
 _dbiHyprlandFn () {
+    _hedMsg "Starting \`Hyprland\` install from source, version: ${_hyprlandVersion}"
     _hyprlandVersion="$(_getLatestOrValidateVersionFn \
         "$(_getSourceLinkFn "github" "Hyprland")" \
         "${_hyprlandVersion}")"
@@ -400,9 +403,11 @@ _dbiHyprlandFn () {
     sudo cmake --install build
 
     popd || exit 1
+    _endMsg "Finished \`Hyprland\` install from source"
 }
 
 _dbiWaylandProtocolsFn () {
+    _hedMsg "Starting \`wayland-protocols\` install from source, version: ${_waylandProtocolsVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["wayland-protocols"]}"
 
@@ -425,9 +430,11 @@ _dbiWaylandProtocolsFn () {
     sudo ninja -C build/ install
 
     popd || exit 1
+    _endMsg "Finished \`wayland-protocols\` install from source"
 }
 
 _dbiWaylandFn () {
+    _hedMsg "Starting \`wayland\` install from source, version: ${_waylandVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["wayland"]}"
 
@@ -451,9 +458,11 @@ _dbiWaylandFn () {
     sudo ninja -C build/ install
 
     popd || exit 1
+    _endMsg "Finished \`wayland\` install from source"
 }
 
 _dbiLibdisplayInfoFn () {
+    _hedMsg "Starting \`libdisplay-info\` install from source, version: ${_libdisplayInfoVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["wayland"]}"
 
@@ -476,9 +485,11 @@ _dbiLibdisplayInfoFn () {
     sudo ninja -C build/ install
 
     popd || exit 1
+    _endMsg "Finished \`libdisplay-info\` install from source"
 }
 
 _dbiLibinputFn () {
+    _hedMsg "Starting \`libinput\` install from source, version: ${_libinputVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["libinput"]}"
 
@@ -503,9 +514,11 @@ _dbiLibinputFn () {
     sudo ninja -C build/ install
 
     popd || exit 1
+    _endMsg "Finished \`libinput\` install from source"
 }
 
 _dbiLibliftoffFn () {
+    _hedMsg "Starting \`libliftoff\` install from source, version: ${_libliftoffVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["libliftoff"]}"
 
@@ -528,9 +541,11 @@ _dbiLibliftoffFn () {
     sudo ninja -C build/ install
 
     popd || exit 1
+    _endMsg "Finished \`libliftoff\` install from source"
 }
 
 _dbiHyprcursorFn () {
+    _hedMsg "Starting \`hyprcursor\` install from source, version: ${_hyprcursorVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprcursor"]}"
 
@@ -556,9 +571,11 @@ _dbiHyprcursorFn () {
     sudo cmake --install build
 
     popd || exit 1
+    _endMsg "Finished \`hyprcursor\` install from source"
 }
 
 _dbiHyprlangFn () {
+    _hedMsg "Starting \`hyprlang\` install from source, version: ${_hyprlangVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprlang"]}"
 
@@ -584,9 +601,11 @@ _dbiHyprlangFn () {
     sudo cmake --install build
 
     popd || exit 1
+    _endMsg "Finished \`hyprlang\` install from source"
 }
 
 _dbiHyprwaylandScannerFn () {
+    _hedMsg "Starting \`hyprwayland-scanner\` install from source, version: ${_hyprwaylandScannerVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprwayland-scanner"]}"
 
@@ -608,6 +627,7 @@ _dbiHyprwaylandScannerFn () {
     sudo cmake --install build
 
     popd || exit 1
+    _endMsg "Finished \`hyprwayland-scanner\` install from source"
 }
 
 _installDependenciesFn () {
@@ -629,6 +649,7 @@ _installDependenciesFn () {
 }
 
 _dbiSddmFn () {
+    _hedMsg "Starting \`sddm\` install from source, version: ${_sddmVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["sddm"]}"
 
@@ -664,9 +685,11 @@ _dbiSddmFn () {
     fi
 
     popd || exit 1
+    _endMsg "Finished \`sddm\` install from source"
 }
 
 _dbiHyprpaperFn () {
+    _hedMsg "Starting \`hyprpaper\` install from source, version: ${_hyprpaperVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprpaper"]}"
 
@@ -692,9 +715,11 @@ _dbiHyprpaperFn () {
     sudo cmake --install build
 
     popd || exit 1
+    _endMsg "Finished \`hyprpaper\` install from source"
 }
 
 _dbiHyprlockFn () {
+    _hedMsg "Starting \`hyprlock\` install from source, version: ${_hyprlockVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprlock"]}"
 
@@ -719,9 +744,11 @@ _dbiHyprlockFn () {
     sudo cmake --install build
 
     popd || exit 1
+    _endMsg "Finished \`hyprlock\` install from source"
 }
 
 _dbiHypridleFn () {
+    _hedMsg "Starting \`hypridle\` install from source, version: ${_hypridleVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hypridle"]}"
 
@@ -746,9 +773,11 @@ _dbiHypridleFn () {
     sudo cmake --install build
 
     popd || exit
+    _endMsg "Finished \`hypridle\` install from source"
 }
 
 _dbiXdgDesktopPortalHyprlandFn () {
+    _hedMsg "Starting \`xdg-desktop-portal-hyprland\` install from source, version: ${_xdgDesktopPortalHyprlandVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["xdg-desktop-portal-hyprland"]}"
 
@@ -771,9 +800,11 @@ _dbiXdgDesktopPortalHyprlandFn () {
     sudo cmake --install build
 
     popd || exit 1
+    _endMsg "Finished \`xdg-desktop-portal-hyprland\` install from source"
 }
 
 _dbiHyprlandPluginsFn () {
+    _hedMsg "Starting \`hyprland-plugins\` install from source, version: ${_hyprlandPluginsVersion}"
     local _repo_src=()
     local _build_cmd
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprland-plugins"]}"
@@ -807,9 +838,11 @@ _dbiHyprlandPluginsFn () {
     done
 
     popd || exit 1
+    _endMsg "Finished \`hyprland-plugins\` install from source"
 }
 
 _dbiHyprlandContribFn () {
+    _hedMsg "Starting \`hyprland-contrib\` install from source, version: ${_hyprlandContribVersion}"
     local _repo_src=() _all_contrib_scripts=()
     local _cscripts_merged
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprland-contrib"]}"
@@ -833,6 +866,7 @@ _dbiHyprlandContribFn () {
     done
 
     popd || exit 1
+    _endMsg "Finished \`hyprland-contrib\` install from source"
 }
 
 _installAddonsFn () {
