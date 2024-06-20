@@ -245,7 +245,7 @@ _getLatestOrValidateVersionFn () {
 
     if [[ -n "${_allLatest}" || "${_version}" == latest ]]; then
         printf "%s" "$(git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' "${_repository}" \
-            tail -1 | perln -pe 's/.*((\d+)\.(\d+)(?!\.(\d+))).*/$1/')"
+            tail -1 | perl -pe 's/.*((\d+)\.(\d+)(?!\.(\d+))).*/$1/')"
     else
         if git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' "${_repository}" | grep "${_version}" &>/dev/null; then
             printf "%s" "${_version}"
@@ -502,7 +502,9 @@ _dbiLibinputFn () {
 
     pushd "${_hyprinstallDir}/libinput-${_libinputVersion}" || exit 5
 
-    sudo ln -s /usr/include/locale.h /usr/include/xlocale.h
+    if [[ ! -f "/usr/include/xlocale.h" ]]; then
+        sudo ln -s /usr/include/locale.h /usr/include/xlocale.h
+    fi
     meson setup \
         --prefix=/usr \
         --buildtype=release \
