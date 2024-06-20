@@ -464,7 +464,7 @@ _dbiWaylandFn () {
 _dbiLibdisplayInfoFn () {
     _hedMsg "Starting \`libdisplay-info\` install from source, version: ${_libdisplayInfoVersion}"
     local _repo_src=()
-    mapfile -t -d ' ' _repo_src <<<"${_repoSources["wayland"]}"
+    mapfile -t -d ' ' _repo_src <<<"${_repoSources["libdisplay-info"]}"
 
     _libdisplayInfoVersion="$(_getLatestOrValidateVersionFn \
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
