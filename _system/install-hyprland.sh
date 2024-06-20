@@ -529,7 +529,7 @@ _dbiLibliftoffFn () {
         "${_libliftoffVersion}")"
     _downloadSourceFn \
         "libliftoff-v${_libliftoffVersion}" \
-        "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_libliftoffVersion}")"
+        "$(_getSourceTarballLinkFn "${_repo_src[@]}" "v${_libliftoffVersion}")"
 
     pushd "${_hyprinstallDir}/libliftoff-v${_libliftoffVersion}" || exit 6
 
