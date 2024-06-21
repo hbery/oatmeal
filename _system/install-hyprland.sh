@@ -12,6 +12,7 @@ _hyprinstallDir="${HOME}/git/hyprland-build"
 
 _noDeps=
 _noSddm=
+_noHyprland=
 _allLatest=
 _noAddons=
 _noCleanup=
@@ -111,12 +112,14 @@ _prgMsg () { echo -e "${_bluClr}|=>${_norClr}${_bldClr} $*${_norClr}";        }
 
 _usageFn () {
     cat << _EOH1
-usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+latest] [+noaddons] [+nocleanup]
+usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddons] [+nocleanup]
                         [-addons ADDON1,ADDON2,..] [-plugins PLUG1,PLUG2,..] [-contrib SCRIPT1,SCRIPT2,..]
 
     -help               Show this help.
     +nodeps             Install just hyprland, no debian-needed dependencies.
     +nosddm             Install without custom sddm.
+    +nohypr             Install without Hyprland.
+                          (useful when installing just plugins and addons)
     +latest             Install all latest packages.
     +noaddons           Install just basic hyprland.
     +nocleanup          Do not claenup build directory.
@@ -156,7 +159,7 @@ _parseArgumentsFn () {
     declare -a _contribScripts
 
     while [[ $# -gt 0 ]]; do
-        case $1 in
+        case "${1}" in
             -help)
                 _usageFn
                 exit
@@ -167,6 +170,10 @@ _parseArgumentsFn () {
                 ;;
             +nosddm)
                 _noSddm="set"
+                shift
+                ;;
+            +nohypr)
+                _noHyprland="set"
                 shift
                 ;;
             +latest)
@@ -193,10 +200,18 @@ _parseArgumentsFn () {
                 mapfile -t -d ',' _contribScripts <<<"${2}"
                 shift 2
                 ;;
-            *)
-                echo >&2 "Unknown option: -${1}"
-                _usageFn
+            -*|+*)
+                echo >&2 "unknown option: ${1}"
+                _usageFn >&2
                 exit 1
+                ;;
+            *)
+                if [[ "${1}" != "" ]]; then
+                    echo >&2 "unknown positional argument: ${1}"
+                    _usageFn >&2
+                    exit 2
+                fi
+                shift
                 ;;
         esac
     done
@@ -207,7 +222,7 @@ _parseArgumentsFn () {
         case ":$(tr ' ' ':' <<<"${_selectedAddons[*]}"):" in
             *":hyprland-plugins:"*) ;;
             *)
-                _wrnMsg "No 'hyprland-plugins' specified in -select-addons. Not installing selected plugins."
+                _wrnMsg "No 'hyprland-plugins' specified in \`-addons\`. Not installing selected plugins."
                 _hyprlandPlugins=()
                 ;;
         esac
@@ -912,10 +927,10 @@ _mainFn () {
     pushd "${_hyprinstallDir}" || exit 1
 
     _installPackageDependenciesFn
-    _installDependenciesFn
-    [ -z "${_noSddm}" ] && _dbiSddmFn
-    [ -z "${_noAddons}" ] && _installAddonsFn
-    _dbiHyprlandFn
+    if [ -z "${_noDeps}"     ]; then _installDependenciesFn; fi
+    if [ -z "${_noSddm}"     ]; then _dbiSddmFn;             fi
+    if [ -z "${_noAddons}"   ]; then _installAddonsFn;       fi
+    if [ -z "${_noHyprland}" ]; then _dbiHyprlandFn;         fi
 
     _dbiHyprlandPluginsFn
     _dbiHyprlandContribFn
