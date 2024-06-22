@@ -39,6 +39,7 @@ if [ "${ID}" = "ubuntu" ]; then
     _hyprcursorVersion="${HYPRINSTALL_HYPRCURSOR_VERSION:-"0.1.9"}"
     _hyprlangVersion="${HYPRINSTALL_HYPRLANG_VERSION:-"0.5.2"}"
     _hyprwaylandScannerVersion="${HYPRINSTALL_HYPRWAYLAND_SCANNER_VERSION:-"0.3.10"}"
+    _hyprutilsVersion="${HYPRINSTALL_HYPRUTILS_VERSION:-"0.1.4"}"
 
     _sddmVersion="${HYPRINSTALL_SDDM_VERSION:-"0.20.0"}"
 
@@ -55,6 +56,7 @@ elif [ "${ID}" = "debian" ]; then
     _hyprcursorVersion="${HYPRINSTALL_HYPRCURSOR_VERSION:-"0.1.9"}"
     _hyprlangVersion="${HYPRINSTALL_HYPRLANG_VERSION:-"0.5.2"}"
     _hyprwaylandScannerVersion="${HYPRINSTALL_HYPRWAYLAND_SCANNER_VERSION:-"0.3.10"}"
+    _hyprutilsVersion="${HYPRINSTALL_HYPRUTILS_VERSION:-"0.1.4"}"
 
     _sddmVersion="${HYPRINSTALL_SDDM_VERSION:-"0.20.0"}"
 
@@ -81,6 +83,7 @@ declare -A _repoSources=(
     ["hyprcursor"]="github hyprwm/hyprcursor"
     ["hyprlang"]="github hyprwm/hyprlang"
     ["hyprwayland-scanner"]="github hyprwm/hyprwayland-scanner"
+    ["hyprutils"]="github hyprwm/hyprutils"
     ["hyprpaper"]="github hyprwm/hyprpaper"
     ["hyprlock"]="github hyprwm/hyprlock"
     ["hypridle"]="github hyprwm/hypridle"
@@ -175,6 +178,7 @@ environment variables: (all prepended with 'HYPRINSTALL_' if you want change ver
     HYPRCURSOR_VERSION                  = ${_hyprcursorVersion}
     HYPRLANG_VERSION                    = ${_hyprlangVersion}
     HYPRWAYLAND_SCANNER_VERSION         = ${_hyprwaylandScannerVersion}
+    HYPRUTILS_VERSION                   = ${_hyprutilsVersion}
 + addons:
     HYPRPAPER_VERSION                   = ${_hyprpaperVersion}
     HYPRLOCK_VERSION                    = ${_hyprlockVersion}
@@ -679,6 +683,36 @@ _dbiHyprwaylandScannerFn () {
     _endMsg "Finished \`hyprwayland-scanner\` install from source"
 }
 
+_dbiHyprutilsFn () {
+    _hedMsg "Starting \`hyprutils\` install from source, version: ${_hyprutilsVersion}"
+    local _repo_src=()
+    mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprutils"]}"
+
+    _hyprutilsVersion="$(_getLatestOrValidateVersionFn \
+        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "${_hyprutilsVersion}")"
+    _downloadSourceFn \
+        "hyprlang-${_hyprutilsVersion}" \
+        "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprutilsVersion}")"
+
+    pushd "${_hyprinstallDir}/hyprutils-${_hyprutilsVersion}" || exit 8
+
+    cmake \
+        --no-warn-unused-cli \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+        -B build \
+        && cmake \
+            --build build \
+            --config Release \
+            --target all \
+            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
+    sudo cmake --install build
+
+    popd || exit 1
+    _endMsg "Finished \`hyprutils\` install from source"
+}
+
 _installDependenciesFn () {
     _dbiWaylandProtocolsFn
     _dbiWaylandFn
@@ -690,6 +724,7 @@ _installDependenciesFn () {
         _dbiHyprlangFn
         _dbiHyprcursorFn
         _dbiHyprwaylandScannerFn
+        _dbiHyprutilsFn
     fi
 
     if [[ "$(gcc -dumpversion)" -lt 13 ]]; then
