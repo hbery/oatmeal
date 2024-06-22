@@ -110,6 +110,37 @@ _infMsg () { echo -e "${_bldClr}*** $*${_norClr}";                            }
 _skpMsg () { echo -e "${_graClr}***${_norClr}${_bldClr} $*${_norClr}";        }
 _prgMsg () { echo -e "${_bluClr}|=>${_norClr}${_bldClr} $*${_norClr}";        }
 
+_bannerFn () {
+    cat << _EOB
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                =  =                                              │
+│                                               ==  ==                                             │
+│                                             -===  ====                                           │
+│                                            ===*    ====                                          │
+│                                           *==-      :===-                                        │
+│                                         ====          ==*=                                       │
+│                                        ====            ====                                      │
+│                                       :==*              ====                                     │
+│                                       ===                ===                                     │
+│                                       =*=                =*=-                                    │
+│                                       ==-                ===-                                    │
+│                                       ===                ===                                     │
+│                                        *==              ==*:                                     │
+│                                         ===            ===                                       │
+│                                           ====*    ======                                        │
+│                                             :=======*-                                           │
+│                                                                                                  │
+│         dBP dBP dBP dBP dBBBBBb dBBBBBb    dBP dBBBBb.dBBBBP dBBBBBBP dBBBBBb     dBP    dBP     │
+│                    dBP      dB'     dBP           dBPBP                    BB                    │
+│       dBBBBBP     dBP   dBBBP'  dBBBBK   dBP dBP dBP 'BBBBb   dBP      dBP BB   dBP    dBP       │
+│      dBP dBP     dBP   dBP     dBP  BB  dBP dBP dBP     dBP  dBP      dBP  BB  dBP    dBP        │
+│     dBP dBP     dBP   dBP     dBP  dB' dBP dBP dBP dBBBBP'  dBP      dBBBBBBB dBBBBP dBBBBP      │
+│                                                                                                  │
+│                                            ~ by hbery ~                                          │
+└──────────────────────────────────────────────────────────────────────────────────────────────────┘
+_EOB
+}
+
 _usageFn () {
     cat << _EOH1
 usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddons] [+nocleanup]
@@ -921,6 +952,7 @@ _cleanupFn () {
 
 _mainFn () {
     _parseArgumentsFn "${@:-}"
+    _bannerFn
 
     mkdir -p "${_hyprinstallDir}"
     trap _cleanupFn EXIT
