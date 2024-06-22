@@ -13,8 +13,10 @@ _hyprinstallDir="${HOME}/git/hyprland-build"
 _noDeps=
 _noSddm=
 _noHyprland=
-_allLatest=
 _noAddons=
+_noPlugins=
+_noContrib=
+_allLatest=
 _noCleanup=
 
 _redClr="\e[1;31m"
@@ -118,7 +120,7 @@ _infMsg () { echo -e "${_bldClr}*** $*${_norClr}";                            }
 _skpMsg () { echo -e "${_graClr}***${_norClr}${_bldClr} $*${_norClr}";        }
 _prgMsg () { echo -e "${_bluClr}|=>${_norClr}${_bldClr} $*${_norClr}";        }
 
-_bannerFn () {
+_bannerMsg () {
     cat << _EOB
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                                =  =                                              │
@@ -160,8 +162,10 @@ usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddo
     +nohypr             Install without Hyprland.
                           (useful when installing just plugins and addons)
     +latest             Install all latest packages.
-    +noaddons           Install just basic hyprland.
-    +nocleanup          Do not claenup build directory.
+    +noaddons           Do not install addons, unless directly specified in \`-plugins\`.
+    +nocleanup          Do not cleanup build directory.
+    +noplugins          Do not install hyprland-plugins.
+    +nocontrib          Do not install hyprland-contrib.
     -addons             Install custom addons, ',' separated.
                           (need to specify with +noaddons)
                         Available:
@@ -225,6 +229,14 @@ _parseArgumentsFn () {
                 _noAddons="set"
                 shift
                 ;;
+            +noplugins)
+                _noPlugins="set"
+                shift
+                ;;
+            +nocontrib)
+                _noContrib="set"
+                shift
+                ;;
             +nocleanup)
                 _noCleanup="set"
                 shift
@@ -257,9 +269,10 @@ _parseArgumentsFn () {
         esac
     done
 
-    if [ -z "${_noAddons}" ]; then
+    if [[ -n "${_noAddons}" ]]; then
         _selectedAddons=()
     else
+        if [[ ${#_hyprlandPlugins[@]} -gt 0 ]]; then
         case ":$(tr ' ' ':' <<<"${_selectedAddons[*]}"):" in
             *":hyprland-plugins:"*) ;;
             *)
@@ -267,10 +280,28 @@ _parseArgumentsFn () {
                 _hyprlandPlugins=()
                 ;;
         esac
+        fi
+        if [[ ${#_contribScripts[@]} -gt 0 ]]; then
+        case ":$(tr ' ' ':' <<<"${_selectedAddons[*]}"):" in
+            *":hyprland-contrib:"*) ;;
+            *)
+                _wrnMsg "No 'hyprland-contrib' specified in \`-addons\`. Not installing selected scripts."
+                _contribScripts=()
+                ;;
+        esac
+        fi
+    fi
+
+    if [[ -n "${_noPlugins}" && ${#_hyprlandPlugins[@]} -gt 0 ]]; then
+        _wrnMsg "Specified \`+noplugins\`. Not installing 'hyprland-plugins'."; _hyprlandPlugins=()
+    fi
+    if [[ -n "${_noContrib}" && ${#_contribScripts[@]} -gt 0 ]]; then
+        _wrnMsg "Specified \`+nocontrib\`. Not installing 'hyprland-contrib'."; _contribScripts=()
     fi
 }
 
 _deDupArrayFn () {
+    # need to map again to array
     printf "%s\n" "${@}" | sort -u
 }
 
@@ -944,7 +975,9 @@ _dbiXdgDesktopPortalHyprlandFn () {
     _endMsg "Finished \`xdg-desktop-portal-hyprland\` install from source"
 }
 
+# INFO: Consider removing plugins install and using https://github.com/Duckonaut/hyprload
 _dbiHyprlandPluginsFn () {
+    # NOTE: hyprwm/hyprland-plugins are not tagged/released
     _hedMsg "Starting \`hyprland-plugins\` install from source, version: ${_hyprlandPluginsVersion}"
     local _repo_src=()
     local _build_cmd
@@ -953,11 +986,19 @@ _dbiHyprlandPluginsFn () {
     _hyprlandPluginsVersion="$(_getLatestOrValidateVersionFn \
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
         "${_hyprlandPluginsVersion}")"
-    _downloadSourceFn \
-        "hyprlandPlugins-${_hyprlandPluginsVersion}" \
-        "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprlandPluginsVersion}")"
+    if [ -z "${_hyprlandPluginsVersion}" ]; then
+        _hyprlandPluginsVersion="main"
+        _cloneSourceFn \
+            "hyprland-plugins-${_hyprlandPluginsVersion}" \
+            "$(_getSourceLinkFn "${_repo_src[@]}")" \
+            "${_hyprlandPluginsVersion}"
+    else
+        _downloadSourceFn \
+            "hyprland-plugins-${_hyprlandPluginsVersion}" \
+            "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprlandPluginsVersion}")"
+    fi
 
-    pushd "${_hyprinstallDir}/hyprlandPlugins-${_hyprlandPluginsVersion}" || exit 13
+    pushd "${_hyprinstallDir}/hyprland-plugins-${_hyprlandPluginsVersion}" || exit 13
 
     if [[ "${#_hyprlandPlugins}" -eq 0 ]]; then
         _skpMsg "No plugins specified. Skipping hyprland-plugins install."
@@ -982,6 +1023,7 @@ _dbiHyprlandPluginsFn () {
     _endMsg "Finished \`hyprland-plugins\` install from source"
 }
 
+# INFO: Consider removing/extracting contrib and/or install them manually
 _dbiHyprlandContribFn () {
     _hedMsg "Starting \`hyprland-contrib\` install from source, version: ${_hyprlandContribVersion}"
     local _repo_src=() _all_contrib_scripts=()
@@ -1025,12 +1067,12 @@ _installAddonsFn () {
 
     for _addon in "${_selected_addons[@]}"; do
         case "${_addon}" in
-            "hyprpaper")                    _dbiHyprpaperFn ;;
-            "hyprlock")                     _dbiHyprlockFn ;;
-            "hypridle")                     _dbiHypridleFn ;;
-            "xdg-desktop-portal-hyprland")  _dbiXdgDesktopPortalHyprlandFn ;;
-            "hyprland-plugins")             _dbiHyprlandPluginsFn ;;
-            "hyprland-contrib")             _dbiHyprlandContribFn ;;
+            "hyprpaper")                                        _dbiHyprpaperFn ;;
+            "hyprlock")                                         _dbiHyprlockFn ;;
+            "hypridle")                                         _dbiHypridleFn ;;
+            "xdg-desktop-portal-hyprland")                      _dbiXdgDesktopPortalHyprlandFn ;;
+            "hyprland-plugins") if [ -z "${_noPlugins}" ]; then _dbiHyprlandPluginsFn; fi ;;
+            "hyprland-contrib") if [ -z "${_noContrib}" ]; then _dbiHyprlandContribFn; fi ;;
             *) _skpMsg "Skipping '${_addon}' as no install instructions found." ;;
         esac
     done
@@ -1046,7 +1088,7 @@ _cleanupFn () {
 
 _mainFn () {
     _parseArgumentsFn "${@:-}"
-    _bannerFn
+    _bannerMsg
 
     mkdir -p "${_hyprinstallDir}"
     trap _cleanupFn EXIT
@@ -1055,11 +1097,9 @@ _mainFn () {
     _installPackageDependenciesFn
     if [ -z "${_noDeps}"     ]; then _installDependenciesFn; fi
     if [ -z "${_noSddm}"     ]; then _dbiSddmFn;             fi
-    if [ -z "${_noAddons}"   ]; then _installAddonsFn;       fi
     if [ -z "${_noHyprland}" ]; then _dbiHyprlandFn;         fi
+    if [ -z "${_noAddons}"   ]; then _installAddonsFn;       fi
 
-    _dbiHyprlandPluginsFn
-    _dbiHyprlandContribFn
     popd || exit 1
 }
 
