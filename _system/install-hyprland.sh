@@ -404,7 +404,7 @@ _cloneSourceFn () {
 
     declare -a _git_args=("--quiet")
     if [ -n "${_recursive}" ]; then _git_args+=("--recursive"); fi
-    if [[ ! "${_release}" =~ "tag=" ]]; then _git_args+=("--branch" "${_release}"); else _checkout_later="yes"; fi
+    if [[ ! "${_release}" =~ ^"tag="* ]]; then _git_args+=("--branch" "${_release}"); else _checkout_later="yes"; fi
 
     set -x
     git clone \
@@ -466,7 +466,7 @@ _dbiHyprlandFn () {
     _cloneSourceFn \
         "hyprland-source" \
         "$(_getSourceLinkFn "github" "hyprwm/Hyprland")" \
-        "tag=${_hyprlandVersion}" \
+        "tag=v${_hyprlandVersion}" \
         "yes"
 
     chmod a+rw "${_hyprinstallDir}/hyprland-source"
