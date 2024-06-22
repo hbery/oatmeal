@@ -35,6 +35,7 @@ if [ "${ID}" = "ubuntu" ]; then
     _libdisplayInfoVersion="${HYPERINSTALL_LIBDISPLAY_INFO_VERSION:-"0.1.1"}"
     _libinputVersion="${HYPRINSTALL_LIBINPUT_VERSION:-"1.24.0"}"
     _libliftoffVersion="${HYPRINSTALL_LIBLIFTOFF_VERSION:-"0.4.1"}"
+    _libxcbErrorsVersion="${HYPRINSTALL_LIBXCB_ERRORS_VERSION:-"xcb-util-errors-1.0.1"}"
 
     _hyprcursorVersion="${HYPRINSTALL_HYPRCURSOR_VERSION:-"0.1.9"}"
     _hyprlangVersion="${HYPRINSTALL_HYPRLANG_VERSION:-"0.5.2"}"
@@ -52,6 +53,7 @@ elif [ "${ID}" = "debian" ]; then
     _libdisplayInfoVersion="${HYPERINSTALL_LIBDISPLAY_INFO_VERSION:-"0.1.1"}"
     _libinputVersion="${HYPRINSTALL_LIBINPUT_VERSION:-"1.23.0"}"
     _libliftoffVersion="${HYPRINSTALL_LIBLIFTOFF_VERSION:-"0.4.1"}"
+    _libxcbErrorsVersion="${HYPRINSTALL_LIBXCB_ERRORS_VERSION:-"xcb-util-errors-1.0.1"}"
 
     _hyprcursorVersion="${HYPRINSTALL_HYPRCURSOR_VERSION:-"0.1.9"}"
     _hyprlangVersion="${HYPRINSTALL_HYPRLANG_VERSION:-"0.5.2"}"
@@ -80,6 +82,7 @@ declare -A _repoSources=(
     ["libdisplay-info"]="freedesktop-gitlab emersion/libdisplay-info"
     ["libinput"]="freedesktop-gitlab libinput/libinput"
     ["libliftoff"]="freedesktop-gitlab emersion/libliftoff"
+    ["libxcb-errors"]="freedesktop-gitlab xorg/lib/libxcb-errors"
     ["hyprcursor"]="github hyprwm/hyprcursor"
     ["hyprlang"]="github hyprwm/hyprlang"
     ["hyprwayland-scanner"]="github hyprwm/hyprwayland-scanner"
@@ -102,7 +105,7 @@ _commonPackages=(
     libxcb-render-util0-dev libxcb-res0-dev libxcb-xinput-dev libgbm-dev xdg-desktop-portal-wlr hwdata
     libgtk-3-dev libsystemd-dev edid-decode extra-cmake-modules libpam0g-dev qtbase5-dev qtdeclarative5-dev
     qttools5-dev python3-docutils check qt6-base-dev qt6-tools-dev qt6-declarative-dev libtomlplusplus-dev
-    librsvg2-dev libzip-dev libpugixml-dev
+    librsvg2-dev libzip-dev libpugixml-dev libxcb-util-dev libwlroots-dev automake xutils-dev libtool xcb-proto
 )
 
 _errMsg () { >&2 echo -e "${_redClr}ERROR:${_norClr}${_bldClr} $*${_norClr}"; }
@@ -175,6 +178,7 @@ environment variables: (all prepended with 'HYPRINSTALL_' if you want change ver
     LIBDISPLAY_INFO_VERSION             = ${_libdisplayInfoVersion}
     LIBINPUT_VERSION                    = ${_libinputVersion}
     LIBLIFTOFF_VERSION                  = ${_libliftoffVersion}
+    LIBXCB_ERRORS_VERSION               = ${_libxcbErrorsVersion}
     HYPRCURSOR_VERSION                  = ${_hyprcursorVersion}
     HYPRLANG_VERSION                    = ${_hyprlangVersion}
     HYPRWAYLAND_SCANNER_VERSION         = ${_hyprwaylandScannerVersion}
@@ -332,7 +336,7 @@ _getSourceTarballLinkFn () {
             ;;
         "freedesktop-gitlab")
             printf "https://gitlab.freedesktop.org/%s/-/archive/%s/%s-%s.tar.gz" \
-                "${_path}" "${_version}" "${_path#*/}" "${_version}"
+                "${_path}" "${_version}" "${_path##*/}" "${_version}"
             ;;
         *)  ;;
     esac
@@ -385,15 +389,18 @@ _downloadSourceFn () {
 }
 
 _cloneSourceFn () {
-    local _repository _release
-    _repository="${1:-}"
-    _release="${2:-}"
+    local _srcd_name _repository _release _recursive
+    _srcd_name="${1:-}"
+    _repository="${2:-}"
+    _release="${3:-}"
+    _recursive="${4:-}"
 
     git clone \
         --quiet \
-        --branch "releases/${_release}" \
+        "${_recursive:+"--recursive"}" \
+        --branch "${_release}" \
         "${_repository}" \
-        "${_hyprinstallDir}/${_release}"
+        "${_hyprinstallDir}/${_srcd_name}"
 }
 
 _dbiGccFn () {
@@ -406,8 +413,9 @@ _dbiGccFn () {
     _source_repo="https://gcc.gnu.org/git/gcc.git"
 
     _cloneSourceFn \
+        "gcc-${_gccVersion}" \
         "${_source_repo}" \
-        "${_gccVersion}"
+        "releases/${_gccVersion}"
 
     pushd "${_hyprinstallDir}/${_gccVersion}" || exit 20
 
@@ -597,6 +605,32 @@ _dbiLibliftoffFn () {
     _endMsg "Finished \`libliftoff\` install from source"
 }
 
+_dbiLibxcbErrorsFn () {
+    _hedMsg "Starting \`libxcb-errors\` install from source, version: ${_libliftoffVersion}"
+    local _repo_src=()
+    mapfile -t -d ' ' _repo_src <<<"${_repoSources["libxcb-errors"]}"
+
+    _cloneSourceFn \
+        "libxcb-errors-${_libxcbErrorsVersion}" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "${_libxcbErrorsVersion}" \
+        "yes"
+
+    mkdir -p "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}/build"
+    pushd "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}" || exit 6
+    pushd "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}/build" || exit 5
+
+
+    ../autogen.sh --prefix=/usr \
+        && make \
+            -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
+    sudo make install
+
+    popd || exit 1
+    popd || exit 1
+    _endMsg "Finished \`libxcb-errors\` install from source"
+}
+
 _dbiHyprlangFn () {
     _hedMsg "Starting \`hyprlang\` install from source, version: ${_hyprlangVersion}"
     local _repo_src=()
@@ -719,6 +753,7 @@ _installDependenciesFn () {
     _dbiLibdisplayInfoFn
     _dbiLibinputFn
     _dbiLibliftoffFn
+    _dbiLibxcbErrorsFn
 
     if [[ $(_getVersionPartFn "${_hyprlandVersion}" "minor") -ge 40 ]]; then
         _dbiHyprlangFn
