@@ -79,8 +79,8 @@ declare -A _repoSources=(
     ["libinput"]="freedesktop-gitlab libinput/libinput"
     ["libliftoff"]="freedesktop-gitlab emersion/libliftoff"
     ["hyprcursor"]="github hyprwm/hyprcursor"
-    ["hyprlang"]="github hyprwm/hyprcursor"
-    ["hyprwayland"]="github hyprwm/hyprwayland"
+    ["hyprlang"]="github hyprwm/hyprland"
+    ["hyprwayland-scanner"]="github hyprwm/hyprwayland-scanner"
     ["hyprpaper"]="github hyprwm/hyprpaper"
     ["hyprlock"]="github hyprwm/hyprlock"
     ["hypridle"]="github hyprwm/hypridle"
@@ -98,7 +98,8 @@ _commonPackages=(
     libavcodec-dev libavformat-dev libxcb-ewmh2 libxcb-ewmh-dev libxcb-present-dev libxcb-icccm4-dev
     libxcb-render-util0-dev libxcb-res0-dev libxcb-xinput-dev libgbm-dev xdg-desktop-portal-wlr hwdata
     libgtk-3-dev libsystemd-dev edid-decode extra-cmake-modules libpam0g-dev qtbase5-dev qtdeclarative5-dev
-    qttools5-dev python3-docutils check qt6-base-dev qt6-tools-dev qt6-declarative-dev
+    qttools5-dev python3-docutils check qt6-base-dev qt6-tools-dev qt6-declarative-dev libtomlplusplus-dev
+    librsvg2-dev libzip-dev
 )
 
 _errMsg () { >&2 echo -e "${_redClr}ERROR:${_norClr}${_bldClr} $*${_norClr}"; }
@@ -592,36 +593,6 @@ _dbiLibliftoffFn () {
     _endMsg "Finished \`libliftoff\` install from source"
 }
 
-_dbiHyprcursorFn () {
-    _hedMsg "Starting \`hyprcursor\` install from source, version: ${_hyprcursorVersion}"
-    local _repo_src=()
-    mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprcursor"]}"
-
-    _hyprcursor="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
-        "${_hyprcursorVersion}")"
-    _downloadSourceFn \
-        "hyprcursor-${_hyprcursorVersion}" \
-        "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprcursorVersion}")"
-
-    pushd "${_hyprinstallDir}/hyprcursor-${_hyprcursorVersion}" || exit 7
-
-    cmake \
-        --no-warn-unused-cli \
-        -DCMAKE_BUILD_TYPE:STRING=Release \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-        -B build \
-        && cmake \
-            --build build \
-            --config Release \
-            --target all \
-            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build
-
-    popd || exit 1
-    _endMsg "Finished \`hyprcursor\` install from source"
-}
-
 _dbiHyprlangFn () {
     _hedMsg "Starting \`hyprlang\` install from source, version: ${_hyprlangVersion}"
     local _repo_src=()
@@ -650,6 +621,36 @@ _dbiHyprlangFn () {
 
     popd || exit 1
     _endMsg "Finished \`hyprlang\` install from source"
+}
+
+_dbiHyprcursorFn () {
+    _hedMsg "Starting \`hyprcursor\` install from source, version: ${_hyprcursorVersion}"
+    local _repo_src=()
+    mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprcursor"]}"
+
+    _hyprcursor="$(_getLatestOrValidateVersionFn \
+        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "${_hyprcursorVersion}")"
+    _downloadSourceFn \
+        "hyprcursor-${_hyprcursorVersion}" \
+        "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprcursorVersion}")"
+
+    pushd "${_hyprinstallDir}/hyprcursor-${_hyprcursorVersion}" || exit 7
+
+    cmake \
+        --no-warn-unused-cli \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+        -B build \
+        && cmake \
+            --build build \
+            --config Release \
+            --target all \
+            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
+    sudo cmake --install build
+
+    popd || exit 1
+    _endMsg "Finished \`hyprcursor\` install from source"
 }
 
 _dbiHyprwaylandScannerFn () {
@@ -686,8 +687,8 @@ _installDependenciesFn () {
     _dbiLibliftoffFn
 
     if [[ $(_getVersionPartFn "${_hyprlandVersion}" "minor") -ge 40 ]]; then
-        _dbiHyprcursorFn
         _dbiHyprlangFn
+        _dbiHyprcursorFn
         _dbiHyprwaylandScannerFn
     fi
 
