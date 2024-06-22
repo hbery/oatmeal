@@ -457,9 +457,6 @@ _dbiHyprlandFn () {
     _hyprlandVersion="$(_getLatestOrValidateVersionFn \
         "$(_getSourceLinkFn "github" "hyprwm/Hyprland")" \
         "${_hyprlandVersion}")"
-    # _downloadSourceFn \
-    #     "source-v${_hyprlandVersion}" \
-    #     "https://github.com/hyprwm/Hyprland/releases/download/v${_hyprlandVersion}/source-v${_hyprlandVersion}.tar.gz"
     _cloneSourceFn \
         "hyprland-source" \
         "$(_getSourceLinkFn "github" "hyprwm/Hyprland")" \
@@ -469,20 +466,19 @@ _dbiHyprlandFn () {
     chmod a+rw "${_hyprinstallDir}/hyprland-source"
     pushd "${_hyprinstallDir}/hyprland-source" || exit 10
 
-    # cmake \
-    #     --no-warn-unused-cli \
-    #     -DCMAKE_BUILD_TYPE:STRING=Release \
-    #     -DCMAKE_INSTALL_PREFIX:STRING=/usr \
-    #     -B build \
-    #     -G Ninja \
-    #     && cmake \
-    #         --build build \
-    #         --config Release \
-    #         --target all \
-    #         --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    #     chmod -R 777 build && \
-    # sudo cmake --install build
-    make all && sudo make install
+    cmake \
+        --no-warn-unused-cli \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
+        -DCMAKE_INSTALL_PREFIX:STRING=/usr \
+        -B build \
+        -G Ninja \
+        && cmake \
+            --build build \
+            --config Release \
+            --target all \
+            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
+        chmod -R 777 build && \
+    sudo cmake --install build
 
     popd || exit 1
     _endMsg "Finished \`Hyprland\` install from source"
