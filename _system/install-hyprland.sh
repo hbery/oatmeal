@@ -396,11 +396,15 @@ _downloadSourceFn () {
 }
 
 _cloneSourceFn () {
-    local _srcd_name _repository _release _recursive
+    local _srcd_name _repository _release _recursive _checkout_later
     _srcd_name="${1:-}"
     _repository="${2:-}"
     _release="${3:-}"
     _recursive="${4:-}"
+
+    declare -a _git_args=("--quiet")
+    if [ -n "${_recursive}" ]; then _git_args+=("--recursive"); fi
+    if [[ ! "${_release}" =~ "tag=" ]]; then _git_args+=("--branch" "${_release}"); else _checkout_later="yes"; fi
 
     set -x
     git clone \
@@ -409,6 +413,13 @@ _cloneSourceFn () {
         --branch "${_release}" \
         "${_repository}" \
         "${_hyprinstallDir}/${_srcd_name}"
+
+    if [[ "${_checkout_later}" == "yes" ]]; then
+        git -C "${_hyprinstallDir}/${_srcd_name}" checkout "${_release/tag=/}"
+        if [[ "${_recursive}" == "yes" ]]; then
+            git -C "${_hyprinstallDir}/${_srcd_name}" submodule update --recursive
+        fi
+    fi
     set +x
 }
 
@@ -455,7 +466,7 @@ _dbiHyprlandFn () {
     _cloneSourceFn \
         "hyprland-source" \
         "$(_getSourceLinkFn "github" "hyprwm/Hyprland")" \
-        "${_hyprlandVersion}" \
+        "tag=${_hyprlandVersion}" \
         "yes"
 
     chmod a+rw "${_hyprinstallDir}/hyprland-source"
