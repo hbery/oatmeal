@@ -70,7 +70,8 @@ elif [ "${ID}" = "debian" ]; then
 
     _debianSpecificPackages=("vulkan-validationlayers-dev")
 
-    _gccVersion="${HYPRINSTALL_GCC_VERSION:-"13.3.0"}"
+    # _gccVersion="${HYPRINSTALL_GCC_VERSION:-"13.3.0"}"
+    _gccVersion="${HYPRINSTALL_GCC_VERSION:-"gcc-13"}"
 else
     exit 1
 fi
@@ -461,7 +462,7 @@ _dbiGccFn () {
     _source_repo="https://gcc.gnu.org/git/gcc.git"
 
     _cloneSourceFn \
-        "gcc-${_gccVersion}" \
+        "${_gccVersion}" \
         "${_source_repo}" \
         "releases/${_gccVersion}"
 
