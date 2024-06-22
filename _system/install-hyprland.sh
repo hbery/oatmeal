@@ -106,6 +106,7 @@ _commonPackages=(
     libgtk-3-dev libsystemd-dev edid-decode extra-cmake-modules libpam0g-dev qtbase5-dev qtdeclarative5-dev
     qttools5-dev python3-docutils check qt6-base-dev qt6-tools-dev qt6-declarative-dev libtomlplusplus-dev
     librsvg2-dev libzip-dev libpugixml-dev libxcb-util-dev libwlroots-dev automake xutils-dev libtool xcb-proto
+    xwayland
 )
 
 _errMsg () { >&2 echo -e "${_redClr}ERROR:${_norClr}${_bldClr} $*${_norClr}"; }
@@ -401,12 +402,14 @@ _cloneSourceFn () {
     _release="${3:-}"
     _recursive="${4:-}"
 
+    set -x
     git clone \
         --quiet \
         "${_recursive:+"--recursive"}" \
         --branch "${_release}" \
         "${_repository}" \
         "${_hyprinstallDir}/${_srcd_name}"
+    set +x
 }
 
 _dbiGccFn () {
@@ -450,9 +453,9 @@ _dbiHyprlandFn () {
     #     "source-v${_hyprlandVersion}" \
     #     "https://github.com/hyprwm/Hyprland/releases/download/v${_hyprlandVersion}/source-v${_hyprlandVersion}.tar.gz"
     _cloneSourceFn \
-        "${_hyprinstallDir}/hyprland-source" \
+        "hyprland-source" \
         "$(_getSourceLinkFn "github" "hyprwm/Hyprland")" \
-        "${_hyprlandVersion}"
+        "${_hyprlandVersion}" \
         "yes"
 
     chmod a+rw "${_hyprinstallDir}/hyprland-source"
