@@ -601,10 +601,10 @@ _dbiHyprcursorFn () {
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
         "${_hyprcursorVersion}")"
     _downloadSourceFn \
-        "hyprcursor-v${_hyprcursorVersion}" \
+        "hyprcursor-${_hyprcursorVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprcursorVersion}")"
 
-    pushd "${_hyprinstallDir}/hyprcursor-v${_hyprcursorVersion}" || exit 7
+    pushd "${_hyprinstallDir}/hyprcursor-${_hyprcursorVersion}" || exit 7
 
     cmake \
         --no-warn-unused-cli \
@@ -631,10 +631,10 @@ _dbiHyprlangFn () {
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
         "${_hyprlangVersion}")"
     _downloadSourceFn \
-        "hyprlang-v${_hyprlangVersion}" \
+        "hyprlang-${_hyprlangVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprlangVersion}")"
 
-    pushd "${_hyprinstallDir}/hyprlang-v${_hyprlangVersion}" || exit 8
+    pushd "${_hyprinstallDir}/hyprlang-${_hyprlangVersion}" || exit 8
 
     cmake \
         --no-warn-unused-cli \
@@ -661,10 +661,10 @@ _dbiHyprwaylandScannerFn () {
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
         "${_hyprwaylandScannerVersion}")"
     _downloadSourceFn \
-        "hyprwayland-scanner-v${_hyprwaylandScannerVersion}" \
+        "hyprwayland-scanner-${_hyprwaylandScannerVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprwaylandScannerVersion}")"
 
-    pushd "${_hyprinstallDir}/hyprwayland-scanner-v${_hyprwaylandScannerVersion}" || exit 9
+    pushd "${_hyprinstallDir}/hyprwayland-scanner-${_hyprwaylandScannerVersion}" || exit 9
 
     cmake \
         -DCMAKE_INSTALL_PREFIX:PATH=/usr \
@@ -705,7 +705,7 @@ _dbiSddmFn () {
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
         "${_sddmVersion}")"
     _downloadSourceFn \
-        "sddm-v${_sddmVersion}" \
+        "sddm-${_sddmVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_sddmVersion}")"
 
     pushd "${_hyprinstallDir}/sddm-${_sddmVersion}/" || exit 10
@@ -745,10 +745,10 @@ _dbiHyprpaperFn () {
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
         "${_hyprpaperVersion}")"
     _downloadSourceFn \
-        "hyprpaper-v${_hyprpaperVersion}" \
+        "hyprpaper-${_hyprpaperVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprpaperVersion}")"
 
-    pushd "${_hyprinstallDir}/hyprpaper-v${_hyprpaperVersion}" || exit 11
+    pushd "${_hyprinstallDir}/hyprpaper-${_hyprpaperVersion}" || exit 11
 
     cmake \
         --no-warn-unused-cli \
@@ -775,10 +775,10 @@ _dbiHyprlockFn () {
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
         "${_hyprlockVersion}")"
     _downloadSourceFn \
-        "hyprlock-v${_hyprlockVersion}" \
+        "hyprlock-${_hyprlockVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprlockVersion}")"
 
-    pushd "${_hyprinstallDir}/hyprlock-v${_hyprlockVersion}" || exit 12
+    pushd "${_hyprinstallDir}/hyprlock-${_hyprlockVersion}" || exit 12
 
     cmake \
         --no-warn-unused-cli \
@@ -804,10 +804,10 @@ _dbiHypridleFn () {
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
         "${_hypridleVersion}")"
     _downloadSourceFn \
-        "hypridle-v${_hypridleVersion}" \
+        "hypridle-${_hypridleVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hypridleVersion}")"
 
-    pushd "${_hyprinstallDir}/hypridle-v${_hypridleVersion}" || exit 13
+    pushd "${_hyprinstallDir}/hypridle-${_hypridleVersion}" || exit 13
 
     cmake \
         --no-warn-unused-cli \
@@ -833,10 +833,10 @@ _dbiXdgDesktopPortalHyprlandFn () {
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
         "${_xdgDesktopPortalHyprlandVersion}")"
     _downloadSourceFn \
-        "xdg-desktop-portal-hyprland-v${_xdgDesktopPortalHyprlandVersion}" \
+        "xdg-desktop-portal-hyprland-${_xdgDesktopPortalHyprlandVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_xdgDesktopPortalHyprlandVersion}")"
 
-    pushd "${_hyprinstallDir}/xdg-desktop-portal-hyprland-v${_xdgDesktopPortalHyprlandVersion}" || exit 14
+    pushd "${_hyprinstallDir}/xdg-desktop-portal-hyprland-${_xdgDesktopPortalHyprlandVersion}" || exit 14
 
     cmake \
         -DCMAKE_INSTALL_LIBEXECDIR:PATH=/usr/lib \
@@ -861,10 +861,10 @@ _dbiHyprlandPluginsFn () {
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
         "${_hyprlandPluginsVersion}")"
     _downloadSourceFn \
-        "hyprlandPlugins-v${_hyprlandPluginsVersion}" \
+        "hyprlandPlugins-${_hyprlandPluginsVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprlandPluginsVersion}")"
 
-    pushd "${_hyprinstallDir}/hyprlandPlugins-v${_hyprlandPluginsVersion}" || exit 13
+    pushd "${_hyprinstallDir}/hyprlandPlugins-${_hyprlandPluginsVersion}" || exit 13
 
     if [[ "${#_hyprlandPlugins}" -eq 0 ]]; then
         _skpMsg "No plugins specified. Skipping hyprland-plugins install."
@@ -897,10 +897,10 @@ _dbiHyprlandContribFn () {
 
     _hyprlandContribVersion="$(_getLatestOrValidateVersionFn "$(_getSourceLinkFn "${_repo_src[@]}")" "${_hyprlandContribVersion}")"
     _downloadSourceFn \
-        "hyprlandContrib-v${_hyprlandContribVersion}" \
+        "hyprlandContrib-${_hyprlandContribVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprlandContribVersion}")"
 
-    pushd "${_hyprinstallDir}/hyprlandContrib-v${_hyprlandContribVersion}" || exit 13
+    pushd "${_hyprinstallDir}/hyprlandContrib-${_hyprlandContribVersion}" || exit 13
     mapfile -t -d$'\n' _all_contrib_scripts \
         < <(find ./contrib -mindepth 1 -maxdepth 1 -type d ! -name ".*" -exec basename -a -- {} +)
 
