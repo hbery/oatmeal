@@ -294,13 +294,19 @@ _getVersionPartFn () {
 }
 
 _getLatestOrValidateVersionFn () {
-    local _repository _version
+    local _repository _version _potential_version
     _repository="${1:-}"
     _version="${2:-}"
 
-    if [[ -n "${_allLatest}" || "${_version}" == latest ]]; then
-        printf "%s" "$(git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' "${_repository}" \
-            tail -1 | perl -pe 's/.*((\d+)\.(\d+)(?!\.(\d+))).*/$1/')"
+    if [[ -n "${_allLatest}" || "${_version}" == "latest" ]]; then
+        _potential_version="$(git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' "${_repository}" \
+            | awk 'END{print $2}' | tr -d '/[:alpha:]^}{')"
+
+        if [ -z "${_potential_version}" ]; then
+            _errMsg "Cannot find latest version tag in ${_repository}"
+            exit 30
+        fi
+        printf "%s" "${_potential_version}"
     else
         if git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' "${_repository}" | grep "${_version}" &>/dev/null; then
             printf "%s" "${_version}"
@@ -606,10 +612,13 @@ _dbiLibliftoffFn () {
 }
 
 _dbiLibxcbErrorsFn () {
-    _hedMsg "Starting \`libxcb-errors\` install from source, version: ${_libliftoffVersion}"
+    _hedMsg "Starting \`libxcb-errors\` install from source, version: ${_libxcbErrorsVersion}"
     local _repo_src=()
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["libxcb-errors"]}"
 
+    if [ -d "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}" ]; then
+        rm -rf "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}"
+    fi
     _cloneSourceFn \
         "libxcb-errors-${_libxcbErrorsVersion}" \
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
