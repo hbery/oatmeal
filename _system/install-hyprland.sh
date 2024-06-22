@@ -18,6 +18,10 @@ _noPlugins=
 _noContrib=
 _allLatest=
 _noCleanup=
+declare -a _selectedAddons=()
+declare -a _hyprlandPlugins=()
+declare -a _contribScripts=()
+
 
 _redClr="\e[1;31m"
 _grnClr="\e[1;32m"
@@ -199,10 +203,6 @@ _EOH1
 }
 
 _parseArgumentsFn () {
-    declare -a _selectedAddons
-    declare -a _hyprlandPlugins
-    declare -a _contribScripts
-
     while [[ $# -gt 0 ]]; do
         case "${1}" in
             -help)
