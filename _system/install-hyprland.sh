@@ -426,7 +426,7 @@ _dbiGccFn () {
 _dbiHyprlandFn () {
     _hedMsg "Starting \`Hyprland\` install from source, version: ${_hyprlandVersion}"
     _hyprlandVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "github" "Hyprland")" \
+        "$(_getSourceLinkFn "github" "hyprwm/Hyprland")" \
         "${_hyprlandVersion}")"
     _downloadSourceFn \
         "source-v${_hyprlandVersion}" \
