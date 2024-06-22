@@ -468,7 +468,7 @@ _dbiGccFn () {
 
     pushd "${_hyprinstallDir}/${_gccVersion}" || exit 20
 
-    ./contrib/download_prerequisities
+    ./contrib/download_prerequisites
     mkdir build && pushd build
     ../configure \
         --prefix="/opt/${_gccVersion%%.*}" \
