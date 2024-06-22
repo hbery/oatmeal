@@ -30,7 +30,7 @@ _norClr="\e[m"
 if [ "${ID}" = "ubuntu" ]; then
     _hyprlandVersion="${HYPRINSTALL_HYPRLAND_VERSION:-"0.41.1"}"
 
-    _waylandProtocolsVersion="${HYPRINSTALL_WAYLAND_PROTOCOLS_VERSION:-"1.32"}"
+    _waylandProtocolsVersion="${HYPRINSTALL_WAYLAND_PROTOCOLS_VERSION:-"1.35"}"
     _waylandVersion="${HYPRINSTALL_WAYLAND_VERSION:-"1.23.0"}"
     _libdisplayInfoVersion="${HYPERINSTALL_LIBDISPLAY_INFO_VERSION:-"0.1.1"}"
     _libinputVersion="${HYPRINSTALL_LIBINPUT_VERSION:-"1.24.0"}"
@@ -401,6 +401,7 @@ _cloneSourceFn () {
     _repository="${2:-}"
     _release="${3:-}"
     _recursive="${4:-}"
+    _checkout_later=""
 
     declare -a _git_args=("--quiet")
     if [ -n "${_recursive}" ]; then _git_args+=("--recursive"); fi
