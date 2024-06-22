@@ -405,14 +405,10 @@ _cloneSourceFn () {
     declare -a _git_args=("--quiet")
     if [ -n "${_recursive}" ]; then _git_args+=("--recursive"); fi
     if [[ ! "${_release}" =~ ^"tag="* ]]; then _git_args+=("--branch" "${_release}"); else _checkout_later="yes"; fi
+    _git_args+=("${_repository}" "${_hyprinstallDir}/${_srcd_name}")
 
     set -x
-    git clone \
-        --quiet \
-        "${_recursive:+"--recursive"}" \
-        --branch "${_release}" \
-        "${_repository}" \
-        "${_hyprinstallDir}/${_srcd_name}"
+    git clone "${_git_args[@]}"
 
     if [[ "${_checkout_later}" == "yes" ]]; then
         git -C "${_hyprinstallDir}/${_srcd_name}" checkout "${_release/tag=/}"
@@ -1044,6 +1040,7 @@ _installAddonsFn () {
 }
 
 _cleanupFn () {
+    set +x
     if [ -z "${_noCleanup}" ]; then
         cd "${_hyprinstallDir}/../"
         rm -rf "${_hyprinstallDir}"
