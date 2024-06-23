@@ -1,0 +1,28 @@
+# vim: ft=conf
+[General]
+DefaultSession=hyprland.desktop
+DisplayServer=wayland
+# GreeterEnvironment=QT_WAYLAND_SHELL_INTEGRATION=layer-shell
+HaltCommand=/run/current-system/systemd/bin/systemctl poweroff
+InputMethod=
+Numlock=none
+RebootCommand=/run/current-system/systemd/bin/systemctl reboot
+
+[Users]
+MinimumUid=1000
+MaximumUid=60513
+HideShells=/sbin/nologin
+RememberLastUser=true
+EnableAvatar=true
+
+[Theme]
+Current=catppuccin-macchiato
+# Background=
+
+[Wayland]
+CompositorCommand=DISPLAY=Virtual-1 weston --shell=fullscreen-shell.so --log=.local/share/sddm/weston.log
+EnableHiDPI=true
+
+SessionDir=/usr/local/share/wayland-sessions,/usr/share/wayland-sessions
+SessionCommand=/usr/share/sddm/scripts/wayland-session
+SessionLogFile=.local/share/sddm/wayland-session.log
