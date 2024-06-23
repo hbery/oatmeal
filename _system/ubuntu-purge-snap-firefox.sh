@@ -1,7 +1,11 @@
 #!/bin/bash
 # vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
-#
-# purge snap firefox from ubuntu
+# ~~~
+# $date: 2024
+# $author: Adam Twardosz (github.com/hbery)
+# $description:
+#   Purge snap firefox from ubuntu
+# ~~~
 
 set -euo pipefail
 
@@ -34,6 +38,6 @@ _mainFn () {
     _switchFirefoxSnap2DebFn
 }
 
-if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     _mainFn "${@:-}"
 fi

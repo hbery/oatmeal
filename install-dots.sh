@@ -1,20 +1,15 @@
 #!/bin/bash
-# vim: ft=bash : ts=4 : sts=4 : sw=2 : et :
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
 # ~~~
-# Date: 2022
-# Author: Adam Twardosz (github.com/hbery)
-# Purpose: install dotfiles and stuff across the system (mostly $HOME)
+# $date: 2024
+# $author: Adam Twardosz (github.com/hbery)
+# $description:
+#   Install dotfiles and stuff across the system (mostly $HOME)
 # ~~~
 
-### BEGIN: SCRIPT_OPTIONS {
-### . END: SCRIPT_OPTIONS }
-
-### BEGIN: GLOBAL_SECTION {
 _stowDetected="$(which stow)"
 _stowBinary="${_stowDetected:-"/usr/bin/stow"}"
-### . END: GLOBAL_SECTION }
 
-### BEGIN: COLOR_PALETTE {
 _redClr="\e[1;31m"
 _grnClr="\e[1;32m"
 _yelClr="\e[1;33m"
@@ -24,9 +19,7 @@ _cyaClr="\e[1;36m"
 _graClr="\e[2;37m"
 _bldClr="\e[1m"
 _norClr="\e[m"
-### . END: COLOR_PALETTE }
 
-### BEGIN: TAG_SECTION {
 declare -A _tagMap
 
  # base tags
@@ -46,10 +39,7 @@ _tagMap[xfce]="xfce plank rofi"
 _tagMap[qtile]="qtilewm dunst rofi nitrogen"
 _tagMap[awesome]="awesomewm dunst rofi nitrogen"
 _tagMap[bspwm]="bspwm sxhkd dunst rofi nitrogen"
-### . END: TAG_SECTION }
 
-### BEGIN: FUNCTION_SECTION {
-## BEGIN _xxxMsg {
 _errMsg () { >&2 echo -e "${_redClr}ERROR:${_norClr}${_bldClr} $*${_norClr}"; }
 _wrnMsg () { echo -e "${_yelClr}WARN:${_norClr}${_bldClr} $*${_norClr}";      }
 _sucMsg () { echo -e "${_grnClr}SUCCESS:${_norClr}${_bldClr} $*${_norClr}";   }
@@ -58,9 +48,7 @@ _endMsg () { echo -e "${_cyaClr}===${_norClr}${_bldClr} $*${_norClr}";        }
 _infMsg () { echo -e "${_bldClr}*** $*${_norClr}";                            }
 _skpMsg () { echo -e "${_graClr}***${_norClr}${_bldClr} $*${_norClr}";        }
 _prgMsg () { echo -e "${_bluClr}|=>${_norClr}${_bldClr} $*${_norClr}";        }
-## . END _xxxMsg }
 
-## BEGIN _usageFn {
 _usageFn () {
     cat << _EOH1
 usage: $(basename "$0") [-h] [-a] [-t TAGS] [-I] [-F] [-P] [-w] [-W] [-S]
@@ -92,11 +80,9 @@ done
 _EOH1
     echo -e "  * ${_grnClr}custom${_norClr}: ${_graClr}what_do_you_want; format \`-t custom:dir1,dir2,..\`${_norClr}"
 }
-## . END _usageFn }
 
-## BEGIN _parseArgumentsFn {
- # parse commandline arguments for script to run
 _parseArgumentsFn () {
+    # parse commandline arguments for script to run
     while getopts ':hat:IFwWPS' _option; do
         case "${_option}" in
             h)
@@ -127,12 +113,10 @@ _parseArgumentsFn () {
         esac
     done
 }
-## . END _parseArgumentsFn }
 
-## BEGIN _checkErrCodeAndPrintFn {
- # wrapper for error checking whether certain action returned success or errors
- # and print it for the user
 _checkErrCodeAndPrintFn () {
+    # wrapper for error checking whether certain action returned success or errors
+    # and print it for the user
     local _errcode _msg_on_error _msg_on_success
 
     _errcode="${1:-}"
@@ -145,18 +129,14 @@ _checkErrCodeAndPrintFn () {
         _sucMsg "${_msg_on_success}"
     fi
 }
-## . END _checkErrCodeAndPrintFn }
 
-## BEGIN _installPackagesFn {
 _installPackagesFn () {
     # TODO 2022-06-08: implement installation script for every package manager
     /bin/true
 }
-## . END _installPackagesFn }
 
-## BEGIN _installDotfilesFn {
- # install TAGS from accompaning directory to HOME directory
 _installDotfilesFn () {
+    # install TAGS from accompaning directory to HOME directory
     local _stow_description_dir _stow_destination_dir
     declare -a _tags_to_install
 
@@ -165,14 +145,11 @@ _installDotfilesFn () {
     _tags_to_install=("${@}")
 
     ${_stowBinary} \
-        --verbose=5 \
         --dir="${_stow_description_dir}" \
         --target="${_stow_destination_dir}" \
         --stow "${_tags_to_install[@]}"
 }
-## . END _installDotfilesFn }
 
-## BEGIN _installFontsFn {
 _installFontsFn () {
     local _tmp_fonts_directory _dest_fonts_directory _errcode
 
@@ -191,9 +168,7 @@ _installFontsFn () {
 
     return ${_errcode}
 }
-## . END _installFontsFn }
 
-## BEGIN _installIconsFn {
 _installIconsFn () {
     local _tmp_icons_directory _dest_icons_directory _errcode
 
@@ -212,9 +187,7 @@ _installIconsFn () {
 
     return ${_errcode}
 }
-## . END _installIconsFn }
 
-## BEGIN _getAndInstallWallpapersFn {
 _getAndInstallWallpapersFn () {
     local _wallpapers_direcory
 
@@ -225,9 +198,7 @@ _getAndInstallWallpapersFn () {
       ln -s "$(realpath "${_image}")" "$(realpath "${_wallpapers_direcory}")/${_image}"
     done <<<"$(find "$(dirname "$0")/_images" -type f -regextype posix-extended -regex ".*(jpg|png)" -print)"
 }
-## . END _getAndInstallWallpapersFn }
 
-## BEGIN _getAndInstallGitWallpapersFn {
 _getAndInstallGitWallpapersFn () {
     local _dest_wallpapers_directory _errcode
 
@@ -246,9 +217,7 @@ _getAndInstallGitWallpapersFn () {
 
     return ${_errcode}
 }
-## . END _getAndInstallGitWallpapersFn }
 
-## BEGIN _applyQtKdeChangesFn {
 _applyQtKdeChangesFn () {
     local _errcode
 
@@ -266,9 +235,7 @@ _applyQtKdeChangesFn () {
 
     return ${_errcode}
 }
-## . END _applyQtKdeChangesFn }
 
-## BEGIN _applyGtkXfceCahngesFn {
 _applyGtkXfceChangesFn () {
     local _errcode
 
@@ -285,24 +252,18 @@ _applyGtkXfceChangesFn () {
         "GTK/XFCE THEMES application succeded."
     return ${_errcode}
 }
-## . END _applyGtkXfceCahngesFn }
 
-## BEGIN _applySystemChangesFn {
 _applySystemChangesFn () {
     # TODO 2022-06-10: implement applying System changes
     /bin/true
 }
-## . END _applySystemChangesFn }
 
-## BEGIN _cleanupFn {
 _cleanupFn () {
     # TODO 2022-06-10: implement cleanup functionality
     [ -d "/tmp/fonts-tmp" ] && rm -rfv "/tmp/fonts-tmp"
     [ -d "/tmp/icons-tmp" ] && rm -rfv "/tmp/icons-tmp"
 }
-## . END _cleanupFn }
 
-## BEGIN _mainFn {
 _mainFn () {
     # parse arguments
     _parseArgumentsFn "$@"
@@ -377,11 +338,7 @@ _mainFn () {
     _cleanupFn
     _endMsg "End of Script."
 }
-## . END _mainFn }
-### . END: FUNCTION_SECTION }
 
-### BEGIN: MAIN_SECTION {
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
     _mainFn "$@"
 fi
-### . END: MAIN_SECTION }

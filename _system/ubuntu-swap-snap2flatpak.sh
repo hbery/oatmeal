@@ -1,7 +1,11 @@
 #!/bin/bash
 # vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
-#
-# swap snap to flatpak
+# ~~~
+# $date: 2024
+# $author: Adam Twardosz (github.com/hbery)
+# $description:
+#   Swap snap to flatpak
+# ~~~
 
 set -euo pipefail
 
@@ -44,6 +48,6 @@ _mainFn () {
     _setupFlatpakFn
 }
 
-if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     _mainFn "${@:-}"
 fi

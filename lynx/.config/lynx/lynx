@@ -1,22 +1,25 @@
-#!/bin/sh
-#
-# all lynx config borrowed from rwxrob
+#!/bin/bash
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
+# ~~~
+# $author: github.com/rwxrob
+# $description:
+#   Lynx launch script
+# ~~~
 
 _lynxpath="/usr/bin/lynx"
 _useragent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.79 Safari/537.1 Lynx"
 
 if [ -e "${HOME}/.config/lynx/lynx.cfg" ];then
-  export LYNX_CFG="${HOME}/.config/lynx/lynx.cfg"
+    export LYNX_CFG="${HOME}/.config/lynx/lynx.cfg"
 fi
 
 if [ -e "${HOME}/.config/lynx/lynx.lss" ];then
-  export LYNX_LSS="${HOME}/.config/lynx/lynx.lss"
+    export LYNX_LSS="${HOME}/.config/lynx/lynx.lss"
 fi
 
 if [ ! -x "${_lynxpath}" ]; then
-  echo "Doesn't look like lynx is installed."
-  exit 1
+    echo >&2 "Doesn't look like lynx is installed."
+    exit 1
 fi
 
 exec "${_lynxpath}" --useragent="${_useragent}" "$@"
-

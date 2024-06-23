@@ -1,7 +1,11 @@
 #!/bin/bash
 # vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
-#
-# install GO system-wide
+# ~~~
+# $date: 2024
+# $author: Adam Twardosz (github.com/hbery)
+# $description:
+#   Install Golang system-wide
+# ~~~
 
 _goHome="${GO_HOME:-"/opt/go"}"
 _goChosenVersion="${GO_VERSION:-"latest"}"

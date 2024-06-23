@@ -1,7 +1,11 @@
 #!/bin/bash
 # vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
-#
-# install RUST system-wide
+# ~~~
+# $date: 2024
+# $author: Adam Twardosz (github.com/hbery)
+# $description:
+#   Install RUST system-wide
+# ~~~
 
 _rustHome="${RUST_HOME:-"/opt/rust"}"
 _rustProfile="${RUST_PROFILE:-"default"}"

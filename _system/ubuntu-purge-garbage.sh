@@ -1,7 +1,11 @@
 #!/bin/bash
 # vim: ts=4 : sts=4 : sw=4 : et :
-#
-# purge ubuntu garbage
+# ~~~
+# $date: 2024
+# $author: Adam Twardosz (github.com/hbery)
+# $description:
+#   Purge ubuntu garbage
+# ~~~
 
 set -euo pipefail
 
@@ -31,6 +35,6 @@ _mainFn () {
     _purgeTerminalAdsFn
 }
 
-if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     _mainFn "${@:-}"
 fi

@@ -1,12 +1,12 @@
 #!/bin/bash
 # vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
 # ~~~
-# Date: 2022
-# Author: Adam Twardosz (github.com/hbery)
-# Purpose: install fonts in .local/share/fonts direcory
+# $date: 2022
+# $author: Adam Twardosz (github.com/hbery)
+# $description:
+#   Install fonts in ${HOME}/.local/share/fonts direcory and place fontconfig
 # ~~~
 
-### BEGIN: SCRIPT_OPTIONS {
 _localFontDirectory="${HOME}/.local/share/fonts"
 _tempFontDirectory="/tmp/fonts"
 _nerdFontLink="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1"
@@ -18,10 +18,7 @@ _otherFontList="Noto-Emoji;https://github.com/googlefonts/noto-emoji/raw/main/fo
                 font-awesome;https://use.fontawesome.com/releases/v6.5.2/fontawesome-free-6.5.2-desktop.zip"
 _shippedFontList="DankMono Liberata Bookerly"
 _necessaryPkgs=("unzip:unzip" "fc-cache:fontconfig" "wget:wget" "file-rename:rename")
-### . END: SCRIPT_OPTIONS }
 
-
-### BEGIN: COLOR_PALETTE {
 _redClr="\e[1;31m"
 _grnClr="\e[1;32m"
 _yelClr="\e[1;33m"
@@ -31,11 +28,7 @@ _cyaClr="\e[1;36m"
 _graClr="\e[2;37m"
 _bldClr="\e[1m"
 _norClr="\e[m"
-### . END: COLOR_PALETTE }
 
-
-### BEGIN: FUNCTION_SECTION {
-## BEGIN _xxxMsg {
 _errMsg () { >&2 echo -e "${_redClr}ERROR:${_bldClr} $*${_norClr}"; }
 _wrnMsg () { echo -e "${_yelClr}WARN:${_bldClr} $*${_norClr}";      }
 _sucMsg () { echo -e "${_grnClr}SUCCESS:${_bldClr} $*${_norClr}";   }
@@ -44,9 +37,7 @@ _endMsg () { echo -e "${_cyaClr}===${_bldClr} $*${_norClr}";        }
 _infMsg () { echo -e "${_bldClr}*** $*${_norClr}";                  }
 _skpMsg () { echo -e "${_graClr}***${_bldClr} $*${_norClr}";        }
 _prgMsg () { echo -e "${_bluClr}|=>${_bldClr} $*${_norClr}";        }
-## . END _xxxMsg }
 
-## BEGIN _usageFn {
 _usageFn () {
     cat << _EOH1
 usage: $(basename "$0") [-h] [-d DDIR] [-t TDIR] [-a]
@@ -67,9 +58,7 @@ usage: $(basename "$0") [-h] [-d DDIR] [-t TDIR] [-a]
                 (specify path to font directory) [WIP]
 _EOH1
 }
-## . END _usageFn }
 
-## BEGIN _parseArgumentsFn {
 _parseArgumentsFn () {
     while getopts ':hd:t:aMNGOLC:' _option; do
         case "${_option}" in
@@ -99,9 +88,7 @@ _parseArgumentsFn () {
         esac
     done
 }
-## . END _parseArgumentsFn }
 
-## BEGIN _checkBinariesFn {
 _checkBinariesFn () {
     for _pkg in "${_necessaryPkgs[@]}"; do
         if ! command -v "${_pkg%:*}" &>/dev/null; then
@@ -110,9 +97,7 @@ _checkBinariesFn () {
         fi
     done
 }
-## . END _checkBinariesFn }
 
-## BEGIN _checkErrCodeAndPrintFn {
 _checkErrCodeAndPrintFn () {
     local _errcode _msg_on_error _msg_on_success
     _errcode="${1:-}"
@@ -125,9 +110,7 @@ _checkErrCodeAndPrintFn () {
         _sucMsg "${_msg_on_success}"
     fi
 }
-## . END _checkErrCodeAndPrintFn }
 
-## BEGIN _downloadFontFn {
 _downloadFontFn () {
     local _font_url _font_name _zip_file_location
     _font_url="${1:-}"
@@ -139,9 +122,7 @@ _downloadFontFn () {
         -O "${_zip_file_location}/${_font_name}.zip" \
         "${_font_url}"
 }
-## . END _downloadFontFn }
 
-## BEGIN _checkoutFontFromGitRepoFn {
 _checkoutFontFromGitRepoFn () {
     local _font_name _repository _relative_path _tmp_dir
     _font_name="${1:-}"
@@ -157,9 +138,7 @@ _checkoutFontFromGitRepoFn () {
     popd &>/dev/null || exit 1
     printf "%s" "${_tmp_dir}/${_relative_path}"
 }
-## . END _checkoutFontFromGitRepoFn }
 
-## BEGIN _unpackFontFn {
 _unpackFontFn () {
     local _tmp_location _font_name _font_destination
     _tmp_location="${1:-}"
@@ -172,9 +151,7 @@ _unpackFontFn () {
     unzip "${_tmp_location}/${_font_name}.zip" \
         -d "${_font_destination}/${_font_name}/"
 }
-## . END _unpackFontFn }
 
-## BEGIN _installNerdFontFn {
 _installNerdFontFn () {
     local _font_name _font_url _tmp_location _font_destination
     _font_name="${1:-}"
@@ -186,9 +163,7 @@ _installNerdFontFn () {
     _downloadFontFn "${_font_url}" "${_font_name}" "${_tmp_location}"
     _unpackFontFn "${_tmp_location}" "${_font_name}" "${_font_destination}"
 }
-## . END _installNerdFontFn }
 
-## BEGIN _installGoogleFontFn {
 _installGoogleFontFn () {
     local _font_name _repository _tmp_location _font_destination _path2font
     _font_name="${1:-}"
@@ -208,9 +183,7 @@ _installGoogleFontFn () {
     # shellcheck disable=SC2016
     file-rename -v -E 's/(.*)(\[.*\])(.*)/$1$3/' "${_font_name}"*
 }
-## . END _installGoogleFontFn }
 
-## BEGIN _installOtherFontFn {
 _installOtherFontFn () {
     local _font_name _font_url _tmp_location _font_destination
     _font_name="${1%%;*}"
@@ -222,9 +195,7 @@ _installOtherFontFn () {
     _downloadFontFn "${_font_url}" "${_font_name}" "${_tmp_location}"
     _unpackFontFn "${_tmp_location}" "${_font_name}" "${_font_destination}"
 }
-## . END _installOtherFontFn }
 
-## BEGIN _installShippedFontFn {
 _installShippedFontFn () {
     local _font_name _font_destination
     _font_name="${1:-}"
@@ -233,9 +204,7 @@ _installShippedFontFn () {
     _prgMsg "Installing font: ${_font_name}"
     cp -rv "$(dirname "$0")/${_font_name}" "${_font_destination}/"
 }
-## . END _installShippedFontFn }
 
-## BEGIN _installMicrosoftFontsFn {
 _installMicrosoftFontsFn () {
     local _font_destination _errcode
     _font_destination="${1:-}"
@@ -250,9 +219,7 @@ _installMicrosoftFontsFn () {
 
     return ${_errcode}
 }
-## . END _installMicrosoftFontsFn }
 
-## BEGIN _installCustomFontsFn {
 _installCustomFontsFn () {
     local _font_name _font_destination
     _font_name="${1:-}"
@@ -261,18 +228,14 @@ _installCustomFontsFn () {
     _skpMsg "[ WIP ] Not yet implemented"
     true
 }
-## . END _installCustomFontsFn }
 
-## BEGIN _updateCacheFn {
 _updateCacheFn () {
     local _font_directory
     _font_directory="${1:-}"
 
     fc-cache -fv "${_font_directory}"
 }
-## . END _updateCacheFn }
 
-## BEGIN _mainFn {
 _mainFn () {
     local _temporary_files_location _local_font_location
     _parseArgumentsFn "$@"
@@ -363,12 +326,7 @@ _mainFn () {
     _infMsg "Cleanup"
     rm -rf "${_temporary_files_location}"
 }
-## . END _mainFn }
-### . END: FUNCTION_SECTION }
 
-
-### BEGIN: MAIN_SECTION {
-if [ "${BASH_SOURCE[0]}" = "$0" ]; then
-    _mainFn "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    _mainFn "${@:-}"
 fi
-### . END: MAIN_SECTION }

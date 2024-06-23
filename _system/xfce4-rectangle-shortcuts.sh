@@ -1,7 +1,11 @@
 #!/bin/bash
 # vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
-#
-# setup XFCE4 keybinds like MacOS RectangleApp
+# ~~~
+# $date: 2024
+# $author: Adam Twardosz (github.com/hbery)
+# $description:
+#   Setup XFCE4 keybinds like MacOS RectangleApp
+# ~~~
 
 set -euo pipefail
 
@@ -136,6 +140,6 @@ _mainFn () {
     _setWindowResizeBindsFn
 }
 
-if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     _mainFn "${@:-}"
 fi

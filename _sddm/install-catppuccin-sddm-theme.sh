@@ -72,3 +72,7 @@ _mainFn () {
     _overrideThemeOptionsFn
     _setThemeFn "catppuccin-macchiato"
 }
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    _mainFn "${@:-}"
+fi
