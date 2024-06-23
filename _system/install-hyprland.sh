@@ -511,7 +511,7 @@ _dbiGccFn () {
 
     pushd "${_hyprinstallDir}/${_gccVersion}" || exit 20
 
-    if [[ ! -e "/opt/${_gccVersion%%.*}/gcc" && ! -e "/opt/${_gccVersion%%.*}/g++" ]]; then
+    if [[ ! -e "/opt/${_gccVersion%%.*}/bin/gcc" && ! -e "/opt/${_gccVersion%%.*}/bin/g++" ]]; then
         ./contrib/download_prerequisites
         mkdir build && pushd build
         ../configure \
