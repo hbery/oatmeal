@@ -530,10 +530,10 @@ _dbiGccFn () {
     _endMsg "Finished \`gcc\` install from source"
 
     _prgMsg "Setting script-wide CC and CXX.."
-    _infMsg "  ..Exporting CC=/opt/${_gccVersion%%.*}/gcc"
-    export CC="/opt/${_gccVersion%%.*}/gcc"
-    _infMsg "  ..Exporting CXX=/opt/${_gccVersion%%.*}/g++"
-    export CXX="/opt/${_gccVersion%%.*}/g++"
+    _infMsg "  ..Exporting CC=/opt/${_gccVersion%%.*}/bin/gcc"
+    export CC="/opt/${_gccVersion%%.*}/bin/gcc"
+    _infMsg "  ..Exporting CXX=/opt/${_gccVersion%%.*}/bin/g++"
+    export CXX="/opt/${_gccVersion%%.*}/bin/g++"
 }
 
 _dbiHyprlandFn () {
