@@ -1,14 +1,11 @@
 #!/bin/bash
 # vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
-#
 # ~~~
-#
 # $date: 2024
 # $author: Adam Twardosz (github.com/hbery)
 # $description:
 #   Install Hyprland Wayland Compositor alongside
 #   with the dependencies and addons.
-#
 # ~~~
 # MIT License
 #
@@ -1134,6 +1131,6 @@ _mainFn () {
     popd || exit 1
 }
 
-if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     _mainFn "${@:-}"
 fi
