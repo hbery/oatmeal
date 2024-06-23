@@ -80,12 +80,12 @@ if [ "${ID}" = "ubuntu" ]; then
 
     _ubuntuSpecificPackages=("vulkan-utility-libraries-dev")
 elif [ "${ID}" = "debian" ]; then
-    _hyprlandVersion="${HYPRINSTALL_HYPRLAND_VERSION:-"0.28.0"}"
+    _hyprlandVersion="${HYPRINSTALL_HYPRLAND_VERSION:-"0.41.1"}"
 
-    _waylandProtocolsVersion="${HYPRINSTALL_WAYLAND_PROTOCOLS_VERSION:-"1.32"}"
-    _waylandVersion="${HYPRINSTALL_WAYLAND_VERSION:-"1.22.0"}"
+    _waylandProtocolsVersion="${HYPRINSTALL_WAYLAND_PROTOCOLS_VERSION:-"1.35"}"
+    _waylandVersion="${HYPRINSTALL_WAYLAND_VERSION:-"1.23.0"}"
     _libdisplayInfoVersion="${HYPERINSTALL_LIBDISPLAY_INFO_VERSION:-"0.1.1"}"
-    _libinputVersion="${HYPRINSTALL_LIBINPUT_VERSION:-"1.23.0"}"
+    _libinputVersion="${HYPRINSTALL_LIBINPUT_VERSION:-"1.24.0"}"
     _libliftoffVersion="${HYPRINSTALL_LIBLIFTOFF_VERSION:-"0.4.1"}"
     _libxcbErrorsVersion="${HYPRINSTALL_LIBXCB_ERRORS_VERSION:-"xcb-util-errors-1.0.1"}"
 
@@ -511,20 +511,29 @@ _dbiGccFn () {
 
     pushd "${_hyprinstallDir}/${_gccVersion}" || exit 20
 
-    ./contrib/download_prerequisites
-    mkdir build && pushd build
-    ../configure \
-        --prefix="/opt/${_gccVersion%%.*}" \
-        --enable-languages=c,c++,fortran,go \
-        --disable-multilib
+    if [[ ! -e "/opt/${_gccVersion%%.*}/gcc" && ! -e "/opt/${_gccVersion%%.*}/g++" ]]; then
+        ./contrib/download_prerequisites
+        mkdir build && pushd build
+        ../configure \
+            --prefix="/opt/${_gccVersion%%.*}" \
+            --enable-languages=c,c++,fortran,go \
+            --disable-multilib
 
-    make \
-        -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo make install
+        make bootstrap-lean \
+            -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
+        sudo make install
 
-    popd || exit 1
+        popd || exit 1
+    fi
+
     popd || exit 1
     _endMsg "Finished \`gcc\` install from source"
+
+    _prgMsg "Setting script-wide CC and CXX.."
+    _infMsg "  ..Exporting CC=/opt/${_gccVersion%%.*}/gcc"
+    export CC="/opt/${_gccVersion%%.*}/gcc"
+    _infMsg "  ..Exporting CXX=/opt/${_gccVersion%%.*}/g++"
+    export CXX="/opt/${_gccVersion%%.*}/g++"
 }
 
 _dbiHyprlandFn () {
@@ -845,6 +854,10 @@ _dbiHyprutilsFn () {
 }
 
 _installDependenciesFn () {
+    if [[ "$(gcc -dumpversion)" -lt 13 ]]; then
+        _dbiGccFn
+    fi
+
     _dbiWaylandProtocolsFn
     _dbiWaylandFn
     _dbiLibdisplayInfoFn
@@ -857,10 +870,6 @@ _installDependenciesFn () {
         _dbiHyprcursorFn
         _dbiHyprwaylandScannerFn
         _dbiHyprutilsFn
-    fi
-
-    if [[ "$(gcc -dumpversion)" -lt 13 ]]; then
-        _dbiGccFn
     fi
 }
 
