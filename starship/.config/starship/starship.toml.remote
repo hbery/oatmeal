@@ -1,0 +1,90 @@
+# ~~~
+#          __                  __    _
+#    _____/ /_____ ___________/ /_  (_)___
+#   / ___/ __/ __ `/ ___/ ___/ __ \/ / __ \
+#  (__  ) /_/ /_/ / /  (__  ) / / / / /_/ /
+# /____/\__/\__,_/_/  /____/_/ /_/_/ .___/
+#                                 /_/
+#
+#
+# ~/.config/starship/starship.toml
+# starship.rs prompt configuration
+# by hbery
+# ~~
+
+# format string
+format = """
+$status\
+$hostname\
+$shlvl\
+$kubernetes\
+$directory\
+$vcsh\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$hg_branch\
+$docker_context\
+$package\
+$cmake\
+$perl\
+$php\
+$python\
+$ruby\
+$rust\
+$scala\
+$conda\
+$memory_usage\
+$env_var\
+$cmd_duration\
+$line_break\
+$jobs\
+$battery\
+$time\
+$shell\
+$character"""
+
+# Don't print a new line at the start of the prompt
+add_newline = false
+
+# Don't use double line package
+[line_break]
+disabled = true
+
+[character]
+vicmd_symbol = "[V](bold green) "
+error_symbol = "[✗](bold red) "
+
+# Disable the package module, hiding it from the prompt completely
+[package]
+disabled = true
+
+[status]
+disabled = false
+format = '[$status]($style) '
+
+[cmd_duration]
+disabled = true
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+style = "blue"
+
+[username]
+disabled = false
+style_user = "bold dimmed yellow"
+show_always = true
+format = '[$user]($style)'
+
+[hostname]
+disabled = false
+ssh_only = false
+format = "[](fg:#33658A)[$hostname](bg:#33658A)[](fg:#33658A) "
+
+[jobs]
+symbol = ""
+
+[python]
+format = 'via [python](yellow bold) [${pyenv_prefix}${version} (\($virtualenv\) )]($style)'
