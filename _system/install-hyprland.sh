@@ -45,6 +45,7 @@ _noPlugins=
 _noContrib=
 _allLatest=
 _noCleanup=
+_reuseSourceDirs=
 declare -a _selectedAddons=()
 declare -a _hyprlandPlugins=()
 declare -a _contribScripts=()
@@ -185,7 +186,7 @@ _EOB
 
 _usageFn () {
     cat << _EOH1
-usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddons] [+nocleanup]
+usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddons] [+nocleanup] [+reusesrc]
                         [-addons ADDON1,ADDON2,..] [-plugins PLUG1,PLUG2,..] [-contrib SCRIPT1,SCRIPT2,..]
 
     -help               Show this help.
@@ -198,6 +199,7 @@ usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddo
     +nocleanup          Do not cleanup build directory.
     +noplugins          Do not install hyprland-plugins.
     +nocontrib          Do not install hyprland-contrib.
+    +reusesrc           Reuse already downloaded/cloned source from libs/packages.
     -addons             Install custom addons, ',' separated.
                           (need to specify with +noaddons)
                         Available:
@@ -267,6 +269,10 @@ _parseArgumentsFn () {
                 ;;
             +nocleanup)
                 _noCleanup="set"
+                shift
+                ;;
+            +reusesrc)
+                _reuseSourceDirs="set"
                 shift
                 ;;
             -addons)
@@ -424,6 +430,11 @@ _downloadSourceFn () {
     _link="${2:-}"
     _comp_algo="${_link##*.}"
 
+    if [[ -n "${_reuseSourceDirs}" && -d "${_hyprinstallDir}/${_srcd_name}" ]]; then
+        _infMsg "Tarball ${_srcd_name} already downloaded. Skipping downloading.."
+        return
+    fi
+
     _prgMsg "Downloading ${_srcd_name}..."
     _infMsg "  ..from ${_link}"
 
@@ -461,6 +472,11 @@ _cloneSourceFn () {
     _release="${3:-}"
     _recursive="${4:-}"
     _checkout_later=""
+
+    if [[ -n "${_reuseSourceDirs}" && -d "${_hyprinstallDir}/${_srcd_name}" ]]; then
+        _infMsg "Repository ${_srcd_name} already cloned. Skipping cloning.."
+        return
+    fi
 
     declare -a _git_args=("--quiet")
     if [ -n "${_recursive}" ]; then _git_args+=("--recursive"); fi
