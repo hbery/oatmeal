@@ -148,7 +148,7 @@ _commonPackages=(
     libgtk-3-dev libsystemd-dev edid-decode extra-cmake-modules libpam0g-dev qtbase5-dev qtdeclarative5-dev
     qttools5-dev python3-docutils check qt6-base-dev qt6-tools-dev qt6-declarative-dev libtomlplusplus-dev
     librsvg2-dev libzip-dev libpugixml-dev libxcb-util-dev libwlroots-dev automake xutils-dev libtool xcb-proto
-    xwayland
+    xwayland libtomlplusplus-dev
 )
 
 _errMsg () { >&2 echo -e "${_redClr}ERROR:${_norClr}${_bldClr} $*${_norClr}"; }
