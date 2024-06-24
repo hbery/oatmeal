@@ -511,6 +511,37 @@ _cloneSourceFn () {
     set +x
 }
 
+_exportGccVariablesFn () {
+    local _prefix _default_libs _new_libs _c_include_path _cplus_include_path
+    _prefix="${1:-}"
+
+    _prgMsg "Setting script-wide CC, CXX, C_INCLUDE_PATH, CPLUS_INCLUDE_PATH and LD_LIBRARY_PATH.."
+
+    _infMsg "  ..Exporting CC=${_prefix}/bin/gcc"
+    CC="${_prefix}/bin/gcc"
+    _infMsg "  ..Exporting CXX=${_prefix}/bin/g++"
+    CXX="${_prefix}/bin/g++"
+
+    _default_libs="$(ld --verbose | grep SEARCH_DIR | tr -s ' ;' \\012 \
+        | sed -nr 's/SEARCH_DIR\("=(.*)"\)/\1/p' | xargs | tr ' ' ':')"
+    _new_libs="${_prefix}/lib64:${_prefix}/lib:${_prefix}/lib/gcc/$(uname -m)-pc-linux-gnu/$("${_prefix}/bin/gcc" -dumpversion)"
+
+    _infMsg "  ..Exporting LD_LIBRARY_PATH=${_new_libs}:..."
+    LD_LIBRARY_PATH="${_new_libs}:${_default_libs}"
+
+    _c_include_path="$(gcc -xc -E -v - </dev/null 2>&1 \
+        | sed -nr '/^#include <.*> search starts here:/,/^End of search list\./{//!p}' | xargs | tr ' ' ':')"
+    _cplus_include_path="$(gcc -xc++ -E -v - </dev/null 2>&1 \
+        | sed -nr '/^#include <.*> search starts here:/,/^End of search list\./{//!p}' | xargs | tr ' ' ':')"
+
+    _infMsg "  ..Exporting C_INCLUDE_PATH=${_prefix}/lib/gcc/$(uname -m)-pc-linux-gnu/$("${_prefix}/bin/gcc" -dumpversion):..."
+    C_INCLUDE_PATH="${_prefix}/lib/gcc/$(uname -m)-pc-linux-gnu/$("${_prefix}/bin/gcc" -dumpversion):${_c_include_path}"
+    _infMsg "  ..Exporting CPLUS_INCLUDE_PATH=${_prefix}/include/c++/$("${_prefix}/bin/g++" -dumpversion):..."
+    CPLUS_INCLUDE_PATH="${_prefix}/include/c++/$("${_prefix}/bin/g++" -dumpversion):${_cplus_include_path}"
+
+    export CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH
+}
+
 _dbiGccFn () {
     _hedMsg "Starting \`gcc\` install from source, version: ${_gccVersion}"
     local _source_repo
@@ -548,11 +579,11 @@ _dbiGccFn () {
     popd || exit 1
     _endMsg "Finished \`gcc\` install from source"
 
-    _prgMsg "Setting script-wide CC and CXX.."
-    _infMsg "  ..Exporting CC=/opt/${_gccVersion%%.*}/bin/gcc"
-    export CC="/opt/${_gccVersion%%.*}/bin/gcc"
-    _infMsg "  ..Exporting CXX=/opt/${_gccVersion%%.*}/bin/g++"
-    export CXX="/opt/${_gccVersion%%.*}/bin/g++"
+    _exportGccVariablesFn "/opt/${_gccVersion%%.*}" || \
+    {
+        _errMsg "Failed to export Gcc related variables"
+        exit 70
+    }
 }
 
 _dbiCmakeFn () {
@@ -868,6 +899,9 @@ _dbiHyprcursorFn () {
 
     pushd "${_hyprinstallDir}/hyprcursor-${_hyprcursorVersion}" || exit 7
 
+    if [[ ! -f "/usr/include/toml++/toml.hpp" ]]; then
+        sudo ln -sf /usr/include/toml++/toml.h /usr/include/toml++/toml.hpp
+    fi
     cmake \
         --no-warn-unused-cli \
         -DCMAKE_BUILD_TYPE:STRING=Release \
@@ -883,7 +917,6 @@ _dbiHyprcursorFn () {
         _errMsg "Failed to build/install \`hyprcursor\`"
         exit 40
     }
-
 
     popd || exit 1
     _endMsg "Finished \`hyprcursor\` install from source"
@@ -1295,7 +1328,12 @@ _mainFn () {
     pushd "${_hyprinstallDir}" || exit 1
 
     _installPackageDependenciesFn
-    if [ -z "${_noDeps}"     ]; then _installDependenciesFn; fi
+    if [ -z "${_noDeps}"     ]; then
+        _installDependenciesFn
+    else
+        _exportGccVariablesFn "/opt/${_gccVersion%%.*}"
+        export PATH="/opt/cmake-${_cmakeVersion}/bin:${PATH}"
+    fi
     if [ -z "${_noSddm}"     ]; then _dbiSddmFn;             fi
     if [ -z "${_noHyprland}" ]; then _dbiHyprlandFn;         fi
     if [ -z "${_noAddons}"   ]; then _installAddonsFn;       fi
