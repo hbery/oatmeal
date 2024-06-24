@@ -78,6 +78,9 @@ if [ "${ID}" = "ubuntu" ]; then
 
     _sddmVersion="${HYPRINSTALL_SDDM_VERSION:-"0.20.0"}"
 
+    _gccVersion=
+    _cmakeVersion=
+
     _ubuntuSpecificPackages=("vulkan-utility-libraries-dev")
 elif [ "${ID}" = "debian" ]; then
     _hyprlandVersion="${HYPRINSTALL_HYPRLAND_VERSION:-"0.41.1"}"
@@ -96,10 +99,11 @@ elif [ "${ID}" = "debian" ]; then
 
     _sddmVersion="${HYPRINSTALL_SDDM_VERSION:-"0.20.0"}"
 
-    _debianSpecificPackages=("vulkan-validationlayers-dev")
-
     # _gccVersion="${HYPRINSTALL_GCC_VERSION:-"13.3.0"}"
     _gccVersion="${HYPRINSTALL_GCC_VERSION:-"gcc-13"}"
+    _cmakeVersion="${HYPRINSTALL_CMAKE_VERSION:-"3.29.6"}"
+
+    _debianSpecificPackages=("vulkan-validationlayers-dev")
 else
     exit 1
 fi
@@ -129,6 +133,7 @@ declare -A _repoSources=(
     ["hyprland-plugins"]="github hyprwm/hyprland-plugins"
     ["hyprland-contrib"]="github hyprwm/contrib"
     ["sddm"]="github sddm/sddm"
+    ["cmake"]="github Kitware/cmake"
 )
 
 _commonPackages=(
@@ -189,6 +194,10 @@ _usageFn () {
 usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddons] [+nocleanup] [+reusesrc]
                         [-addons ADDON1,ADDON2,..] [-plugins PLUG1,PLUG2,..] [-contrib SCRIPT1,SCRIPT2,..]
 
+    Script to install Hyprland and few addons.
+    Plugins and Contrib-scripts install is experimental (consider using hyprload).
+    Script is destined to be used only on \`debian\` and \`ubuntu\`.
+
     -help               Show this help.
     +nodeps             Install just hyprland, no debian-needed dependencies.
     +nosddm             Install without custom sddm.
@@ -222,6 +231,7 @@ environment variables: (all prepended with 'HYPRINSTALL_' if you want change ver
     HYPRLANG_VERSION                    = ${_hyprlangVersion}
     HYPRWAYLAND_SCANNER_VERSION         = ${_hyprwaylandScannerVersion}
     HYPRUTILS_VERSION                   = ${_hyprutilsVersion}
+
 + addons:
     HYPRPAPER_VERSION                   = ${_hyprpaperVersion}
     HYPRLOCK_VERSION                    = ${_hyprlockVersion}
@@ -229,6 +239,10 @@ environment variables: (all prepended with 'HYPRINSTALL_' if you want change ver
     XDG_DESKTOP_PORTAL_HYPRLAND_VERSION = ${_xdgDesktopPortalHyprlandVersion}
     HYPRLAND_PLUGINS_VERSION            = ${_hyprlandPluginsVersion}
     HYPRLAND_CONTRIB_VERSION            = ${_hyprlandContribVersion}
+
++ debian-only:
+    GCC_VERSION                         = ${_gccVersion}
+    CMAKE_VERSION                       = ${_cmakeVersion}
 _EOH1
 }
 
@@ -534,6 +548,37 @@ _dbiGccFn () {
     export CC="/opt/${_gccVersion%%.*}/bin/gcc"
     _infMsg "  ..Exporting CXX=/opt/${_gccVersion%%.*}/bin/g++"
     export CXX="/opt/${_gccVersion%%.*}/bin/g++"
+}
+
+_dbiCmakeFn () {
+    _hedMsg "Starting \`cmake\` install, version: ${_cmakeVersion}"
+    local _repo_src=() _script_name
+    mapfile -t -d ' ' _repo_src <<<"${_repoSources["cmake"]}"
+
+    _cmakeVersion="$(_getLatestOrValidateVersionFn \
+        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "${_cmakeVersion}")"
+
+    _script_name="cmake-${_cmakeVersion}-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m).sh"
+    wget \
+        --quiet \
+        --show-progress \
+        --output-document="${_hyprinstallDir}/cmake-${_cmakeVersion}.sh" \
+        "$(_getSourceLinkFn "${_repo_src[@]}" | sed -nr 's/^(.*)\.git$/\1/p')/releases/download/v${_cmakeVersion}/${_script_name}"
+
+    chmod 0755 "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh"
+    sudo mkdir -p "/opt/cmake-${_cmakeVersion}"
+    sudo "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh" \
+        --skip-license \
+        --exclude-subdir \
+        --prefix="/opt/cmake-${_cmakeVersion}"
+    sudo chmod -R 0755 "/opt/cmake-${_cmakeVersion}/bin"
+
+    _endMsg "Finished \`cmake\` install"
+
+    _prgMsg "Adding script-wide new cmake to path.."
+    _infMsg "  ..Adding /opt/cmake-${_cmakeVersion}/bin to PATH"
+    export PATH="/opt/cmake-${_cmakeVersion}/bin:${PATH}"
 }
 
 _dbiHyprlandFn () {
@@ -856,6 +901,9 @@ _dbiHyprutilsFn () {
 _installDependenciesFn () {
     if [[ "$(gcc -dumpversion)" -lt 13 ]]; then
         _dbiGccFn
+    fi
+    if [[ -n "${_cmakeVersion}" ]]; then
+        _dbiCmakeFn
     fi
 
     _dbiWaylandProtocolsFn
