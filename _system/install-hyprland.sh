@@ -33,6 +33,7 @@
 set -euo pipefail
 source /etc/os-release
 
+# TODO: get better logging
 _hyprinstallLogFile="/tmp/hyprinstall-$$.log"
 exec &> >(tee -i "${_hyprinstallLogFile}")
 _hyprinstallDir="${HOME}/git/hyprland-build"
@@ -1184,6 +1185,14 @@ _cleanupFn () {
     if [ -z "${_noCleanup}" ]; then
         cd "${_hyprinstallDir}/../"
         rm -rf "${_hyprinstallDir}"
+    else
+        # if +nocleanup, remove just `build` directories
+        local _dirs=()
+        mapfile -d -t$'\n' _dirs < <(find "${_hyprinstallDir}/" -mindepth 1 -maxdepth 1 -type d)
+
+        for _d in "${_dirs[@]}"; do
+            rm -rf "${_d}/build"
+        done
     fi
 }
 
