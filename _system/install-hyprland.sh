@@ -1,5 +1,6 @@
 #!/bin/bash
 # vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
+# shellcheck disable=SC2015
 # ~~~
 # $date: 2024
 # $author: Adam Twardosz (github.com/hbery)
@@ -532,11 +533,14 @@ _dbiGccFn () {
         ../configure \
             --prefix="/opt/${_gccVersion%%.*}" \
             --enable-languages=c,c++,fortran,go \
-            --disable-multilib
-
-        make bootstrap-lean \
-            -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-        sudo make install
+            --disable-multilib \
+            && make bootstrap-lean \
+                -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
+        sudo make install || \
+        {
+            _errMsg "Failed to build/install \`gcc\`"
+            exit 40
+        }
 
         popd || exit 1
     fi
@@ -572,7 +576,11 @@ _dbiCmakeFn () {
     sudo "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh" \
         --skip-license \
         --exclude-subdir \
-        --prefix="/opt/cmake-${_cmakeVersion}"
+        --prefix="/opt/cmake-${_cmakeVersion}" || \
+        {
+            _errMsg "Failed to build/install \`cmake\`"
+            exit 40
+        }
     sudo chmod -R 0755 "/opt/cmake-${_cmakeVersion}/bin"
 
     _endMsg "Finished \`cmake\` install"
@@ -608,7 +616,11 @@ _dbiHyprlandFn () {
             --target all \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
         chmod -R 777 build && \
-    sudo cmake --install build
+    sudo cmake --install build || \
+    {
+        _errMsg "Failed to build/install \`Hyprland\`"
+        exit 40
+    }
 
     popd || exit 1
     _endMsg "Finished \`Hyprland\` install from source"
@@ -635,7 +647,11 @@ _dbiWaylandProtocolsFn () {
         && ninja \
             -C build/ \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install
+    sudo ninja -C build/ install || \
+    {
+        _errMsg "Failed to build/install \`wayland-protocols\`"
+        exit 40
+    }
 
     popd || exit 1
     _endMsg "Finished \`wayland-protocols\` install from source"
@@ -663,7 +679,11 @@ _dbiWaylandFn () {
         && ninja \
             -C build/ \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install
+    sudo ninja -C build/ install || \
+    {
+        _errMsg "Failed to build/install \`wayland\`"
+        exit 40
+    }
 
     popd || exit 1
     _endMsg "Finished \`wayland\` install from source"
@@ -690,7 +710,11 @@ _dbiLibdisplayInfoFn () {
         && ninja \
             -C build/ \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install
+    sudo ninja -C build/ install || \
+    {
+        _errMsg "Failed to build/install \`libdisplay-info\`"
+        exit 40
+    }
 
     popd || exit 1
     _endMsg "Finished \`libdisplay-info\` install from source"
@@ -721,7 +745,11 @@ _dbiLibinputFn () {
         && ninja \
             -C build/ \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install
+    sudo ninja -C build/ install || \
+    {
+        _errMsg "Failed to build/install \`libinput\`"
+        exit 40
+    }
 
     popd || exit 1
     _endMsg "Finished \`libinput\` install from source"
@@ -748,7 +776,11 @@ _dbiLibliftoffFn () {
         && ninja \
             -C build/ \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install
+    sudo ninja -C build/ install || \
+    {
+        _errMsg "Failed to build/install \`libliftoff\`"
+        exit 40
+    }
 
     popd || exit 1
     _endMsg "Finished \`libliftoff\` install from source"
@@ -776,7 +808,11 @@ _dbiLibxcbErrorsFn () {
     ../autogen.sh --prefix=/usr \
         && make \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo make install
+    sudo make install || \
+    {
+        _errMsg "Failed to build/install \`libxcb-errors\`"
+        exit 40
+    }
 
     popd || exit 1
     popd || exit 1
@@ -807,7 +843,12 @@ _dbiHyprlangFn () {
             --config Release \
             --target hyprlang \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build
+    sudo cmake --install build || \
+    {
+        _errMsg "Failed to build/install \`hyprlang\`"
+        exit 40
+    }
+
 
     popd || exit 1
     _endMsg "Finished \`hyprlang\` install from source"
@@ -837,7 +878,12 @@ _dbiHyprcursorFn () {
             --config Release \
             --target all \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build
+    sudo cmake --install build || \
+    {
+        _errMsg "Failed to build/install \`hyprcursor\`"
+        exit 40
+    }
+
 
     popd || exit 1
     _endMsg "Finished \`hyprcursor\` install from source"
@@ -863,7 +909,12 @@ _dbiHyprwaylandScannerFn () {
         && cmake \
             --build build \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build
+    sudo cmake --install build || \
+    {
+        _errMsg "Failed to build/install \`hyprwayland-scanner\`"
+        exit 40
+    }
+
 
     popd || exit 1
     _endMsg "Finished \`hyprwayland-scanner\` install from source"
@@ -893,7 +944,12 @@ _dbiHyprutilsFn () {
             --config Release \
             --target all \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build
+    sudo cmake --install build || \
+    {
+        _errMsg "Failed to build/install \`hyprutils\`"
+        exit 40
+    }
+
 
     popd || exit 1
     _endMsg "Finished \`hyprutils\` install from source"
@@ -946,7 +1002,12 @@ _dbiSddmFn () {
         && make \
             --directory=build \
             --jobs="$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo make --directory=build install
+    sudo make --directory=build install || \
+    {
+        _errMsg "Failed to build/install \`sddm\`"
+        exit 40
+    }
+
 
     if [ -z "$(getent passwd sddm)" ]; then
         sudo useradd \
@@ -986,7 +1047,12 @@ _dbiHyprpaperFn () {
             --config Release \
             --target hyprpaper \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build
+    sudo cmake --install build || \
+    {
+        _errMsg "Failed to build/install \`hyprpaper\`"
+        exit 40
+    }
+
 
     popd || exit 1
     _endMsg "Finished \`hyprpaper\` install from source"
@@ -1015,7 +1081,12 @@ _dbiHyprlockFn () {
             --config Release \
             --target hyprlock \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build
+    sudo cmake --install build || \
+    {
+        _errMsg "Failed to build/install \`hyprlock\`"
+        exit 40
+    }
+
 
     popd || exit 1
     _endMsg "Finished \`hyprlock\` install from source"
@@ -1044,7 +1115,12 @@ _dbiHypridleFn () {
             --config Release \
             --target hypridle \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build
+    sudo cmake --install build || \
+    {
+        _errMsg "Failed to build/install \`hypridle\`"
+        exit 40
+    }
+
 
     popd || exit
     _endMsg "Finished \`hypridle\` install from source"
@@ -1071,7 +1147,12 @@ _dbiXdgDesktopPortalHyprlandFn () {
         && cmake \
             --build build \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build
+    sudo cmake --install build || \
+    {
+        _errMsg "Failed to build/install \`xdg-desktop-portal-hyprland\`"
+        exit 40
+    }
+
 
     popd || exit 1
     _endMsg "Finished \`xdg-desktop-portal-hyprland\` install from source"
@@ -1114,7 +1195,12 @@ _dbiHyprlandPluginsFn () {
         if [[ -n "${_build_cmd}" ]]; then
             _prgMsg "Installing ${_plugin}"
             _infMsg "Running command: ${_build_cmd}"
-            eval "${_build_cmd}"
+            eval "${_build_cmd}" || \
+            {
+                _errMsg "Failed to build/install \`hyprland-plugin:${_plugin}\`"
+                exit 40
+            }
+
         else
             _wrnMsg "No such plugin like ${_plugin}. Continuing.."
         fi
@@ -1145,7 +1231,11 @@ _dbiHyprlandContribFn () {
     for _cscript in "${_contribScripts[@]}"; do
         case ":${_cscripts_merged}:" in
             *":${_cscript}:"*)
-                make -C "${_cscript}" install ;;
+                make -C "${_cscript}" install || \
+                {
+                    _errMsg "Failed to build/install \`hyprland-contrib:${_cscript}\`"
+                    exit 40
+                } ;;
             *) _wrnMsg "No such contrib script as ${_cscript}. Continuing.." ;;
         esac
     done
