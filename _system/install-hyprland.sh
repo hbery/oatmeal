@@ -596,11 +596,13 @@ _dbiCmakeFn () {
         "${_cmakeVersion}")"
 
     _script_name="cmake-${_cmakeVersion}-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m).sh"
-    wget \
-        --quiet \
-        --show-progress \
-        --output-document="${_hyprinstallDir}/cmake-${_cmakeVersion}.sh" \
-        "$(_getSourceLinkFn "${_repo_src[@]}" | sed -nr 's/^(.*)\.git$/\1/p')/releases/download/v${_cmakeVersion}/${_script_name}"
+    if [[ ! "${_script_name}" ]]; then
+        wget \
+            --quiet \
+            --show-progress \
+            --output-document="${_hyprinstallDir}/cmake-${_cmakeVersion}.sh" \
+            "$(_getSourceLinkFn "${_repo_src[@]}" | sed -nr 's/^(.*)\.git$/\1/p')/releases/download/v${_cmakeVersion}/${_script_name}"
+    fi
 
     chmod 0755 "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh"
     sudo mkdir -p "/opt/cmake-${_cmakeVersion}"
