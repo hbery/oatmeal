@@ -623,6 +623,11 @@ _dbiCmakeFn () {
     export PATH="/opt/cmake-${_cmakeVersion}/bin:${PATH}"
 }
 
+_echoCompilerMsg () {
+    _skpMsg "CC: $CC"
+    _skpMsg "CXX: $CXX"
+}
+
 _dbiHyprlandFn () {
     _hedMsg "Starting \`Hyprland\` install from source, version: ${_hyprlandVersion}"
     _hyprlandVersion="$(_getLatestOrValidateVersionFn \
@@ -636,6 +641,8 @@ _dbiHyprlandFn () {
 
     chmod a+rw "${_hyprinstallDir}/hyprland-source"
     pushd "${_hyprinstallDir}/hyprland-source" || exit 10
+
+    _echoCompilerMsg
 
     cmake \
         --no-warn-unused-cli \
@@ -673,6 +680,8 @@ _dbiWaylandProtocolsFn () {
 
     pushd "${_hyprinstallDir}/wayland-protocols-${_waylandProtocolsVersion}" || exit 3
 
+    _echoCompilerMsg
+
     meson setup \
         --prefix=/usr \
         --buildtype=release \
@@ -703,6 +712,8 @@ _dbiWaylandFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_waylandVersion}")"
 
     pushd "${_hyprinstallDir}/wayland-${_waylandVersion}" || exit 2
+
+    _echoCompilerMsg
 
     meson setup \
         --prefix=/usr \
@@ -735,6 +746,8 @@ _dbiLibdisplayInfoFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_libdisplayInfoVersion}")"
 
     pushd "${_hyprinstallDir}/libdisplay-info-${_libdisplayInfoVersion}" || exit 4
+
+    _echoCompilerMsg
 
     meson setup \
         --prefix=/usr \
@@ -770,6 +783,8 @@ _dbiLibinputFn () {
     if [[ ! -f "/usr/include/xlocale.h" ]]; then
         sudo ln -s /usr/include/locale.h /usr/include/xlocale.h
     fi
+    _echoCompilerMsg
+
     meson setup \
         --prefix=/usr \
         --buildtype=release \
@@ -801,6 +816,8 @@ _dbiLibliftoffFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "v${_libliftoffVersion}")"
 
     pushd "${_hyprinstallDir}/libliftoff-v${_libliftoffVersion}" || exit 6
+
+    _echoCompilerMsg
 
     meson setup \
         --prefix=/usr \
@@ -837,6 +854,8 @@ _dbiLibxcbErrorsFn () {
     pushd "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}" || exit 6
     pushd "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}/build" || exit 5
 
+
+    _echoCompilerMsg
 
     ../autogen.sh --prefix=/usr \
         && make \
@@ -904,6 +923,8 @@ _dbiHyprcursorFn () {
     if [[ ! -f "/usr/include/toml++/toml.hpp" ]]; then
         sudo ln -sf /usr/include/toml++/toml.h /usr/include/toml++/toml.hpp
     fi
+    _echoCompilerMsg
+
     cmake \
         --no-warn-unused-cli \
         -DCMAKE_BUILD_TYPE:STRING=Release \
@@ -938,6 +959,8 @@ _dbiHyprwaylandScannerFn () {
 
     pushd "${_hyprinstallDir}/hyprwayland-scanner-${_hyprwaylandScannerVersion}" || exit 9
 
+    _echoCompilerMsg
+
     cmake \
         -DCMAKE_INSTALL_PREFIX:PATH=/usr \
         -B build \
@@ -968,6 +991,8 @@ _dbiHyprutilsFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprutilsVersion}")"
 
     pushd "${_hyprinstallDir}/hyprutils-${_hyprutilsVersion}" || exit 8
+
+    _echoCompilerMsg
 
     cmake \
         --no-warn-unused-cli \
@@ -1027,6 +1052,8 @@ _dbiSddmFn () {
 
     pushd "${_hyprinstallDir}/sddm-${_sddmVersion}/" || exit 10
 
+    _echoCompilerMsg
+
     cmake \
         -DCMAKE_INSTALL_PREFIX:PATH=/usr \
         -DCMAKE_BUILD_TYPE:STRING=Release \
@@ -1072,6 +1099,8 @@ _dbiHyprpaperFn () {
 
     pushd "${_hyprinstallDir}/hyprpaper-${_hyprpaperVersion}" || exit 11
 
+    _echoCompilerMsg
+
     cmake \
         --no-warn-unused-cli \
         -DCMAKE_BUILD_TYPE:STRING=Release \
@@ -1107,6 +1136,8 @@ _dbiHyprlockFn () {
 
     pushd "${_hyprinstallDir}/hyprlock-${_hyprlockVersion}" || exit 12
 
+    _echoCompilerMsg
+
     cmake \
         --no-warn-unused-cli \
         -DCMAKE_BUILD_TYPE:STRING=Release \
@@ -1140,6 +1171,8 @@ _dbiHypridleFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hypridleVersion}")"
 
     pushd "${_hyprinstallDir}/hypridle-${_hypridleVersion}" || exit 13
+
+    _echoCompilerMsg
 
     cmake \
         --no-warn-unused-cli \
@@ -1175,6 +1208,8 @@ _dbiXdgDesktopPortalHyprlandFn () {
 
     pushd "${_hyprinstallDir}/xdg-desktop-portal-hyprland-${_xdgDesktopPortalHyprlandVersion}" || exit 14
 
+    _echoCompilerMsg
+
     cmake \
         -DCMAKE_INSTALL_LIBEXECDIR:PATH=/usr/lib \
         -DCMAKE_INSTALL_PREFIX:PATH=/usr \
@@ -1200,6 +1235,8 @@ _dbiHyprlandPluginsFn () {
     local _repo_src=()
     local _build_cmd
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprland-plugins"]}"
+
+    _echoCompilerMsg
 
     _hyprlandPluginsVersion="$(_getLatestOrValidateVersionFn \
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
@@ -1261,6 +1298,8 @@ _dbiHyprlandContribFn () {
     pushd "${_hyprinstallDir}/hyprlandContrib-${_hyprlandContribVersion}" || exit 13
     mapfile -t -d$'\n' _all_contrib_scripts \
         < <(find ./contrib -mindepth 1 -maxdepth 1 -type d ! -name ".*" -exec basename -a -- {} +)
+
+    _echoCompilerMsg
 
     _cscripts_merged="$(tr ' ' ':' <<<"${_all_contrib_scripts[*]}")"
     for _cscript in "${_contribScripts[@]}"; do
