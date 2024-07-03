@@ -593,6 +593,8 @@ _setGccVariablesFn () {
 
     _infMsg "  ..Setting LD_LIBRARY_PATH=${_new_libs}:..."
     HYPRINSTALL_LD_LIBRARY_PATH="${_new_libs}:${_default_libs}"
+    _infMsg "  ..Setting LD_RUN_PATH=${_prefix}/lib64"
+    HYPRINSTALL_LD_RUN_PATH="${_prefix}/lib64"
 
     _c_include_path="$(gcc -xc -E -v - </dev/null 2>&1 \
         | sed -nr '/^#include <.*> search starts here:/,/^End of search list\./{//!p}' | xargs | tr ' ' ':')"
@@ -603,44 +605,50 @@ _setGccVariablesFn () {
     HYPRINSTALL_C_INCLUDE_PATH="${_prefix}/lib/gcc/$(uname -m)-pc-linux-gnu/$("${_prefix}/bin/gcc" -dumpversion):${_c_include_path}"
     _infMsg "  ..Setting CPLUS_INCLUDE_PATH=${_prefix}/include/c++/$("${_prefix}/bin/g++" -dumpversion):..."
     HYPRINSTALL_CPLUS_INCLUDE_PATH="${_prefix}/include/c++/$("${_prefix}/bin/g++" -dumpversion):${_cplus_include_path}"
-
-    _infMsg "  ..Setting LD_RUN_PATH=${_new_libs}"
-    HYPRINSTALL_LD_RUN_PATH="${_new_libs}"
 }
 
 _exportGccVariablesFn () {
     if [[ -z "${_gccVersion}" ]]; then return; fi
     if [[ "${_buildVariablesExported}" == "yes" ]]; then
-        _skpMsg "Variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH LD_RUN_PATH already exported"
+        _skpMsg "Variables: CC CXX LD_LIBRARY_PATH LD_RUN_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH already exported"
         return
     else
-        _hedMsg "Exporting variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH LD_RUN_PATH"
+        _hedMsg "Exporting variables: CC CXX LD_LIBRARY_PATH LD_RUN_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH"
     fi
     OLD_CC="${CC:-}";                                 CC="$HYPRINSTALL_CC"
     OLD_CXX="${CXX:-}";                               CXX="$HYPRINSTALL_CXX"
     OLD_LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}";       LD_LIBRARY_PATH="$HYPRINSTALL_LD_LIBRARY_PATH"
+    OLD_LD_RUN_PATH="${LD_RUN_PATH:-}";               LD_RUN_PATH="$HYPRINSTALL_LD_RUN_PATH"
     OLD_C_INCLUDE_PATH="${C_INCLUDE_PATH:-}";         C_INCLUDE_PATH="$HYPRINSTALL_C_INCLUDE_PATH"
     OLD_CPLUS_INCLUDE_PATH="${CPLUS_INCLUDE_PATH:-}"; CPLUS_INCLUDE_PATH="$HYPRINSTALL_CPLUS_INCLUDE_PATH"
-    OLD_LD_RUN_PATH="${LD_RUN_PATH:-}";               LD_RUN_PATH="$HYPRINSTALL_LD_RUN_PATH"
-    export CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH LD_RUN_PATH
+    export CC CXX LD_LIBRARY_PATH LD_RUN_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH
     _buildVariablesExported="yes"
 }
 
 _unsetGccVariablesFn () {
     if [[ -z "${_gccVersion}" ]]; then return; fi
     if [[ "${_buildVariablesExported}" == "no" ]]; then
-        _skpMsg "Variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH RPATH were not exported"
+        _skpMsg "Variables: CC CXX LD_LIBRARY_PATH LD_RUN_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH were not exported"
         return
     else
-        _endMsg "Unsetting variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH RPATH"
+        _endMsg "Unsetting variables: CC CXX LD_LIBRARY_PATH LD_RUN_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH"
     fi
     if [ -n "$OLD_CC" ]; then CC="$OLD_CC"; else unset CC; fi
     if [ -n "$OLD_CXX" ]; then CXX="$OLD_CXX"; else unset CXX; fi
     if [ -n "$OLD_LD_LIBRARY_PATH" ]; then LD_LIBRARY_PATH="$OLD_LD_LIBRARY_PATH"; else unset LD_LIBRARY_PATH; fi
+    if [ -n "$OLD_LD_RUN_PATH" ]; then LD_RUN_PATH="$OLD_LD_RUN_PATH"; else unset LD_RUN_PATH; fi
     if [ -n "$OLD_C_INCLUDE_PATH" ]; then C_INCLUDE_PATH="$OLD_C_INCLUDE_PATH"; else unset C_INCLUDE_PATH; fi
     if [ -n "$OLD_CPLUS_INCLUDE_PATH" ]; then CPLUS_INCLUDE_PATH="$OLD_CPLUS_INCLUDE_PATH"; else unset CPLUS_INCLUDE_PATH; fi
-    if [ -n "$OLD_LD_RUN_PATH" ]; then LD_RUN_PATH="$OLD_LD_RUN_PATH"; else unset LD_RUN_PATH; fi
     _buildVariablesExported="no"
+}
+
+_echoCompilerMsg () {
+    _skpMsg "CC: $CC"
+    _skpMsg "CXX: $CXX"
+    _skpMsg "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+    _skpMsg "LD_RUN_PATH: $LD_RUN_PATH"
+    _skpMsg "C_INCLUDE_PATH: $C_INCLUDE_PATH"
+    _skpMsg "CPLUS_INCLUDE_PATH: $CPLUS_INCLUDE_PATH"
 }
 
 _dbiGccFn () {
@@ -739,6 +747,7 @@ _dbiHyprlandFn () {
     pushd "${_hyprinstallDir}/hyprland-source" || exit 10
 
     _exportGccVariablesFn
+    _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
@@ -969,6 +978,7 @@ _dbiHyprlangFn () {
     pushd "${_hyprinstallDir}/hyprlang-${_hyprlangVersion}" || exit 8
 
     _exportGccVariablesFn
+    _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
@@ -1006,6 +1016,7 @@ _dbiHyprcursorFn () {
     pushd "${_hyprinstallDir}/hyprcursor-${_hyprcursorVersion}" || exit 7
 
     _exportGccVariablesFn
+    _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     if [[ ! -f "/usr/include/toml++/toml.hpp" ]]; then
@@ -1047,6 +1058,7 @@ _dbiHyprwaylandScannerFn () {
     pushd "${_hyprinstallDir}/hyprwayland-scanner-${_hyprwaylandScannerVersion}" || exit 9
 
     _exportGccVariablesFn
+    _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
@@ -1080,6 +1092,7 @@ _dbiHyprutilsFn () {
     pushd "${_hyprinstallDir}/hyprutils-${_hyprutilsVersion}" || exit 8
 
     _exportGccVariablesFn
+    _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
@@ -1185,6 +1198,7 @@ _dbiHyprpaperFn () {
     pushd "${_hyprinstallDir}/hyprpaper-${_hyprpaperVersion}" || exit 11
 
     _exportGccVariablesFn
+    _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
@@ -1222,6 +1236,7 @@ _dbiHyprlockFn () {
     pushd "${_hyprinstallDir}/hyprlock-${_hyprlockVersion}" || exit 12
 
     _exportGccVariablesFn
+    _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
@@ -1258,6 +1273,7 @@ _dbiHypridleFn () {
     pushd "${_hyprinstallDir}/hypridle-${_hypridleVersion}" || exit 13
 
     _exportGccVariablesFn
+    _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
@@ -1294,6 +1310,7 @@ _dbiXdgDesktopPortalHyprlandFn () {
     pushd "${_hyprinstallDir}/xdg-desktop-portal-hyprland-${_xdgDesktopPortalHyprlandVersion}" || exit 14
 
     _exportGccVariablesFn
+    _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
@@ -1344,6 +1361,7 @@ _dbiHyprlandPluginsFn () {
     fi
 
     _exportGccVariablesFn
+    _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     for _plugin in "${_hyprlandPlugins[@]}"; do
@@ -1386,6 +1404,7 @@ _dbiHyprlandContribFn () {
         < <(find ./contrib -mindepth 1 -maxdepth 1 -type d ! -name ".*" -exec basename -a -- {} +)
 
     _exportGccVariablesFn
+    _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     _cscripts_merged="$(tr ' ' ':' <<<"${_all_contrib_scripts[*]}")"
