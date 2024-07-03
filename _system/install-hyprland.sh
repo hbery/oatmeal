@@ -714,16 +714,20 @@ _dbiCmakeFn () {
         chmod 0755 "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh"
     fi
 
-    sudo mkdir -p "/opt/cmake-${_cmakeVersion}"
-    sudo "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh" \
-        --skip-license \
-        --exclude-subdir \
-        --prefix="/opt/cmake-${_cmakeVersion}" || \
-        {
-            _errMsg "Failed to build/install \`cmake\`"
-            exit 40
-        }
-    sudo chmod -R 0755 "/opt/cmake-${_cmakeVersion}/bin"
+    if [[ ! -x "/opt/cmake-${_cmakeVersion}/bin/cmake" ]]; then
+        sudo mkdir -p "/opt/cmake-${_cmakeVersion}"
+        sudo "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh" \
+            --skip-license \
+            --exclude-subdir \
+            --prefix="/opt/cmake-${_cmakeVersion}" || \
+            {
+                _errMsg "Failed to build/install \`cmake\`"
+                exit 40
+            }
+        sudo chmod -R 0755 "/opt/cmake-${_cmakeVersion}/bin"
+    else
+        _skpMsg "\`cmake\` already installed. Skipping.."
+    fi
 
     _endMsg "Finished \`cmake\` install"
 
