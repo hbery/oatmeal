@@ -719,15 +719,6 @@ _dbiCmakeFn () {
     export PATH="/opt/cmake-${_cmakeVersion}/bin:${PATH}"
 }
 
-_echoCompilerMsg () {
-    _skpMsg "CC: $CC"
-    _skpMsg "CXX: $CXX"
-    _skpMsg "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-    _skpMsg "C_INCLUDE_PATH: $C_INCLUDE_PATH"
-    _skpMsg "CPLUS_INCLUDE_PATH: $CPLUS_INCLUDE_PATH"
-    _skpMsg "RPATH: $RPATH"
-}
-
 _dbiHyprlandFn () {
     _hedMsg "Starting \`Hyprland\` install from source, version: ${_hyprlandVersion}"
     _hyprlandVersion="$(_getLatestOrValidateVersionFn \
