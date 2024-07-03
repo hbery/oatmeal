@@ -48,6 +48,7 @@ _noContrib=
 _allLatest=
 _noCleanup=
 _reuseSourceDirs=
+_buildVariablesExported=
 declare -a _selectedAddons=()
 declare -a _hyprlandPlugins=()
 declare -a _contribScripts=()
