@@ -139,16 +139,76 @@ declare -A _repoSources=(
 )
 
 _commonPackages=(
-    meson wget build-essential ninja-build cmake-extras cmake gettext gettext-base fontconfig libfontconfig-dev
-    libffi-dev libxml2-dev libdrm-dev libxkbcommon-x11-dev libxkbregistry-dev libxkbcommon-dev libpixman-1-dev
-    libudev-dev libseat-dev seatd libxcb-dri3-dev libvulkan-dev libvulkan-volk-dev libvkfft-dev libgulkan-dev
-    libegl-dev libgles2 libegl1-mesa-dev glslang-tools libinput-bin libinput-dev libxcb-composite0-dev libavutil-dev
-    libavcodec-dev libavformat-dev libxcb-ewmh2 libxcb-ewmh-dev libxcb-present-dev libxcb-icccm4-dev
-    libxcb-render-util0-dev libxcb-res0-dev libxcb-xinput-dev libgbm-dev xdg-desktop-portal-wlr hwdata
-    libgtk-3-dev libsystemd-dev edid-decode extra-cmake-modules libpam0g-dev qtbase5-dev qtdeclarative5-dev
-    qttools5-dev python3-docutils check qt6-base-dev qt6-tools-dev qt6-declarative-dev libtomlplusplus-dev
-    librsvg2-dev libzip-dev libpugixml-dev libxcb-util-dev libwlroots-dev automake xutils-dev libtool xcb-proto
-    xwayland libtomlplusplus-dev
+    wget
+    build-essential
+    meson
+    ninja-build
+    cmake
+    cmake-extras
+    automake
+    check
+    edid-decode
+    extra-cmake-modules
+    fontconfig
+    gettext
+    gettext-base
+    glslang-tools
+    hwdata
+    libavcodec-dev
+    libavformat-dev
+    libavutil-dev
+    libdrm-dev
+    libegl1-mesa-dev
+    libegl-dev
+    libffi-dev
+    libfontconfig-dev
+    libgbm-dev
+    libgles2
+    libgtk-3-dev
+    libgulkan-dev
+    libinput-bin
+    libinput-dev
+    libpam0g-dev
+    libpixman-1-dev
+    libpugixml-dev
+    librsvg2-dev
+    libseat-dev
+    libsystemd-dev
+    libtomlplusplus-dev
+    libtomlplusplus-dev
+    libtool
+    libudev-dev
+    libvkfft-dev
+    libvulkan-dev
+    libvulkan-volk-dev
+    libwlroots-dev
+    libxcb-composite0-dev
+    libxcb-dri3-dev
+    libxcb-ewmh2
+    libxcb-ewmh-dev
+    libxcb-icccm4-dev
+    libxcb-present-dev
+    libxcb-render-util0-dev
+    libxcb-res0-dev
+    libxcb-util-dev
+    libxcb-xinput-dev
+    libxkbcommon-dev
+    libxkbcommon-x11-dev
+    libxkbregistry-dev
+    libxml2-dev
+    libzip-dev
+    python3-docutils
+    qt6-base-dev
+    qt6-declarative-dev
+    qt6-tools-dev
+    qtbase5-dev
+    qtdeclarative5-dev
+    qttools5-dev
+    seatd
+    xcb-proto
+    xdg-desktop-portal-wlr
+    xutils-dev
+    xwayland
 )
 
 _errMsg () { >&2 echo -e "${_redClr}ERROR:${_norClr}${_bldClr} $*${_norClr}"; }
@@ -511,35 +571,71 @@ _cloneSourceFn () {
     set +x
 }
 
-_exportGccVariablesFn () {
-    local _prefix _default_libs _new_libs _c_include_path _cplus_include_path
+_setGccVariablesFn () {
+    local _prefix _default_libs _new_libs _c_include_path _cplus_include_path _rpath
     _prefix="${1:-}"
 
-    _prgMsg "Setting script-wide CC, CXX, C_INCLUDE_PATH, CPLUS_INCLUDE_PATH and LD_LIBRARY_PATH.."
+    _prgMsg "Setting script-wide HYPRINSTALL_( CC CXX C_INCLUDE_PATH CPLUS_INCLUDE_PATH LD_LIBRARY_PATH RPATH ).."
 
-    _infMsg "  ..Exporting CC=${_prefix}/bin/gcc"
-    CC="${_prefix}/bin/gcc"
-    _infMsg "  ..Exporting CXX=${_prefix}/bin/g++"
-    CXX="${_prefix}/bin/g++"
+    _infMsg "  ..Setting CC=${_prefix}/bin/gcc"
+    HYPRINSTALL_CC="${_prefix}/bin/gcc"
+    _infMsg "  ..Setting CXX=${_prefix}/bin/g++"
+    HYPRINSTALL_CXX="${_prefix}/bin/g++"
 
     _default_libs="$(ld --verbose | grep SEARCH_DIR | tr -s ' ;' \\012 \
         | sed -nr 's/SEARCH_DIR\("=(.*)"\)/\1/p' | xargs | tr ' ' ':')"
     _new_libs="${_prefix}/lib64:${_prefix}/lib:${_prefix}/lib/gcc/$(uname -m)-pc-linux-gnu/$("${_prefix}/bin/gcc" -dumpversion)"
 
-    _infMsg "  ..Exporting LD_LIBRARY_PATH=${_new_libs}:..."
-    LD_LIBRARY_PATH="${_new_libs}:${_default_libs}"
+    _infMsg "  ..Setting LD_LIBRARY_PATH=${_new_libs}:..."
+    HYPRINSTALL_LD_LIBRARY_PATH="${_new_libs}:${_default_libs}"
 
     _c_include_path="$(gcc -xc -E -v - </dev/null 2>&1 \
         | sed -nr '/^#include <.*> search starts here:/,/^End of search list\./{//!p}' | xargs | tr ' ' ':')"
     _cplus_include_path="$(gcc -xc++ -E -v - </dev/null 2>&1 \
         | sed -nr '/^#include <.*> search starts here:/,/^End of search list\./{//!p}' | xargs | tr ' ' ':')"
 
-    _infMsg "  ..Exporting C_INCLUDE_PATH=${_prefix}/lib/gcc/$(uname -m)-pc-linux-gnu/$("${_prefix}/bin/gcc" -dumpversion):..."
-    C_INCLUDE_PATH="${_prefix}/lib/gcc/$(uname -m)-pc-linux-gnu/$("${_prefix}/bin/gcc" -dumpversion):${_c_include_path}"
-    _infMsg "  ..Exporting CPLUS_INCLUDE_PATH=${_prefix}/include/c++/$("${_prefix}/bin/g++" -dumpversion):..."
-    CPLUS_INCLUDE_PATH="${_prefix}/include/c++/$("${_prefix}/bin/g++" -dumpversion):${_cplus_include_path}"
+    _infMsg "  ..Setting C_INCLUDE_PATH=${_prefix}/lib/gcc/$(uname -m)-pc-linux-gnu/$("${_prefix}/bin/gcc" -dumpversion):..."
+    HYPRINSTALL_C_INCLUDE_PATH="${_prefix}/lib/gcc/$(uname -m)-pc-linux-gnu/$("${_prefix}/bin/gcc" -dumpversion):${_c_include_path}"
+    _infMsg "  ..Setting CPLUS_INCLUDE_PATH=${_prefix}/include/c++/$("${_prefix}/bin/g++" -dumpversion):..."
+    HYPRINSTALL_CPLUS_INCLUDE_PATH="${_prefix}/include/c++/$("${_prefix}/bin/g++" -dumpversion):${_cplus_include_path}"
 
-    export CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH
+    _infMsg "  ..Setting RPATH=${_new_libs}"
+    HYPRINSTALL_RPATH="${_new_libs}"
+}
+
+_exportGccVariablesFn () {
+    if [[ -z "${_gccVersion}" ]]; then return; fi
+    if [[ "${_buildVariablesExported}" == "yes" ]]; then
+        _skpMsg "Variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH RPATH already exported"
+        return
+    else
+        _hedMsg "Exporting variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH RPATH"
+    fi
+    OLD_CC="$CC"; CC="$HYPRINSTALL_CC"
+    OLD_CXX="$CXX";                               CXX="$HYPRINSTALL_CXX"
+    OLD_LD_LIBRARY_PATH="$LD_LIBRARY_PATH";       LD_LIBRARY_PATH="$HYPRINSTALL_LD_LIBRARY_PATH"
+    OLD_C_INCLUDE_PATH="$C_INCLUDE_PATH";         C_INCLUDE_PATH="$HYPRINSTALL_C_INCLUDE_PATH"
+    OLD_CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH"; CPLUS_INCLUDE_PATH="$HYPRINSTALL_CPLUS_INCLUDE_PATH"
+    OLD_RPATH="$RPATH";                           RPATH="$HYPRINSTALL_RPATH"
+    export CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH RPATH
+    _buildVariablesExported="yes"
+}
+
+_unsetGccVariablesFn () {
+    if [[ -z "${_gccVersion}" ]]; then return; fi
+    if [[ "${_buildVariablesExported}" == "no" ]]; then
+        _skpMsg "Variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH RPATH were not exported"
+        return
+    else
+        _endMsg "Unsetting variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH RPATH"
+    fi
+    if [ -n "$OLD_CC" ]; then CC="$OLD_CC"; else unset CC; fi
+    if [ -n "$OLD_CXX" ]; then CXX="$OLD_CXX"; else unset CXX; fi
+    if [ -n "$OLD_LD_LIBRARY_PATH" ]; then LD_LIBRARY_PATH="$OLD_LD_LIBRARY_PATH"; else unset LD_LIBRARY_PATH; fi
+    if [ -n "$OLD_C_INCLUDE_PATH" ]; then C_INCLUDE_PATH="$OLD_C_INCLUDE_PATH"; else unset C_INCLUDE_PATH; fi
+    if [ -n "$OLD_CPLUS_INCLUDE_PATH" ]; then CPLUS_INCLUDE_PATH="$OLD_CPLUS_INCLUDE_PATH"; else unset CPLUS_INCLUDE_PATH; fi
+    if [ -n "$OLD_RPATH" ]; then RPATH="$OLD_RPATH"; else unset RPATH; fi
+    _buildVariablesExported="no"
 }
 
 _dbiGccFn () {
@@ -548,7 +644,7 @@ _dbiGccFn () {
     # NOTE: Consider using below sources to match ubuntu's noble numbat release
     # _patch_name="$(curl -s https://patches.ubuntu.com/g/gcc-13/ | perl -ne 's/.*<a href="(gcc-13.*\.patch)">.*/$1/ and print')"
     # _patch_link="https://patches.ubuntu.com/g/gcc-13/${_patch_name}"
-    # _source_tarball="https://ftp.gwdg.de/pub/misc/gcc/releases/gcc-13.2.0/gcc-13.2.0.tar.gz"
+    # _source_tarball="https://ftpmirror.gnu.org/gcc/gcc-13.2.0/gcc-13.2.0.tar.gz"
     _source_repo="https://gcc.gnu.org/git/gcc.git"
 
     _cloneSourceFn \
@@ -579,7 +675,7 @@ _dbiGccFn () {
     popd || exit 1
     _endMsg "Finished \`gcc\` install from source"
 
-    _exportGccVariablesFn "/opt/${_gccVersion%%.*}" || \
+    _setGccVariablesFn "/opt/${_gccVersion%%.*}" || \
     {
         _errMsg "Failed to export Gcc related variables"
         exit 70
@@ -596,15 +692,15 @@ _dbiCmakeFn () {
         "${_cmakeVersion}")"
 
     _script_name="cmake-${_cmakeVersion}-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m).sh"
-    if [[ ! "${_script_name}" ]]; then
+    if [[ ! -x "${_script_name}" ]]; then
         wget \
             --quiet \
             --show-progress \
             --output-document="${_hyprinstallDir}/cmake-${_cmakeVersion}.sh" \
             "$(_getSourceLinkFn "${_repo_src[@]}" | sed -nr 's/^(.*)\.git$/\1/p')/releases/download/v${_cmakeVersion}/${_script_name}"
+        chmod 0755 "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh"
     fi
 
-    chmod 0755 "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh"
     sudo mkdir -p "/opt/cmake-${_cmakeVersion}"
     sudo "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh" \
         --skip-license \
@@ -626,6 +722,10 @@ _dbiCmakeFn () {
 _echoCompilerMsg () {
     _skpMsg "CC: $CC"
     _skpMsg "CXX: $CXX"
+    _skpMsg "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+    _skpMsg "C_INCLUDE_PATH: $C_INCLUDE_PATH"
+    _skpMsg "CPLUS_INCLUDE_PATH: $CPLUS_INCLUDE_PATH"
+    _skpMsg "RPATH: $RPATH"
 }
 
 _dbiHyprlandFn () {
@@ -642,7 +742,8 @@ _dbiHyprlandFn () {
     chmod a+rw "${_hyprinstallDir}/hyprland-source"
     pushd "${_hyprinstallDir}/hyprland-source" || exit 10
 
-    _echoCompilerMsg
+    _exportGccVariablesFn
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
         --no-warn-unused-cli \
@@ -680,8 +781,6 @@ _dbiWaylandProtocolsFn () {
 
     pushd "${_hyprinstallDir}/wayland-protocols-${_waylandProtocolsVersion}" || exit 3
 
-    _echoCompilerMsg
-
     meson setup \
         --prefix=/usr \
         --buildtype=release \
@@ -712,8 +811,6 @@ _dbiWaylandFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_waylandVersion}")"
 
     pushd "${_hyprinstallDir}/wayland-${_waylandVersion}" || exit 2
-
-    _echoCompilerMsg
 
     meson setup \
         --prefix=/usr \
@@ -746,8 +843,6 @@ _dbiLibdisplayInfoFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_libdisplayInfoVersion}")"
 
     pushd "${_hyprinstallDir}/libdisplay-info-${_libdisplayInfoVersion}" || exit 4
-
-    _echoCompilerMsg
 
     meson setup \
         --prefix=/usr \
@@ -783,7 +878,6 @@ _dbiLibinputFn () {
     if [[ ! -f "/usr/include/xlocale.h" ]]; then
         sudo ln -s /usr/include/locale.h /usr/include/xlocale.h
     fi
-    _echoCompilerMsg
 
     meson setup \
         --prefix=/usr \
@@ -817,8 +911,6 @@ _dbiLibliftoffFn () {
 
     pushd "${_hyprinstallDir}/libliftoff-v${_libliftoffVersion}" || exit 6
 
-    _echoCompilerMsg
-
     meson setup \
         --prefix=/usr \
         --buildtype=release \
@@ -851,11 +943,7 @@ _dbiLibxcbErrorsFn () {
         "yes"
 
     mkdir -p "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}/build"
-    pushd "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}" || exit 6
     pushd "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}/build" || exit 5
-
-
-    _echoCompilerMsg
 
     ../autogen.sh --prefix=/usr \
         && make \
@@ -866,7 +954,6 @@ _dbiLibxcbErrorsFn () {
         exit 40
     }
 
-    popd || exit 1
     popd || exit 1
     _endMsg "Finished \`libxcb-errors\` install from source"
 }
@@ -885,6 +972,9 @@ _dbiHyprlangFn () {
 
     pushd "${_hyprinstallDir}/hyprlang-${_hyprlangVersion}" || exit 8
 
+    _exportGccVariablesFn
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
+
     cmake \
         --no-warn-unused-cli \
         -DCMAKE_BUILD_TYPE:STRING=Release \
@@ -900,7 +990,6 @@ _dbiHyprlangFn () {
         _errMsg "Failed to build/install \`hyprlang\`"
         exit 40
     }
-
 
     popd || exit 1
     _endMsg "Finished \`hyprlang\` install from source"
@@ -920,10 +1009,12 @@ _dbiHyprcursorFn () {
 
     pushd "${_hyprinstallDir}/hyprcursor-${_hyprcursorVersion}" || exit 7
 
+    _exportGccVariablesFn
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
+
     if [[ ! -f "/usr/include/toml++/toml.hpp" ]]; then
         sudo ln -sf /usr/include/toml++/toml.h /usr/include/toml++/toml.hpp
     fi
-    _echoCompilerMsg
 
     cmake \
         --no-warn-unused-cli \
@@ -959,7 +1050,8 @@ _dbiHyprwaylandScannerFn () {
 
     pushd "${_hyprinstallDir}/hyprwayland-scanner-${_hyprwaylandScannerVersion}" || exit 9
 
-    _echoCompilerMsg
+    _exportGccVariablesFn
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
         -DCMAKE_INSTALL_PREFIX:PATH=/usr \
@@ -972,7 +1064,6 @@ _dbiHyprwaylandScannerFn () {
         _errMsg "Failed to build/install \`hyprwayland-scanner\`"
         exit 40
     }
-
 
     popd || exit 1
     _endMsg "Finished \`hyprwayland-scanner\` install from source"
@@ -992,7 +1083,8 @@ _dbiHyprutilsFn () {
 
     pushd "${_hyprinstallDir}/hyprutils-${_hyprutilsVersion}" || exit 8
 
-    _echoCompilerMsg
+    _exportGccVariablesFn
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
         --no-warn-unused-cli \
@@ -1009,7 +1101,6 @@ _dbiHyprutilsFn () {
         _errMsg "Failed to build/install \`hyprutils\`"
         exit 40
     }
-
 
     popd || exit 1
     _endMsg "Finished \`hyprutils\` install from source"
@@ -1051,8 +1142,6 @@ _dbiSddmFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_sddmVersion}")"
 
     pushd "${_hyprinstallDir}/sddm-${_sddmVersion}/" || exit 10
-
-    _echoCompilerMsg
 
     cmake \
         -DCMAKE_INSTALL_PREFIX:PATH=/usr \
@@ -1099,7 +1188,8 @@ _dbiHyprpaperFn () {
 
     pushd "${_hyprinstallDir}/hyprpaper-${_hyprpaperVersion}" || exit 11
 
-    _echoCompilerMsg
+    _exportGccVariablesFn
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
         --no-warn-unused-cli \
@@ -1116,7 +1206,6 @@ _dbiHyprpaperFn () {
         _errMsg "Failed to build/install \`hyprpaper\`"
         exit 40
     }
-
 
     popd || exit 1
     _endMsg "Finished \`hyprpaper\` install from source"
@@ -1136,7 +1225,8 @@ _dbiHyprlockFn () {
 
     pushd "${_hyprinstallDir}/hyprlock-${_hyprlockVersion}" || exit 12
 
-    _echoCompilerMsg
+    _exportGccVariablesFn
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
         --no-warn-unused-cli \
@@ -1152,7 +1242,6 @@ _dbiHyprlockFn () {
         _errMsg "Failed to build/install \`hyprlock\`"
         exit 40
     }
-
 
     popd || exit 1
     _endMsg "Finished \`hyprlock\` install from source"
@@ -1172,7 +1261,8 @@ _dbiHypridleFn () {
 
     pushd "${_hyprinstallDir}/hypridle-${_hypridleVersion}" || exit 13
 
-    _echoCompilerMsg
+    _exportGccVariablesFn
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
         --no-warn-unused-cli \
@@ -1188,7 +1278,6 @@ _dbiHypridleFn () {
         _errMsg "Failed to build/install \`hypridle\`"
         exit 40
     }
-
 
     popd || exit
     _endMsg "Finished \`hypridle\` install from source"
@@ -1208,7 +1297,8 @@ _dbiXdgDesktopPortalHyprlandFn () {
 
     pushd "${_hyprinstallDir}/xdg-desktop-portal-hyprland-${_xdgDesktopPortalHyprlandVersion}" || exit 14
 
-    _echoCompilerMsg
+    _exportGccVariablesFn
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
         -DCMAKE_INSTALL_LIBEXECDIR:PATH=/usr/lib \
@@ -1223,7 +1313,6 @@ _dbiXdgDesktopPortalHyprlandFn () {
         exit 40
     }
 
-
     popd || exit 1
     _endMsg "Finished \`xdg-desktop-portal-hyprland\` install from source"
 }
@@ -1235,8 +1324,6 @@ _dbiHyprlandPluginsFn () {
     local _repo_src=()
     local _build_cmd
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprland-plugins"]}"
-
-    _echoCompilerMsg
 
     _hyprlandPluginsVersion="$(_getLatestOrValidateVersionFn \
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
@@ -1259,6 +1346,9 @@ _dbiHyprlandPluginsFn () {
         _skpMsg "No plugins specified. Skipping hyprland-plugins install."
         return
     fi
+
+    _exportGccVariablesFn
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     for _plugin in "${_hyprlandPlugins[@]}"; do
         _build_cmd="$(sed -nr '/^\['"${_plugin}"'\]$/,/^$/p' hyprpm.toml \
@@ -1299,7 +1389,8 @@ _dbiHyprlandContribFn () {
     mapfile -t -d$'\n' _all_contrib_scripts \
         < <(find ./contrib -mindepth 1 -maxdepth 1 -type d ! -name ".*" -exec basename -a -- {} +)
 
-    _echoCompilerMsg
+    _exportGccVariablesFn
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     _cscripts_merged="$(tr ' ' ':' <<<"${_all_contrib_scripts[*]}")"
     for _cscript in "${_contribScripts[@]}"; do
