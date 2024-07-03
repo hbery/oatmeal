@@ -34,9 +34,7 @@
 set -euo pipefail
 source /etc/os-release
 
-# TODO: get better logging
 _hyprinstallLogFile="/tmp/hyprinstall-$$.log"
-exec &> >(tee -i "${_hyprinstallLogFile}")
 _hyprinstallDir="${HOME}/git/hyprland-build"
 
 _noDeps=
@@ -255,7 +253,7 @@ _EOB
 _usageFn () {
     cat << _EOH1
 usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddons] [+nocleanup] [+reusesrc]
-                        [-addons ADDON1,ADDON2,..] [-plugins PLUG1,PLUG2,..] [-contrib SCRIPT1,SCRIPT2,..]
+                        [-logfile FILE] [-addons ADDON1,ADDON2,..] [-plugins PLUG1,PLUG2,..] [-contrib SCRIPT1,SCRIPT2,..]
 
     Script to install Hyprland and few addons.
     Plugins and Contrib-scripts install is experimental (consider using hyprload).
@@ -272,13 +270,14 @@ usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddo
     +noplugins          Do not install hyprland-plugins.
     +nocontrib          Do not install hyprland-contrib.
     +reusesrc           Reuse already downloaded/cloned source from libs/packages.
-    -addons             Install custom addons, ',' separated.
+    -logfile FILE       Specify logfile to log the script to. Default: ${_hyprinstallLogFile}
+    -addons ADDON,..    Specify addons to install, ',' separated.
                           (need to specify with +noaddons)
                         Available:
                           (hyprpaper,hyprlock,hypridle,xdg-desktop-portal-hyprland,hyprland-plugins,hyprland-contrib)
-    -plugins            Specify plugins to install from hyprland-plugins, ',' separated.
+    -plugins PLUG,..    Specify plugins to install from hyprland-plugins, ',' separated.
                           (take dirnames from https://github.com/hyprwm/hyprland-plugins.git)
-    -contrib            Specify contrib scripts from hyprland-contrib, ',' separated.
+    -contrib SCRIPT,..  Specify contrib scripts from hyprland-contrib, ',' separated.
                           (take dirnames from https://github.com/hyprwm/contrib.git)
 
 environment variables: (all prepended with 'HYPRINSTALL_' if you want change version)
@@ -351,6 +350,10 @@ _parseArgumentsFn () {
             +reusesrc)
                 _reuseSourceDirs="set"
                 shift
+                ;;
+            -logfile)
+                _hyprinstallLogFile="${2:-"${_hyprinstallLogFile}"}"
+                shift 2
                 ;;
             -addons)
                 mapfile -t -d ',' _selectedAddons <<<"${2}"
@@ -544,6 +547,7 @@ _downloadSourceFn () {
 
 _cloneSourceFn () {
     local _srcd_name _repository _release _recursive _checkout_later
+    local _git_args=()
     _srcd_name="${1:-}"
     _repository="${2:-}"
     _release="${3:-}"
@@ -555,7 +559,7 @@ _cloneSourceFn () {
         return
     fi
 
-    declare -a _git_args=("--quiet")
+    _git_args+=("--quiet")
     if [ -n "${_recursive}" ]; then _git_args+=("--recursive"); fi
     if [[ ! "${_release}" =~ ^"tag="* ]]; then _git_args+=("--branch" "${_release}"); else _checkout_later="yes"; fi
     _git_args+=("${_repository}" "${_hyprinstallDir}/${_srcd_name}")
@@ -600,25 +604,25 @@ _setGccVariablesFn () {
     _infMsg "  ..Setting CPLUS_INCLUDE_PATH=${_prefix}/include/c++/$("${_prefix}/bin/g++" -dumpversion):..."
     HYPRINSTALL_CPLUS_INCLUDE_PATH="${_prefix}/include/c++/$("${_prefix}/bin/g++" -dumpversion):${_cplus_include_path}"
 
-    _infMsg "  ..Setting RPATH=${_new_libs}"
-    HYPRINSTALL_RPATH="${_new_libs}"
+    _infMsg "  ..Setting LD_RUN_PATH=${_new_libs}"
+    HYPRINSTALL_LD_RUN_PATH="${_new_libs}"
 }
 
 _exportGccVariablesFn () {
     if [[ -z "${_gccVersion}" ]]; then return; fi
     if [[ "${_buildVariablesExported}" == "yes" ]]; then
-        _skpMsg "Variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH RPATH already exported"
+        _skpMsg "Variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH LD_RUN_PATH already exported"
         return
     else
-        _hedMsg "Exporting variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH RPATH"
+        _hedMsg "Exporting variables: CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH LD_RUN_PATH"
     fi
-    OLD_CC="$CC"; CC="$HYPRINSTALL_CC"
-    OLD_CXX="$CXX";                               CXX="$HYPRINSTALL_CXX"
-    OLD_LD_LIBRARY_PATH="$LD_LIBRARY_PATH";       LD_LIBRARY_PATH="$HYPRINSTALL_LD_LIBRARY_PATH"
-    OLD_C_INCLUDE_PATH="$C_INCLUDE_PATH";         C_INCLUDE_PATH="$HYPRINSTALL_C_INCLUDE_PATH"
-    OLD_CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH"; CPLUS_INCLUDE_PATH="$HYPRINSTALL_CPLUS_INCLUDE_PATH"
-    OLD_RPATH="$RPATH";                           RPATH="$HYPRINSTALL_RPATH"
-    export CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH RPATH
+    OLD_CC="${CC:-}";                                 CC="$HYPRINSTALL_CC"
+    OLD_CXX="${CXX:-}";                               CXX="$HYPRINSTALL_CXX"
+    OLD_LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}";       LD_LIBRARY_PATH="$HYPRINSTALL_LD_LIBRARY_PATH"
+    OLD_C_INCLUDE_PATH="${C_INCLUDE_PATH:-}";         C_INCLUDE_PATH="$HYPRINSTALL_C_INCLUDE_PATH"
+    OLD_CPLUS_INCLUDE_PATH="${CPLUS_INCLUDE_PATH:-}"; CPLUS_INCLUDE_PATH="$HYPRINSTALL_CPLUS_INCLUDE_PATH"
+    OLD_LD_RUN_PATH="${LD_RUN_PATH:-}";               LD_RUN_PATH="$HYPRINSTALL_LD_RUN_PATH"
+    export CC CXX LD_LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH LD_RUN_PATH
     _buildVariablesExported="yes"
 }
 
@@ -635,7 +639,7 @@ _unsetGccVariablesFn () {
     if [ -n "$OLD_LD_LIBRARY_PATH" ]; then LD_LIBRARY_PATH="$OLD_LD_LIBRARY_PATH"; else unset LD_LIBRARY_PATH; fi
     if [ -n "$OLD_C_INCLUDE_PATH" ]; then C_INCLUDE_PATH="$OLD_C_INCLUDE_PATH"; else unset C_INCLUDE_PATH; fi
     if [ -n "$OLD_CPLUS_INCLUDE_PATH" ]; then CPLUS_INCLUDE_PATH="$OLD_CPLUS_INCLUDE_PATH"; else unset CPLUS_INCLUDE_PATH; fi
-    if [ -n "$OLD_RPATH" ]; then RPATH="$OLD_RPATH"; else unset RPATH; fi
+    if [ -n "$OLD_LD_RUN_PATH" ]; then LD_RUN_PATH="$OLD_LD_RUN_PATH"; else unset LD_RUN_PATH; fi
     _buildVariablesExported="no"
 }
 
@@ -1445,6 +1449,7 @@ _cleanupFn () {
 
 _mainFn () {
     _parseArgumentsFn "${@:-}"
+    exec &> >(tee -i "${_hyprinstallLogFile}")
     _bannerMsg
 
     mkdir -p "${_hyprinstallDir}"
