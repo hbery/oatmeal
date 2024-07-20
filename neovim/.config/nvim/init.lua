@@ -120,10 +120,10 @@ hi(0, 'Folded', { guibg = nil })
 -- Split keys remap
 kms('n', '<leader>v', ':vsplit<CR><C-w>l', { silent = true, desc = "Split buffer vertically" })
 kms('n', '<leader>b', ':split<CR><C-w>j', { silent = true, desc = "Split buffer horizontally" })
-kms('n', '<C-h>', '<C-w>h', { remap = false })
-kms('n', '<C-j>', '<C-w>j', { remap = false })
-kms('n', '<C-k>', '<C-w>k', { remap = false })
-kms('n', '<C-l>', '<C-w>l', { remap = false })
+kms('n', '<C-h>', '<C-w>h', { remap = false, desc = "Switch to left window" })
+kms('n', '<C-j>', '<C-w>j', { remap = false, desc = "Switch to down window" })
+kms('n', '<C-k>', '<C-w>k', { remap = false, desc = "Switch to up window" })
+kms('n', '<C-l>', '<C-w>l', { remap = false, desc = "Switch to right window" })
 
 -- Filesystem navigation `oil.nvim`
 kms("n", "-", require("oil").open, { desc = "Open parent directory" })
@@ -135,12 +135,12 @@ kms("n", "<leader>tb", ':split<CR><C-w>j:terminal<CR>', { silent = true, remap =
 kms("n", "<leader>tv", ':vsplit<CR><C-w>l:terminal<CR>', { silent = true, remap = false, desc = "Open terminal next to current window" })
 
 -- Keep block selected after indent
-kms('v', '<', '<gv', { remap = false })
-kms('v', '>', '>gv', { remap = false })
+kms('v', '<', '<gv', { remap = false, desc = "Deindent selected block keeping it selected" })
+kms('v', '>', '>gv', { remap = false, desc = "Indent selected block keeping it selected"  })
 
 -- Maintain the cursor position when yanking a visual selection
-kms('v', 'y', 'myy`y', { remap = false })
-kms('v', 'TY', 'myY`y', { remap = false })
+kms('v', 'y', 'myy`y', { remap = false, desc = "Yank visual selection maintaining last cursor position" })
+kms('v', 'Y', 'myY`y', { remap = false, desc = "Yank lines in visual selection maintaining last cursor position" })
 
 -- Search for visually selected text
 kms('v', '//', "y/<C-R>=escape(@\",'/\')<CR><CR>", { remap = false, desc = "Search for visually selected string" })
@@ -157,27 +157,27 @@ kms('n', '<leader>y', '\"+yy', { remap = false, desc = "Yank line to clipboard" 
 kms('v', '<leader>y', '\"+y', { remap = false, desc = "Yank selection to clipboard" })
 kms('n', '<leader>Y', '\"+Y', { remap = false, desc = "Yank till the end of the line to clipboard" })
 
-kms('n', '<leader>d', '\"_d', { remap = false })
-kms('v', '<leader>d', '\"_d', { remap = false })
+kms('n', '<leader>d', '\"_d', { remap = false, desc = "Delete to oblivion" })
+kms('v', '<leader>d', '\"_d', { remap = false, desc = "Delete selection to oblivion" })
 
 -- Keep me centered
-kms('n', 'n', 'nzzzv', { remap = false })
-kms('n', 'N', 'Nzzzv', { remap = false })
-kms('n', 'J', 'mzJ`z', { remap = false })
+kms('n', 'n', 'nzzzv', { remap = false, desc = "Next occurence in the center of the screen" })
+kms('n', 'N', 'Nzzzv', { remap = false, desc = "Previous occurence in the center of the screen" })
+kms('n', 'J', 'mzJ`z', { remap = false, desc = "Join lines, without moving cursor" })
 
 -- Fix the syntax highlighting (if broken)
 kms('n', '<leader>s', ':syntax off<CR>:syntax on<CR>', { remap = false, silent = true, desc = "Retoggle syntax" })
 
 -- Move text as intended
 --  in VISUAL
-kms('v', 'K', ":m '<-2<CR>gv=gv", { remap = false, silent = true })
-kms('v', 'J', ":m '>+1<CR>gv=gv", { remap = false, silent = true })
+kms('v', 'K', ":m '<-2<CR>gv=gv", { remap = false, silent = true, desc = "Move selected lines UP" })
+kms('v', 'J', ":m '>+1<CR>gv=gv", { remap = false, silent = true, desc = "Move selected lines DOWN"  })
 --  in NORMAL
-kms('n', '<leader>mk', ':m .-2<CR>==', { remap = false, silent = true, desc = "Move this currently highlighted line UP" })
-kms('n', '<leader>mj', ':m .+1<CR>==', { remap = false, silent = true, desc = "Move this currently highlighted line DOWN" })
-
-kms('i', '<A-k>', '<esc>:m .-2<CR>==gi', { remap = false, silent = true })
-kms('i', '<A-j>', '<esc>:m .+1<CR>==gi', { remap = false, silent = true })
+kms('n', '<leader>mk', ':m .-2<CR>==', { remap = false, silent = true, desc = "Move highlighted line UP" })
+kms('n', '<leader>mj', ':m .+1<CR>==', { remap = false, silent = true, desc = "Move highlighted line DOWN" })
+-- in INSERT
+kms('i', '<A-k>', '<esc>:m .-2<CR>==gi', { remap = false, silent = true, desc = "Move edited line UP" })
+kms('i', '<A-j>', '<esc>:m .+1<CR>==gi', { remap = false, silent = true, desc = "Move edited line DOWN" })
 
 -- Persist yank text in paste buffer
 kms('x', '<leader>p', '\"_dP', { remap = false, desc = "Paste yanked text from buffer, don't replace" })

@@ -16,8 +16,8 @@ return {
     },
 
   config = function()
-    local dap = require 'dap'
-    local dapui = require 'dapui'
+    local dap = require('dap')
+    local dapui = require('dapui')
 
     require('mason-nvim-dap').setup {
       automatic_installation = true,
