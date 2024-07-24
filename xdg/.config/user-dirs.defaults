@@ -1,0 +1,8 @@
+DESKTOP=sys/dsk
+DOWNLOAD=dls
+TEMPLATES=sys/tpl
+PUBLICSHARE=sys/pub
+DOCUMENTS=doc
+MUSIC=doc/aud
+PICTURES=doc/pic
+VIDEOS=doc/vid
