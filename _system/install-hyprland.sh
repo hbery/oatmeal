@@ -700,6 +700,12 @@ _dbiGccFn () {
     pushd "${_hyprinstallDir}/gcc-${_gccVersion}" || exit 20
 
     if [[ ! -e "/opt/${_gccVersion%%.*}/bin/gcc" && ! -e "/opt/${_gccVersion%%.*}/bin/g++" ]]; then
+        C_INCLUDE_PATH="$(gcc -xc -E -v - </dev/null 2>&1 \
+            | sed -nr '/^#include <.*> search starts here:/,/^End of search list\./{//!p}' | xargs | tr ' ' ':')"
+        LD_LIBRARY_PATH="$(ld --verbose | grep SEARCH_DIR | tr -s ' ;' \\012 \
+            | sed -nr 's/SEARCH_DIR\("=(.*)"\)/\1/p' | xargs | tr ' ' ':')"
+        LIBRARY_PATH="${LD_LIBRARY_PATH}"
+
         ./contrib/download_prerequisites
         mkdir -p build && pushd build
         ../configure -v                                                   \
@@ -744,6 +750,7 @@ _dbiGccFn () {
             --host=x86_64-linux-gnu                                       \
             --target=x86_64-linux-gnu                                     \
             --with-build-config=bootstrap-lto-lean                        \
+            && export LD_LIBRARY_PATH LIBRARY_PATH C_INCLUDE_PATH         \
             && make                                                       \
                 -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
         sudo make install ||                                              \
@@ -751,6 +758,7 @@ _dbiGccFn () {
             _errMsg "Failed to build/install \`gcc\`"
             exit 40
         }
+        unset LD_LIBRARY_PATH LIBRARY_PATH C_INCLUDE_PATH
 
         popd || exit 1
     fi
