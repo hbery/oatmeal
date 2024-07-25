@@ -685,15 +685,15 @@ _dbiGccFn () {
     # local _source_repo
     # _source_repo="https://gcc.gnu.org/git/gcc.git"
     #
-    # _cloneSourceFn \
-    #     "${_gccVersion}" \
+    # _cloneSourceFn        \
+    #     "${_gccVersion}"  \
     #     "${_source_repo}" \
     #     "releases/${_gccVersion}"
 
     local _source_tarball
 
     _source_tarball="https://ftpmirror.gnu.org/gnu/gcc/gcc-${_gccVersion}/gcc-${_gccVersion}.tar.gz"
-    _downloadSourceFn \
+    _downloadSourceFn        \
         "gcc-${_gccVersion}" \
         "${_source_tarball}"
 
@@ -702,52 +702,51 @@ _dbiGccFn () {
     if [[ ! -e "/opt/${_gccVersion%%.*}/bin/gcc" && ! -e "/opt/${_gccVersion%%.*}/bin/g++" ]]; then
         ./contrib/download_prerequisites
         mkdir build && pushd build
-        ../configure                                                        \
-            -v                                                              \
-            --with-pkgversion="Debian ${_gccVersion}-1 (hbery-custom)"      \
-            --enable-languages=c,c++,go,fortran                             \
-            --prefix="/opt/${_gccVersion%%.*}"                              \
-            --libdir="/opt/gcc-${_gccVersion%%.*}/lib"                      \
-            --libexecdir="/opt/gcc-${_gccVersion%%.*}/libexec"              \
-            --program-prefix="x86_64-linux-gnu-"                            \
-            --program-suffix="-${_gccVersion%%.*}"                          \
-            --with-gcc-major-version-only                                   \
-            --without-included-gettext                                      \
-            --without-cuda-driver                                           \
-            --enable-shared                                                 \
-            --enable-linker-build-id                                        \
-            --enable-threads=posix                                          \
-            --enable-nls                                                    \
-            --enable-bootstrap                                              \
-            --enable-clocale=gnu                                            \
-            --enable-libstdcxx-debug                                        \
-            --with-default-libstdcxx-abi=new                                \
-            --enable-libstdcxx-time=yes                                     \
-            --enable-libstdcxx-backtrace                                    \
-            --enable-gnu-unique-object                                      \
-            --disable-vtable-verify                                         \
-            --enable-plugin                                                 \
-            --enable-default-pie                                            \
-            --with-system-zlib                                              \
-            --enable-libphobos-checking=release                             \
-            --with-target-system-zlib=auto                                  \
-            --enable-multiarch                                              \
-            --disable-werror                                                \
-            --enable-cet                                                    \
-            --with-arch-32=i686                                             \
-            --with-abi=m64                                                  \
-            --with-multilib-list=m32,m64,mx32                               \
-            --enable-multilib                                               \
-            --with-tune=generic                                             \
-            --enable-link-serialization=3                                   \
-            --enable-checking=release                                       \
-            --build=x86_64-linux-gnu                                        \
-            --host=x86_64-linux-gnu                                         \
-            --target=x86_64-linux-gnu                                       \
-            --with-build-config=bootstrap-lto-lean                          \
-            && make bootstrap-lto-lean                                      \
-                -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" &&   \
-        sudo make install ||                                                \
+        ../configure -v                                                   \
+            --with-pkgversion="Debian ${_gccVersion}-1 (hbery-custom)"    \
+            --enable-languages=c,c++,go,fortran                           \
+            --prefix="/opt/${_gccVersion%%.*}"                            \
+            --libdir="/opt/gcc-${_gccVersion%%.*}/lib"                    \
+            --libexecdir="/opt/gcc-${_gccVersion%%.*}/libexec"            \
+            --program-prefix="x86_64-linux-gnu-"                          \
+            --program-suffix="-${_gccVersion%%.*}"                        \
+            --with-gcc-major-version-only                                 \
+            --without-included-gettext                                    \
+            --without-cuda-driver                                         \
+            --enable-shared                                               \
+            --enable-linker-build-id                                      \
+            --enable-threads=posix                                        \
+            --enable-nls                                                  \
+            --enable-bootstrap                                            \
+            --enable-clocale=gnu                                          \
+            --enable-libstdcxx-debug                                      \
+            --with-default-libstdcxx-abi=new                              \
+            --enable-libstdcxx-time=yes                                   \
+            --enable-libstdcxx-backtrace                                  \
+            --enable-gnu-unique-object                                    \
+            --disable-vtable-verify                                       \
+            --enable-plugin                                               \
+            --enable-default-pie                                          \
+            --with-system-zlib                                            \
+            --enable-libphobos-checking=release                           \
+            --with-target-system-zlib=auto                                \
+            --enable-multiarch                                            \
+            --disable-werror                                              \
+            --enable-cet                                                  \
+            --with-arch-32=i686                                           \
+            --with-abi=m64                                                \
+            --with-multilib-list=m32,m64,mx32                             \
+            --enable-multilib                                             \
+            --with-tune=generic                                           \
+            --enable-link-serialization=3                                 \
+            --enable-checking=release                                     \
+            --build=x86_64-linux-gnu                                      \
+            --host=x86_64-linux-gnu                                       \
+            --target=x86_64-linux-gnu                                     \
+            --with-build-config=bootstrap-lto-lean                        \
+            && make                                                       \
+                -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
+        sudo make install ||                                              \
         {
             _errMsg "Failed to build/install \`gcc\`"
             exit 40
@@ -772,14 +771,14 @@ _dbiCmakeFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["cmake"]}"
 
     _cmakeVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"    \
         "${_cmakeVersion}")"
 
     _script_name="cmake-${_cmakeVersion}-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m).sh"
     if [[ ! -x "${_script_name}" ]]; then
-        wget \
-            --quiet \
-            --show-progress \
+        wget                                                                 \
+            --quiet                                                          \
+            --show-progress                                                  \
             --output-document="${_hyprinstallDir}/cmake-${_cmakeVersion}.sh" \
             "$(_getSourceLinkFn "${_repo_src[@]}" | sed -nr 's/^(.*)\.git$/\1/p')/releases/download/v${_cmakeVersion}/${_script_name}"
         chmod 0755 "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh"
@@ -788,9 +787,9 @@ _dbiCmakeFn () {
     if [[ ! -x "/opt/cmake-${_cmakeVersion}/bin/cmake" ]]; then
         sudo mkdir -p "/opt/cmake-${_cmakeVersion}"
         sudo "${_hyprinstallDir}/cmake-${_cmakeVersion}.sh" \
-            --skip-license \
-            --exclude-subdir \
-            --prefix="/opt/cmake-${_cmakeVersion}" || \
+            --skip-license                                  \
+            --exclude-subdir                                \
+            --prefix="/opt/cmake-${_cmakeVersion}" ||       \
             {
                 _errMsg "Failed to build/install \`cmake\`"
                 exit 40
@@ -809,13 +808,13 @@ _dbiCmakeFn () {
 
 _dbiHyprlandFn () {
     _hedMsg "Starting \`Hyprland\` install from source, version: ${_hyprlandVersion}"
-    _hyprlandVersion="$(_getLatestOrValidateVersionFn \
+    _hyprlandVersion="$(_getLatestOrValidateVersionFn    \
         "$(_getSourceLinkFn "github" "hyprwm/Hyprland")" \
         "${_hyprlandVersion}")"
     _cloneSourceFn \
-        "hyprland-source" \
+        "hyprland-source"                                \
         "$(_getSourceLinkFn "github" "hyprwm/Hyprland")" \
-        "tag=v${_hyprlandVersion}" \
+        "tag=v${_hyprlandVersion}"                       \
         "yes"
 
     chmod a+rw "${_hyprinstallDir}/hyprland-source"
@@ -825,19 +824,19 @@ _dbiHyprlandFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake \
-        --no-warn-unused-cli \
-        -DCMAKE_BUILD_TYPE:STRING=Release \
-        -DCMAKE_INSTALL_PREFIX:STRING=/usr \
-        -B build \
-        -G Ninja \
-        && cmake \
-            --build build \
-            --config Release \
-            --target all \
+    cmake                                                                     \
+        --no-warn-unused-cli                                                  \
+        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
+        -DCMAKE_INSTALL_PREFIX:STRING=/usr                                    \
+        -B build                                                              \
+        -G Ninja                                                              \
+        && cmake                                                              \
+            --build build                                                     \
+            --config Release                                                  \
+            --target all                                                      \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-        chmod -R 777 build && \
-    sudo cmake --install build || \
+        chmod -R 777 build &&                                                 \
+    sudo cmake --install build ||                                             \
     {
         _errMsg "Failed to build/install \`Hyprland\`"
         exit 40
@@ -853,9 +852,9 @@ _dbiWaylandProtocolsFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["wayland-protocols"]}"
 
     _waylandProtocolsVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"               \
         "${_waylandProtocolsVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                                   \
         "wayland-protocols-${_waylandProtocolsVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_waylandProtocolsVersion}")"
 
@@ -865,14 +864,14 @@ _dbiWaylandProtocolsFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    meson setup \
-        --prefix=/usr \
-        --buildtype=release \
-        build/ \
-        && ninja \
-            -C build/ \
+    meson setup                                                       \
+        --prefix=/usr                                                 \
+        --buildtype=release                                           \
+        build/                                                        \
+        && ninja                                                      \
+            -C build/                                                 \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install || \
+    sudo ninja -C build/ install ||                                   \
     {
         _errMsg "Failed to build/install \`wayland-protocols\`"
         exit 40
@@ -888,9 +887,9 @@ _dbiWaylandFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["wayland"]}"
 
     _waylandVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"      \
         "${_waylandVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                \
         "wayland-${_waylandVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_waylandVersion}")"
 
@@ -900,15 +899,15 @@ _dbiWaylandFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    meson setup \
-        --prefix=/usr \
-        --buildtype=release \
-        -Ddocumentation=false \
-        build/ \
-        && ninja \
-            -C build/ \
+    meson setup                                                       \
+        --prefix=/usr                                                 \
+        --buildtype=release                                           \
+        -Ddocumentation=false                                         \
+        build/                                                        \
+        && ninja                                                      \
+            -C build/                                                 \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install || \
+    sudo ninja -C build/ install ||                                   \
     {
         _errMsg "Failed to build/install \`wayland\`"
         exit 40
@@ -924,9 +923,9 @@ _dbiLibdisplayInfoFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["libdisplay-info"]}"
 
     _libdisplayInfoVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"             \
         "${_libdisplayInfoVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                               \
         "libdisplay-info-${_libdisplayInfoVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_libdisplayInfoVersion}")"
 
@@ -936,14 +935,14 @@ _dbiLibdisplayInfoFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    meson setup \
-        --prefix=/usr \
-        --buildtype=release \
-        build/ \
-        && ninja \
-            -C build/ \
+    meson setup                                                       \
+        --prefix=/usr                                                 \
+        --buildtype=release                                           \
+        build/                                                        \
+        && ninja                                                      \
+            -C build/                                                 \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install || \
+    sudo ninja -C build/ install ||                                   \
     {
         _errMsg "Failed to build/install \`libdisplay-info\`"
         exit 40
@@ -975,15 +974,15 @@ _dbiLibinputFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    meson setup \
-        --prefix=/usr \
-        --buildtype=release \
-        -Ddocumentation=false \
-        build/ \
-        && ninja \
-            -C build/ \
+    meson setup                                                       \
+        --prefix=/usr                                                 \
+        --buildtype=release                                           \
+        -Ddocumentation=false                                         \
+        build/                                                        \
+        && ninja                                                      \
+            -C build/                                                 \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install || \
+    sudo ninja -C build/ install ||                                   \
     {
         _errMsg "Failed to build/install \`libinput\`"
         exit 40
@@ -999,9 +998,9 @@ _dbiLibliftoffFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["libliftoff"]}"
 
     _libliftoffVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"         \
         "${_libliftoffVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                       \
         "libliftoff-v${_libliftoffVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "v${_libliftoffVersion}")"
 
@@ -1011,14 +1010,14 @@ _dbiLibliftoffFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    meson setup \
-        --prefix=/usr \
-        --buildtype=release \
-        build/ \
-        && ninja \
-            -C build/ \
+    meson setup                                                       \
+        --prefix=/usr                                                 \
+        --buildtype=release                                           \
+        build/                                                        \
+        && ninja                                                      \
+            -C build/                                                 \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install || \
+    sudo ninja -C build/ install ||                                   \
     {
         _errMsg "Failed to build/install \`libliftoff\`"
         exit 40
@@ -1036,10 +1035,10 @@ _dbiLibxcbErrorsFn () {
     if [ -d "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}" ]; then
         rm -rf "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}"
     fi
-    _cloneSourceFn \
+    _cloneSourceFn                              \
         "libxcb-errors-${_libxcbErrorsVersion}" \
         "$(_getSourceLinkFn "${_repo_src[@]}")" \
-        "${_libxcbErrorsVersion}" \
+        "${_libxcbErrorsVersion}"               \
         "yes"
 
     mkdir -p "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}/build"
@@ -1049,10 +1048,10 @@ _dbiLibxcbErrorsFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    ../autogen.sh --prefix=/usr \
-        && make \
+    ../autogen.sh --prefix=/usr                                       \
+        && make                                                       \
             -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo make install || \
+    sudo make install ||                                              \
     {
         _errMsg "Failed to build/install \`libxcb-errors\`"
         exit 40
@@ -1068,9 +1067,9 @@ _dbiHyprlangFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprlang"]}"
 
     _hyprlangVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"       \
         "${_hyprlangVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                  \
         "hyprlang-${_hyprlangVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprlangVersion}")"
 
@@ -1080,17 +1079,17 @@ _dbiHyprlangFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake \
-        --no-warn-unused-cli \
-        -DCMAKE_BUILD_TYPE:STRING=Release \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-        -B build \
-        && cmake \
-            --build build \
-            --config Release \
-            --target hyprlang \
+    cmake                                                                     \
+        --no-warn-unused-cli                                                  \
+        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
+        -B build                                                              \
+        && cmake                                                              \
+            --build build                                                     \
+            --config Release                                                  \
+            --target hyprlang                                                 \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build || \
+    sudo cmake --install build ||                                             \
     {
         _errMsg "Failed to build/install \`hyprlang\`"
         exit 40
@@ -1106,9 +1105,9 @@ _dbiHyprcursorFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprcursor"]}"
 
     _hyprcursor="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"  \
         "${_hyprcursorVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                      \
         "hyprcursor-${_hyprcursorVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprcursorVersion}")"
 
@@ -1122,17 +1121,17 @@ _dbiHyprcursorFn () {
         sudo ln -sf /usr/include/toml++/toml.h /usr/include/toml++/toml.hpp
     fi
 
-    cmake \
-        --no-warn-unused-cli \
-        -DCMAKE_BUILD_TYPE:STRING=Release \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-        -B build \
-        && cmake \
-            --build build \
-            --config Release \
-            --target all \
+    cmake                                                                     \
+        --no-warn-unused-cli                                                  \
+        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
+        -B build                                                              \
+        && cmake                                                              \
+            --build build                                                     \
+            --config Release                                                  \
+            --target all                                                      \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build || \
+    sudo cmake --install build ||                                             \
     {
         _errMsg "Failed to build/install \`hyprcursor\`"
         exit 40
@@ -1148,9 +1147,9 @@ _dbiHyprwaylandScannerFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprwayland-scanner"]}"
 
     _hyprwaylandScannerVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"                 \
         "${_hyprwaylandScannerVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                                       \
         "hyprwayland-scanner-${_hyprwaylandScannerVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprwaylandScannerVersion}")"
 
@@ -1160,13 +1159,13 @@ _dbiHyprwaylandScannerFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-        -B build \
-        && cmake \
-            --build build \
+    cmake                                                                     \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
+        -B build                                                              \
+        && cmake                                                              \
+            --build build                                                     \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build || \
+    sudo cmake --install build ||                                             \
     {
         _errMsg "Failed to build/install \`hyprwayland-scanner\`"
         exit 40
@@ -1182,9 +1181,9 @@ _dbiHyprutilsFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprutils"]}"
 
     _hyprutilsVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"        \
         "${_hyprutilsVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                   \
         "hyprlang-${_hyprutilsVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprutilsVersion}")"
 
@@ -1194,17 +1193,17 @@ _dbiHyprutilsFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake \
-        --no-warn-unused-cli \
-        -DCMAKE_BUILD_TYPE:STRING=Release \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-        -B build \
-        && cmake \
-            --build build \
-            --config Release \
-            --target all \
+    cmake                                                                     \
+        --no-warn-unused-cli                                                  \
+        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
+        -B build                                                              \
+        && cmake                                                              \
+            --build build                                                     \
+            --config Release                                                  \
+            --target all                                                      \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build || \
+    sudo cmake --install build ||                                             \
     {
         _errMsg "Failed to build/install \`hyprutils\`"
         exit 40
@@ -1243,9 +1242,9 @@ _dbiSddmFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["sddm"]}"
 
     _sddmVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"   \
         "${_sddmVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn          \
         "sddm-${_sddmVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_sddmVersion}")"
 
@@ -1255,17 +1254,17 @@ _dbiSddmFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-        -DCMAKE_BUILD_TYPE:STRING=Release \
-        -DENABLE_JOURNALD:BOOL=ON \
-        -DBUILD_MAN_PAGES:BOOL=ON \
-        -DBUILD_WITH_QT6:BOOL=ON \
-        -B build \
-        && make \
-            --directory=build \
+    cmake                                                                 \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                  \
+        -DCMAKE_BUILD_TYPE:STRING=Release                                 \
+        -DENABLE_JOURNALD:BOOL=ON                                         \
+        -DBUILD_MAN_PAGES:BOOL=ON                                         \
+        -DBUILD_WITH_QT6:BOOL=ON                                          \
+        -B build                                                          \
+        && make                                                           \
+            --directory=build                                             \
             --jobs="$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo make --directory=build install || \
+    sudo make --directory=build install ||                                \
     {
         _errMsg "Failed to build/install \`sddm\`"
         exit 40
@@ -1273,11 +1272,11 @@ _dbiSddmFn () {
 
 
     if [ -z "$(getent passwd sddm)" ]; then
-        sudo useradd \
-            --system \
-            --create-home \
-            --shell "/sbin/nologin" \
-            --home-dir "/var/lib/sddm" \
+        sudo useradd                                   \
+            --system                                   \
+            --create-home                              \
+            --shell "/sbin/nologin"                    \
+            --home-dir "/var/lib/sddm"                 \
             --comment "Simple Desktop Display Manager" \
             sddm
     fi
@@ -1292,9 +1291,9 @@ _dbiHyprpaperFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprpaper"]}"
 
     _hyprpaperVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"        \
         "${_hyprpaperVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                    \
         "hyprpaper-${_hyprpaperVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprpaperVersion}")"
 
@@ -1304,17 +1303,17 @@ _dbiHyprpaperFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake \
-        --no-warn-unused-cli \
-        -DCMAKE_BUILD_TYPE:STRING=Release \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-        -B build \
-        && cmake \
-            --build build \
-            --config Release \
-            --target hyprpaper \
+    cmake                                                                     \
+        --no-warn-unused-cli                                                  \
+        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
+        -B build                                                              \
+        && cmake                                                              \
+            --build build                                                     \
+            --config Release                                                  \
+            --target hyprpaper                                                \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build || \
+    sudo cmake --install build ||                                             \
     {
         _errMsg "Failed to build/install \`hyprpaper\`"
         exit 40
@@ -1330,9 +1329,9 @@ _dbiHyprlockFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprlock"]}"
 
     _hyprlockVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"       \
         "${_hyprlockVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                  \
         "hyprlock-${_hyprlockVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprlockVersion}")"
 
@@ -1342,16 +1341,16 @@ _dbiHyprlockFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake \
-        --no-warn-unused-cli \
-        -DCMAKE_BUILD_TYPE:STRING=Release \
-        -B build \
-        && cmake \
-            --build build \
-            --config Release \
-            --target hyprlock \
+    cmake                                                                     \
+        --no-warn-unused-cli                                                  \
+        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
+        -B build                                                              \
+        && cmake                                                              \
+            --build build                                                     \
+            --config Release                                                  \
+            --target hyprlock                                                 \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build || \
+    sudo cmake --install build ||                                             \
     {
         _errMsg "Failed to build/install \`hyprlock\`"
         exit 40
@@ -1367,9 +1366,9 @@ _dbiHypridleFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hypridle"]}"
 
     _hypridleVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"       \
         "${_hypridleVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                  \
         "hypridle-${_hypridleVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hypridleVersion}")"
 
@@ -1379,16 +1378,16 @@ _dbiHypridleFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake \
-        --no-warn-unused-cli \
-        -DCMAKE_BUILD_TYPE:STRING=Release \
-        -B build \
-        && cmake \
-            --build build \
-            --config Release \
-            --target hypridle \
+    cmake                                                                     \
+        --no-warn-unused-cli                                                  \
+        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
+        -B build                                                              \
+        && cmake                                                              \
+            --build build                                                     \
+            --config Release                                                  \
+            --target hypridle                                                 \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build || \
+    sudo cmake --install build ||                                             \
     {
         _errMsg "Failed to build/install \`hypridle\`"
         exit 40
@@ -1404,9 +1403,9 @@ _dbiXdgDesktopPortalHyprlandFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["xdg-desktop-portal-hyprland"]}"
 
     _xdgDesktopPortalHyprlandVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"                       \
         "${_xdgDesktopPortalHyprlandVersion}")"
-    _downloadSourceFn \
+    _downloadSourceFn                                                     \
         "xdg-desktop-portal-hyprland-${_xdgDesktopPortalHyprlandVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_xdgDesktopPortalHyprlandVersion}")"
 
@@ -1416,14 +1415,14 @@ _dbiXdgDesktopPortalHyprlandFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake \
-        -DCMAKE_INSTALL_LIBEXECDIR:PATH=/usr/lib \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
-        -B build \
-        && cmake \
-            --build build \
+    cmake                                                                     \
+        -DCMAKE_INSTALL_LIBEXECDIR:PATH=/usr/lib                              \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
+        -B build                                                              \
+        && cmake                                                              \
+            --build build                                                     \
             --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build || \
+    sudo cmake --install build ||                                             \
     {
         _errMsg "Failed to build/install \`xdg-desktop-portal-hyprland\`"
         exit 40
@@ -1442,16 +1441,16 @@ _dbiHyprlandPluginsFn () {
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprland-plugins"]}"
 
     _hyprlandPluginsVersion="$(_getLatestOrValidateVersionFn \
-        "$(_getSourceLinkFn "${_repo_src[@]}")" \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"              \
         "${_hyprlandPluginsVersion}")"
     if [ -z "${_hyprlandPluginsVersion}" ]; then
         _hyprlandPluginsVersion="main"
-        _cloneSourceFn \
+        _cloneSourceFn                                    \
             "hyprland-plugins-${_hyprlandPluginsVersion}" \
-            "$(_getSourceLinkFn "${_repo_src[@]}")" \
+            "$(_getSourceLinkFn "${_repo_src[@]}")"       \
             "${_hyprlandPluginsVersion}"
     else
-        _downloadSourceFn \
+        _downloadSourceFn                                 \
             "hyprland-plugins-${_hyprlandPluginsVersion}" \
             "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprlandPluginsVersion}")"
     fi
@@ -1469,7 +1468,7 @@ _dbiHyprlandPluginsFn () {
 
     for _plugin in "${_hyprlandPlugins[@]}"; do
         _build_cmd="$(sed -nr '/^\['"${_plugin}"'\]$/,/^$/p' hyprpm.toml \
-            | sed -nr '/^build = \[/,/^\]/p' | tr ',' ';' \
+            | sed -nr '/^build = \[/,/^\]/p' | tr ',' ';'                \
             | xargs | sed -nr 's/^build = \[ (.*) \]/\1/p')"
         if [[ -n "${_build_cmd}" ]]; then
             _prgMsg "Installing ${_plugin}"
@@ -1497,8 +1496,10 @@ _dbiHyprlandContribFn () {
     local _cscripts_merged
     mapfile -t -d ' ' _repo_src <<<"${_repoSources["hyprland-contrib"]}"
 
-    _hyprlandContribVersion="$(_getLatestOrValidateVersionFn "$(_getSourceLinkFn "${_repo_src[@]}")" "${_hyprlandContribVersion}")"
-    _downloadSourceFn \
+    _hyprlandContribVersion="$(_getLatestOrValidateVersionFn \
+        "$(_getSourceLinkFn "${_repo_src[@]}")"              \
+        "${_hyprlandContribVersion}")"
+    _downloadSourceFn                                \
         "hyprlandContrib-${_hyprlandContribVersion}" \
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_hyprlandContribVersion}")"
 
