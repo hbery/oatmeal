@@ -701,7 +701,7 @@ _dbiGccFn () {
 
     if [[ ! -e "/opt/${_gccVersion%%.*}/bin/gcc" && ! -e "/opt/${_gccVersion%%.*}/bin/g++" ]]; then
         ./contrib/download_prerequisites
-        mkdir build && pushd build
+        mkdir -p build && pushd build
         ../configure -v                                                   \
             --with-pkgversion="Debian ${_gccVersion}-1 (hbery-custom)"    \
             --enable-languages=c,c++,go,fortran                           \
