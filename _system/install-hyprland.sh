@@ -35,7 +35,7 @@ set -euo pipefail
 source /etc/os-release
 
 _hyprinstallLogFile="/tmp/hyprinstall-$$.log"
-_hyprinstallDir="${HOME}/git/hyprland-build"
+_hyprinstallDir="${HYPRINSTALL_DIR:-"${HOME}/git/hyprland-build"}"
 
 _noDeps=
 _noSddm=
@@ -100,8 +100,8 @@ elif [ "${ID}" = "debian" ]; then
 
     _sddmVersion="${HYPRINSTALL_SDDM_VERSION:-"0.20.0"}"
 
-    # _gccVersion="${HYPRINSTALL_GCC_VERSION:-"13.3.0"}"
-    _gccVersion="${HYPRINSTALL_GCC_VERSION:-"gcc-13"}"
+    _gccVersion="${HYPRINSTALL_GCC_VERSION:-"13.3.0"}"
+    # _gccVersion="${HYPRINSTALL_GCC_VERSION:-"gcc-13"}"
     _cmakeVersion="${HYPRINSTALL_CMAKE_VERSION:-"3.29.6"}"
 
     _debianSpecificPackages=("vulkan-validationlayers-dev")
@@ -208,6 +208,7 @@ _commonPackages=(
     xdg-desktop-portal-wlr
     xutils-dev
     xwayland
+    zlib1g-dev
 )
 
 _errMsg () { >&2 echo -e "${_redClr}ERROR:${_norClr}${_bldClr} $*${_norClr}"; }
@@ -653,30 +654,77 @@ _echoCompilerMsg () {
 
 _dbiGccFn () {
     _hedMsg "Starting \`gcc\` install from source, version: ${_gccVersion}"
-    local _source_repo
     # NOTE: Consider using below sources to match ubuntu's noble numbat release
     # _patch_name="$(curl -s https://patches.ubuntu.com/g/gcc-13/ | perl -ne 's/.*<a href="(gcc-13.*\.patch)">.*/$1/ and print')"
     # _patch_link="https://patches.ubuntu.com/g/gcc-13/${_patch_name}"
-    # _source_tarball="https://ftpmirror.gnu.org/gcc/gcc-13.2.0/gcc-13.2.0.tar.gz"
-    _source_repo="https://gcc.gnu.org/git/gcc.git"
 
-    _cloneSourceFn \
-        "${_gccVersion}" \
-        "${_source_repo}" \
-        "releases/${_gccVersion}"
+    # XXX: If cloning from source
+    # local _source_repo
+    # _source_repo="https://gcc.gnu.org/git/gcc.git"
+    #
+    # _cloneSourceFn \
+    #     "${_gccVersion}" \
+    #     "${_source_repo}" \
+    #     "releases/${_gccVersion}"
 
-    pushd "${_hyprinstallDir}/${_gccVersion}" || exit 20
+    local _source_tarball
+
+    _source_tarball="https://ftpmirror.gnu.org/gnu/gcc/gcc-${_gccVersion}/gcc-${_gccVersion}.tar.gz"
+    _downloadSourceFn \
+        "gcc-${_gccVersion}" \
+        "${_source_tarball}"
+
+    pushd "${_hyprinstallDir}/gcc-${_gccVersion}" || exit 20
 
     if [[ ! -e "/opt/${_gccVersion%%.*}/bin/gcc" && ! -e "/opt/${_gccVersion%%.*}/bin/g++" ]]; then
         ./contrib/download_prerequisites
         mkdir build && pushd build
-        ../configure \
-            --prefix="/opt/${_gccVersion%%.*}" \
-            --enable-languages=c,c++,fortran,go \
-            --disable-multilib \
-            && make bootstrap-lean \
-                -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-        sudo make install || \
+        ../configure                                                        \
+            -v                                                              \
+            --with-pkgversion="Debian ${_gccVersion}-1 (hbery-custom)"      \
+            --enable-languages=c,c++,go,fortran                             \
+            --prefix="/opt/${_gccVersion%%.*}"                              \
+            --libdir="/opt/gcc-${_gccVersion%%.*}/lib"                      \
+            --libexecdir="/opt/gcc-${_gccVersion%%.*}/libexec"              \
+            --program-prefix="x86_64-linux-gnu-"                            \
+            --program-suffix="-${_gccVersion%%.*}"                          \
+            --with-gcc-major-version-only                                   \
+            --without-included-gettext                                      \
+            --without-cuda-driver                                           \
+            --enable-shared                                                 \
+            --enable-linker-build-id                                        \
+            --enable-threads=posix                                          \
+            --enable-nls                                                    \
+            --enable-bootstrap                                              \
+            --enable-clocale=gnu                                            \
+            --enable-libstdcxx-debug                                        \
+            --with-default-libstdcxx-abi=new                                \
+            --enable-libstdcxx-time=yes                                     \
+            --enable-libstdcxx-backtrace                                    \
+            --enable-gnu-unique-object                                      \
+            --disable-vtable-verify                                         \
+            --enable-plugin                                                 \
+            --enable-default-pie                                            \
+            --with-system-zlib                                              \
+            --enable-libphobos-checking=release                             \
+            --with-target-system-zlib=auto                                  \
+            --enable-multiarch                                              \
+            --disable-werror                                                \
+            --enable-cet                                                    \
+            --with-arch-32=i686                                             \
+            --with-abi=m64                                                  \
+            --with-multilib-list=m32,m64,mx32                               \
+            --enable-multilib                                               \
+            --with-tune=generic                                             \
+            --enable-link-serialization=3                                   \
+            --enable-checking=release                                       \
+            --build=x86_64-linux-gnu                                        \
+            --host=x86_64-linux-gnu                                         \
+            --target=x86_64-linux-gnu                                       \
+            --with-build-config=bootstrap-lto-lean                          \
+            && make bootstrap-lto-lean                                      \
+                -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" &&   \
+        sudo make install ||                                                \
         {
             _errMsg "Failed to build/install \`gcc\`"
             exit 40
@@ -690,7 +738,7 @@ _dbiGccFn () {
 
     _setGccVariablesFn "/opt/${_gccVersion%%.*}" || \
     {
-        _errMsg "Failed to export Gcc related variables"
+        _errMsg "Failed to export \`gcc\` related variables"
         exit 70
     }
 }
@@ -790,6 +838,10 @@ _dbiWaylandProtocolsFn () {
 
     pushd "${_hyprinstallDir}/wayland-protocols-${_waylandProtocolsVersion}" || exit 3
 
+    _exportGccVariablesFn
+    _echoCompilerMsg
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
+
     meson setup \
         --prefix=/usr \
         --buildtype=release \
@@ -820,6 +872,10 @@ _dbiWaylandFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_waylandVersion}")"
 
     pushd "${_hyprinstallDir}/wayland-${_waylandVersion}" || exit 2
+
+    _exportGccVariablesFn
+    _echoCompilerMsg
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     meson setup \
         --prefix=/usr \
@@ -852,6 +908,10 @@ _dbiLibdisplayInfoFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_libdisplayInfoVersion}")"
 
     pushd "${_hyprinstallDir}/libdisplay-info-${_libdisplayInfoVersion}" || exit 4
+
+    _exportGccVariablesFn
+    _echoCompilerMsg
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     meson setup \
         --prefix=/usr \
@@ -888,6 +948,10 @@ _dbiLibinputFn () {
         sudo ln -s /usr/include/locale.h /usr/include/xlocale.h
     fi
 
+    _exportGccVariablesFn
+    _echoCompilerMsg
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
+
     meson setup \
         --prefix=/usr \
         --buildtype=release \
@@ -919,6 +983,10 @@ _dbiLibliftoffFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "v${_libliftoffVersion}")"
 
     pushd "${_hyprinstallDir}/libliftoff-v${_libliftoffVersion}" || exit 6
+
+    _exportGccVariablesFn
+    _echoCompilerMsg
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     meson setup \
         --prefix=/usr \
@@ -953,6 +1021,10 @@ _dbiLibxcbErrorsFn () {
 
     mkdir -p "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}/build"
     pushd "${_hyprinstallDir}/libxcb-errors-${_libxcbErrorsVersion}/build" || exit 5
+
+    _exportGccVariablesFn
+    _echoCompilerMsg
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     ../autogen.sh --prefix=/usr \
         && make \
@@ -1155,6 +1227,10 @@ _dbiSddmFn () {
         "$(_getSourceTarballLinkFn "${_repo_src[@]}" "${_sddmVersion}")"
 
     pushd "${_hyprinstallDir}/sddm-${_sddmVersion}/" || exit 10
+
+    _exportGccVariablesFn
+    _echoCompilerMsg
+    trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
     cmake \
         -DCMAKE_INSTALL_PREFIX:PATH=/usr \
