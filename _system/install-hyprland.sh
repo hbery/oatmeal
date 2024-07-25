@@ -158,6 +158,7 @@ _commonPackages=(
     libavcodec-dev
     libavformat-dev
     libavutil-dev
+    libc6-dev-i386
     libdrm-dev
     libegl1-mesa-dev
     libegl-dev
