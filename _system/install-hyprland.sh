@@ -4,13 +4,14 @@
 # ~~~
 # $date: 2024
 # $author: Adam Twardosz (github.com/hbery)
+# $email: a.twardosz98@gmail.com
 # $description:
 #   Install Hyprland Wayland Compositor alongside
 #   with the dependencies and addons.
 # ~~~
 # MIT License
 #
-# Copyright (c) 2024 Adam Twardosz (github.com/hbery)
+# Copyright (c) 2024 Adam Twardosz <a.twardosz98@gmail.com> (github.com/hbery)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -101,11 +102,12 @@ elif [ "${ID}" = "debian" ]; then
     _sddmVersion="${HYPRINSTALL_SDDM_VERSION:-"0.20.0"}"
 
     _gccVersion="${HYPRINSTALL_GCC_VERSION:-"13.3.0"}"
-    # _gccVersion="${HYPRINSTALL_GCC_VERSION:-"gcc-13"}"
+    # _gccVersion="${HYPRINSTALL_GCC_VERSION:-"gcc-13"}" # when cloned from source
     _cmakeVersion="${HYPRINSTALL_CMAKE_VERSION:-"3.29.6"}"
 
     _debianSpecificPackages=("vulkan-validationlayers-dev")
 else
+    echo >&2 "This system is neither \`debian\` nor \`ubuntu\`"
     exit 1
 fi
 
@@ -252,15 +254,24 @@ _EOB
 }
 
 _usageFn () {
+    local _help_type
+    _help_type="${1:-}"
+
     cat << _EOH1
-usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddons] [+nocleanup] [+reusesrc]
+usage: $(basename "$0") [-help={|full|env}] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddons] [+nocleanup] [+reusesrc]
                         [-logfile FILE] [-addons ADDON1,ADDON2,..] [-plugins PLUG1,PLUG2,..] [-contrib SCRIPT1,SCRIPT2,..]
 
     Script to install Hyprland and few addons.
     Plugins and Contrib-scripts install is experimental (consider using hyprload).
     Script is destined to be used only on \`debian\` and \`ubuntu\`.
 
-    -help               Show this help.
+_EOH1
+
+    if [[ "${_help_type}" == "full" ]]; then
+        cat << _EOH2
+    -help               Show short help (default).
+         =full          Show this help.
+         =env           Show help for environment variables.
     +nodeps             Install just hyprland, no debian-needed dependencies.
     +nosddm             Install without custom sddm.
     +nohypr             Install without Hyprland.
@@ -281,7 +292,13 @@ usage: $(basename "$0") [-help] [+nodeps] [+nosddm] [+nohypr] [+latest] [+noaddo
     -contrib SCRIPT,..  Specify contrib scripts from hyprland-contrib, ',' separated.
                           (take dirnames from https://github.com/hyprwm/contrib.git)
 
-environment variables: (all prepended with 'HYPRINSTALL_' if you want change version)
+_EOH2
+    fi
+
+    if [[ "${_help_type}" == "env" ]]; then
+        cat << _EOH3
+environment variables: (all prepended with 'HYPRINSTALL_' if you to want change it)
+    DIR                                 = ${_hyprinstallDir}
     HYPRLAND_VERSION                    = ${_hyprlandVersion}
 + dependencies:
     WAYLAND_PROTOCOLS_VERSION           = ${_waylandProtocolsVersion}
@@ -306,7 +323,9 @@ environment variables: (all prepended with 'HYPRINSTALL_' if you want change ver
 + debian-only:
     GCC_VERSION                         = ${_gccVersion}
     CMAKE_VERSION                       = ${_cmakeVersion}
-_EOH1
+
+_EOH3
+    fi
 }
 
 _parseArgumentsFn () {
@@ -314,6 +333,10 @@ _parseArgumentsFn () {
         case "${1}" in
             -help)
                 _usageFn
+                exit
+                ;;
+            -help=*)
+                _usageFn "${1##*=}"
                 exit
                 ;;
             +nodeps)
