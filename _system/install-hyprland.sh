@@ -750,7 +750,7 @@ _dbiGccFn () {
             --build=x86_64-linux-gnu                                      \
             --host=x86_64-linux-gnu                                       \
             --target=x86_64-linux-gnu                                     \
-            --with-build-config=bootstrap-lto-lean                        \
+            --with-build-config=bootstrap-lean                            \
             && export LD_LIBRARY_PATH LIBRARY_PATH C_INCLUDE_PATH         \
             && make                                                       \
                 -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
