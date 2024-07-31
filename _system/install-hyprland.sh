@@ -37,6 +37,7 @@ source /etc/os-release
 
 _hyprinstallLogFile="/tmp/hyprinstall-$$.log"
 _hyprinstallDir="${HYPRINSTALL_DIR:-"${HOME}/git/hyprland-build"}"
+_threads="$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)"
 
 _noDeps=
 _noSddm=
@@ -301,6 +302,7 @@ _EOH2
 environment variables: (all prepended with 'HYPRINSTALL_' if you to want change it)
     DIR                                 = ${_hyprinstallDir}
     HYPRLAND_VERSION                    = ${_hyprlandVersion}
+
 + dependencies:
     WAYLAND_PROTOCOLS_VERSION           = ${_waylandProtocolsVersion}
     WAYLAND_VERSION                     = ${_waylandVersion}
@@ -432,10 +434,12 @@ _parseArgumentsFn () {
     fi
 
     if [[ -n "${_noPlugins}" && ${#_hyprlandPlugins[@]} -gt 0 ]]; then
-        _wrnMsg "Specified \`+noplugins\`. Not installing 'hyprland-plugins'."; _hyprlandPlugins=()
+        _wrnMsg "Specified \`+noplugins\`. Not installing 'hyprland-plugins'."
+        _hyprlandPlugins=()
     fi
     if [[ -n "${_noContrib}" && ${#_contribScripts[@]} -gt 0 ]]; then
-        _wrnMsg "Specified \`+nocontrib\`. Not installing 'hyprland-contrib'."; _contribScripts=()
+        _wrnMsg "Specified \`+nocontrib\`. Not installing 'hyprland-contrib'."
+        _contribScripts=()
     fi
 }
 
@@ -709,52 +713,51 @@ _dbiGccFn () {
 
         ./contrib/download_prerequisites
         mkdir -p build && pushd build
-        ../configure -v                                                   \
-            --with-pkgversion="Debian ${_gccVersion}-1 (hbery-custom)"    \
-            --enable-languages=c,c++,go,fortran                           \
-            --prefix="/opt/${_gccVersion%%.*}"                            \
-            --libdir="/opt/gcc-${_gccVersion%%.*}/lib"                    \
-            --libexecdir="/opt/gcc-${_gccVersion%%.*}/libexec"            \
-            --program-prefix="x86_64-linux-gnu-"                          \
-            --program-suffix="-${_gccVersion%%.*}"                        \
-            --with-gcc-major-version-only                                 \
-            --without-included-gettext                                    \
-            --without-cuda-driver                                         \
-            --enable-shared                                               \
-            --enable-linker-build-id                                      \
-            --enable-threads=posix                                        \
-            --enable-nls                                                  \
-            --enable-bootstrap                                            \
-            --enable-clocale=gnu                                          \
-            --enable-libstdcxx-debug                                      \
-            --with-default-libstdcxx-abi=new                              \
-            --enable-libstdcxx-time=yes                                   \
-            --enable-libstdcxx-backtrace                                  \
-            --enable-gnu-unique-object                                    \
-            --disable-vtable-verify                                       \
-            --enable-plugin                                               \
-            --enable-default-pie                                          \
-            --with-system-zlib                                            \
-            --enable-libphobos-checking=release                           \
-            --with-target-system-zlib=auto                                \
-            --enable-multiarch                                            \
-            --disable-werror                                              \
-            --enable-cet                                                  \
-            --with-arch-32=i686                                           \
-            --with-abi=m64                                                \
-            --with-multilib-list=m32,m64,mx32                             \
-            --enable-multilib                                             \
-            --with-tune=generic                                           \
-            --enable-link-serialization=3                                 \
-            --enable-checking=release                                     \
-            --build=x86_64-linux-gnu                                      \
-            --host=x86_64-linux-gnu                                       \
-            --target=x86_64-linux-gnu                                     \
-            --with-build-config=bootstrap-lean                            \
-            && export LD_LIBRARY_PATH LIBRARY_PATH C_INCLUDE_PATH         \
-            && make                                                       \
-                -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-        sudo make install ||                                              \
+        ../configure -v                                                \
+            --with-pkgversion="Debian ${_gccVersion}-1 (hbery-custom)" \
+            --enable-languages=c,c++,go,fortran                        \
+            --prefix="/opt/${_gccVersion%%.*}"                         \
+            --libdir="/opt/gcc-${_gccVersion%%.*}/lib"                 \
+            --libexecdir="/opt/gcc-${_gccVersion%%.*}/libexec"         \
+            --program-prefix="x86_64-linux-gnu-"                       \
+            --program-suffix="-${_gccVersion%%.*}"                     \
+            --with-gcc-major-version-only                              \
+            --without-included-gettext                                 \
+            --without-cuda-driver                                      \
+            --enable-shared                                            \
+            --enable-linker-build-id                                   \
+            --enable-threads=posix                                     \
+            --enable-nls                                               \
+            --enable-bootstrap                                         \
+            --enable-clocale=gnu                                       \
+            --enable-libstdcxx-debug                                   \
+            --with-default-libstdcxx-abi=new                           \
+            --enable-libstdcxx-time=yes                                \
+            --enable-libstdcxx-backtrace                               \
+            --enable-gnu-unique-object                                 \
+            --disable-vtable-verify                                    \
+            --enable-plugin                                            \
+            --enable-default-pie                                       \
+            --with-system-zlib                                         \
+            --enable-libphobos-checking=release                        \
+            --with-target-system-zlib=auto                             \
+            --enable-multiarch                                         \
+            --disable-werror                                           \
+            --enable-cet                                               \
+            --with-arch-32=i686                                        \
+            --with-abi=m64                                             \
+            --with-multilib-list=m32,m64,mx32                          \
+            --enable-multilib                                          \
+            --with-tune=generic                                        \
+            --enable-link-serialization=3                              \
+            --enable-checking=release                                  \
+            --build=x86_64-linux-gnu                                   \
+            --host=x86_64-linux-gnu                                    \
+            --target=x86_64-linux-gnu                                  \
+            --with-build-config=bootstrap-lean                         \
+            && export LD_LIBRARY_PATH LIBRARY_PATH C_INCLUDE_PATH      \
+            && make -j "${_threads}" &&                                \
+        sudo make install-strip ||                                     \
         {
             _errMsg "Failed to build/install \`gcc\`"
             exit 40
@@ -833,19 +836,19 @@ _dbiHyprlandFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake                                                                     \
-        --no-warn-unused-cli                                                  \
-        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
-        -DCMAKE_INSTALL_PREFIX:STRING=/usr                                    \
-        -B build                                                              \
-        -G Ninja                                                              \
-        && cmake                                                              \
-            --build build                                                     \
-            --config Release                                                  \
-            --target all                                                      \
-            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-        chmod -R 777 build &&                                                 \
-    sudo cmake --install build ||                                             \
+    cmake                                  \
+        --no-warn-unused-cli               \
+        -DCMAKE_BUILD_TYPE:STRING=Release  \
+        -DCMAKE_INSTALL_PREFIX:STRING=/usr \
+        -B build                           \
+        -G Ninja                           \
+        && cmake                           \
+            --build build                  \
+            --config Release               \
+            --target all                   \
+            --parallel "${_threads}" &&    \
+        chmod -R 777 build &&              \
+    sudo cmake --install build ||          \
     {
         _errMsg "Failed to build/install \`Hyprland\`"
         exit 40
@@ -873,14 +876,14 @@ _dbiWaylandProtocolsFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    meson setup                                                       \
-        --prefix=/usr                                                 \
-        --buildtype=release                                           \
-        build/                                                        \
-        && ninja                                                      \
-            -C build/                                                 \
-            -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install ||                                   \
+    meson setup                     \
+        --prefix=/usr               \
+        --buildtype=release         \
+        build/                      \
+        && ninja                    \
+            -C build/               \
+            -j "${_threads}" &&     \
+    sudo ninja -C build/ install || \
     {
         _errMsg "Failed to build/install \`wayland-protocols\`"
         exit 40
@@ -908,15 +911,15 @@ _dbiWaylandFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    meson setup                                                       \
-        --prefix=/usr                                                 \
-        --buildtype=release                                           \
-        -Ddocumentation=false                                         \
-        build/                                                        \
-        && ninja                                                      \
-            -C build/                                                 \
-            -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install ||                                   \
+    meson setup                     \
+        --prefix=/usr               \
+        --buildtype=release         \
+        -Ddocumentation=false       \
+        build/                      \
+        && ninja                    \
+            -C build/               \
+            -j "${_threads}" &&     \
+    sudo ninja -C build/ install || \
     {
         _errMsg "Failed to build/install \`wayland\`"
         exit 40
@@ -944,14 +947,14 @@ _dbiLibdisplayInfoFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    meson setup                                                       \
-        --prefix=/usr                                                 \
-        --buildtype=release                                           \
-        build/                                                        \
-        && ninja                                                      \
-            -C build/                                                 \
-            -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install ||                                   \
+    meson setup                     \
+        --prefix=/usr               \
+        --buildtype=release         \
+        build/                      \
+        && ninja                    \
+            -C build/               \
+            -j "${_threads}" &&     \
+    sudo ninja -C build/ install || \
     {
         _errMsg "Failed to build/install \`libdisplay-info\`"
         exit 40
@@ -983,15 +986,15 @@ _dbiLibinputFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    meson setup                                                       \
-        --prefix=/usr                                                 \
-        --buildtype=release                                           \
-        -Ddocumentation=false                                         \
-        build/                                                        \
-        && ninja                                                      \
-            -C build/                                                 \
-            -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install ||                                   \
+    meson setup                     \
+        --prefix=/usr               \
+        --buildtype=release         \
+        -Ddocumentation=false       \
+        build/                      \
+        && ninja                    \
+            -C build/               \
+            -j "${_threads}" &&     \
+    sudo ninja -C build/ install || \
     {
         _errMsg "Failed to build/install \`libinput\`"
         exit 40
@@ -1019,14 +1022,14 @@ _dbiLibliftoffFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    meson setup                                                       \
-        --prefix=/usr                                                 \
-        --buildtype=release                                           \
-        build/                                                        \
-        && ninja                                                      \
-            -C build/                                                 \
-            -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo ninja -C build/ install ||                                   \
+    meson setup                     \
+        --prefix=/usr               \
+        --buildtype=release         \
+        build/                      \
+        && ninja                    \
+            -C build/               \
+            -j "${_threads}" &&     \
+    sudo ninja -C build/ install || \
     {
         _errMsg "Failed to build/install \`libliftoff\`"
         exit 40
@@ -1057,10 +1060,10 @@ _dbiLibxcbErrorsFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    ../autogen.sh --prefix=/usr                                       \
-        && make                                                       \
-            -j "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo make install ||                                              \
+    ../autogen.sh --prefix=/usr \
+        && make                 \
+            -j "${_threads}" && \
+    sudo make install ||        \
     {
         _errMsg "Failed to build/install \`libxcb-errors\`"
         exit 40
@@ -1088,17 +1091,17 @@ _dbiHyprlangFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake                                                                     \
-        --no-warn-unused-cli                                                  \
-        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
-        -B build                                                              \
-        && cmake                                                              \
-            --build build                                                     \
-            --config Release                                                  \
-            --target hyprlang                                                 \
-            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build ||                                             \
+    cmake                                 \
+        --no-warn-unused-cli              \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr  \
+        -B build                          \
+        && cmake                          \
+            --build build                 \
+            --config Release              \
+            --target hyprlang             \
+            --parallel "${_threads}" &&   \
+    sudo cmake --install build ||         \
     {
         _errMsg "Failed to build/install \`hyprlang\`"
         exit 40
@@ -1130,17 +1133,17 @@ _dbiHyprcursorFn () {
         sudo ln -sf /usr/include/toml++/toml.h /usr/include/toml++/toml.hpp
     fi
 
-    cmake                                                                     \
-        --no-warn-unused-cli                                                  \
-        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
-        -B build                                                              \
-        && cmake                                                              \
-            --build build                                                     \
-            --config Release                                                  \
-            --target all                                                      \
-            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build ||                                             \
+    cmake                                 \
+        --no-warn-unused-cli              \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr  \
+        -B build                          \
+        && cmake                          \
+            --build build                 \
+            --config Release              \
+            --target all                  \
+            --parallel "${_threads}" &&   \
+    sudo cmake --install build ||         \
     {
         _errMsg "Failed to build/install \`hyprcursor\`"
         exit 40
@@ -1168,13 +1171,13 @@ _dbiHyprwaylandScannerFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake                                                                     \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
-        -B build                                                              \
-        && cmake                                                              \
-            --build build                                                     \
-            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build ||                                             \
+    cmake                                \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+        -B build                         \
+        && cmake                         \
+            --build build                \
+            --parallel "${_threads}" &&  \
+    sudo cmake --install build ||        \
     {
         _errMsg "Failed to build/install \`hyprwayland-scanner\`"
         exit 40
@@ -1202,17 +1205,17 @@ _dbiHyprutilsFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake                                                                     \
-        --no-warn-unused-cli                                                  \
-        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
-        -B build                                                              \
-        && cmake                                                              \
-            --build build                                                     \
-            --config Release                                                  \
-            --target all                                                      \
-            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build ||                                             \
+    cmake                                 \
+        --no-warn-unused-cli              \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr  \
+        -B build                          \
+        && cmake                          \
+            --build build                 \
+            --config Release              \
+            --target all                  \
+            --parallel "${_threads}" &&   \
+    sudo cmake --install build ||         \
     {
         _errMsg "Failed to build/install \`hyprutils\`"
         exit 40
@@ -1263,17 +1266,17 @@ _dbiSddmFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake                                                                 \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                  \
-        -DCMAKE_BUILD_TYPE:STRING=Release                                 \
-        -DENABLE_JOURNALD:BOOL=ON                                         \
-        -DBUILD_MAN_PAGES:BOOL=ON                                         \
-        -DBUILD_WITH_QT6:BOOL=ON                                          \
-        -B build                                                          \
-        && make                                                           \
-            --directory=build                                             \
-            --jobs="$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo make --directory=build install ||                                \
+    cmake                                  \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr   \
+        -DCMAKE_BUILD_TYPE:STRING=Release  \
+        -DENABLE_JOURNALD:BOOL=ON          \
+        -DBUILD_MAN_PAGES:BOOL=ON          \
+        -DBUILD_WITH_QT6:BOOL=ON           \
+        -B build                           \
+        && make                            \
+            --directory=build              \
+            --jobs="${_threads}" &&        \
+    sudo make --directory=build install || \
     {
         _errMsg "Failed to build/install \`sddm\`"
         exit 40
@@ -1312,17 +1315,17 @@ _dbiHyprpaperFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake                                                                     \
-        --no-warn-unused-cli                                                  \
-        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
-        -B build                                                              \
-        && cmake                                                              \
-            --build build                                                     \
-            --config Release                                                  \
-            --target hyprpaper                                                \
-            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build ||                                             \
+    cmake                                 \
+        --no-warn-unused-cli              \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr  \
+        -B build                          \
+        && cmake                          \
+            --build build                 \
+            --config Release              \
+            --target hyprpaper            \
+            --parallel "${_threads}" &&   \
+    sudo cmake --install build ||         \
     {
         _errMsg "Failed to build/install \`hyprpaper\`"
         exit 40
@@ -1350,16 +1353,16 @@ _dbiHyprlockFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake                                                                     \
-        --no-warn-unused-cli                                                  \
-        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
-        -B build                                                              \
-        && cmake                                                              \
-            --build build                                                     \
-            --config Release                                                  \
-            --target hyprlock                                                 \
-            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build ||                                             \
+    cmake                                 \
+        --no-warn-unused-cli              \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
+        -B build                          \
+        && cmake                          \
+            --build build                 \
+            --config Release              \
+            --target hyprlock             \
+            --parallel "${_threads}" &&   \
+    sudo cmake --install build ||         \
     {
         _errMsg "Failed to build/install \`hyprlock\`"
         exit 40
@@ -1387,16 +1390,16 @@ _dbiHypridleFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake                                                                     \
-        --no-warn-unused-cli                                                  \
-        -DCMAKE_BUILD_TYPE:STRING=Release                                     \
-        -B build                                                              \
-        && cmake                                                              \
-            --build build                                                     \
-            --config Release                                                  \
-            --target hypridle                                                 \
-            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build ||                                             \
+    cmake                                 \
+        --no-warn-unused-cli              \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
+        -B build                          \
+        && cmake                          \
+            --build build                 \
+            --config Release              \
+            --target hypridle             \
+            --parallel "${_threads}" &&   \
+    sudo cmake --install build ||         \
     {
         _errMsg "Failed to build/install \`hypridle\`"
         exit 40
@@ -1424,14 +1427,14 @@ _dbiXdgDesktopPortalHyprlandFn () {
     _echoCompilerMsg
     trap "_unsetGccVariablesFn; trap - RETURN" RETURN
 
-    cmake                                                                     \
-        -DCMAKE_INSTALL_LIBEXECDIR:PATH=/usr/lib                              \
-        -DCMAKE_INSTALL_PREFIX:PATH=/usr                                      \
-        -B build                                                              \
-        && cmake                                                              \
-            --build build                                                     \
-            --parallel "$(nproc 2>/dev/null || getconf _NPROCESSORS_CONF)" && \
-    sudo cmake --install build ||                                             \
+    cmake                                        \
+        -DCMAKE_INSTALL_LIBEXECDIR:PATH=/usr/lib \
+        -DCMAKE_INSTALL_PREFIX:PATH=/usr         \
+        -B build                                 \
+        && cmake                                 \
+            --build build                        \
+            --parallel "${_threads}" &&          \
+    sudo cmake --install build ||                \
     {
         _errMsg "Failed to build/install \`xdg-desktop-portal-hyprland\`"
         exit 40
