@@ -716,7 +716,7 @@ _dbiGccFn () {
         ../configure -v                                                \
             --with-pkgversion="Debian ${_gccVersion}-1 (hbery-custom)" \
             --enable-languages=c,c++,go,fortran                        \
-            --prefix="/opt/${_gccVersion%%.*}"                         \
+            --prefix="/opt/gcc-${_gccVersion%%.*}"                     \
             --libdir="/opt/gcc-${_gccVersion%%.*}/lib"                 \
             --libexecdir="/opt/gcc-${_gccVersion%%.*}/libexec"         \
             --program-prefix="x86_64-linux-gnu-"                       \
