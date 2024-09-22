@@ -1,15 +1,44 @@
 #!/bin/bash
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
 
-[ ! "$1" ] && exit
+_ssh=""
 
-_ps="$(ps -t "${1}" -o "user=,command=" )"
+_parseSSHWithUserFn () {
+    $([ "$(uname -s)" = "Darwin" ] && echo -n "ggrep" || echo -n "grep") -Pow "\b([a-zA-Z0-9]+)@(.+)\b" <<<"${_ssh}"
+}
 
-_ssh="$(echo "${_ps}" | grep " ssh ")"
-[ "${_ssh}" != "" ] \
-    && {
-        _toprint=$(echo "${_ssh}" | $([ "$(uname -s)" = "Darwin" ] && echo -n "ggrep" || echo -n "grep") -Pow "\b([a-zA-Z0-9]+)@(.+)\b") \
-        || _toprint=$(echo "${_ssh}"| head -1 | awk '{print $1"@"$NF}')
-    } \
-    || _toprint="$(echo "${_ps}" | tail -1 | awk '{print $1}')@$(hostname -s)";
+_parseSSHWithoutUserFn () {
+    local _user
+    if [[ ${#USER} -ge 8 ]]; then
+        _user="$(cut -c-7 <<<"$USER")+"
+    else
+        _user="$USER"
+    fi
 
-[ "${_toprint}" != "" ] && echo "${_toprint}" || echo "-@-"
+    grep "$(printf "%-9s" "${_user}")ssh" <<<"${_ssh}"  | awk '{print $1"@"$NF}'
+}
+
+_parseLocalUserFn () {
+    echo "$(tail -1 <<<"${_ps}" | awk '{print $1}')@$(hostname -s)"
+}
+
+
+_mainFn () {
+    [ ! "$1" ] && exit
+
+    _ps="$(ps -t "${1}" -o "user=,command=")"
+    _ssh="$(echo "${_ps}" | grep " ssh ")"
+
+    [ "${_ssh}" != "" ] \
+        && {
+            _toprint="$(_parseSSHWithUserFn)" \
+            || _toprint="$(_parseSSHWithoutUserFn)"
+        } \
+            || _toprint="$(_parseLocalUserFn)";
+
+    [ "${_toprint}" != "" ] && echo "${_toprint}" || echo "-@-"
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    _mainFn "${@:-}"
+fi
