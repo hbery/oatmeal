@@ -120,10 +120,6 @@ hi(0, 'Folded', { guibg = nil })
 -- Split keys remap
 kms('n', '<leader>v', ':vsplit<CR><C-w>l', { silent = true, desc = "Split buffer vertically" })
 kms('n', '<leader>b', ':split<CR><C-w>j', { silent = true, desc = "Split buffer horizontally" })
-kms('n', '<C-h>', '<C-w>h', { remap = false, desc = "Switch to left window" })
-kms('n', '<C-j>', '<C-w>j', { remap = false, desc = "Switch to down window" })
-kms('n', '<C-k>', '<C-w>k', { remap = false, desc = "Switch to up window" })
-kms('n', '<C-l>', '<C-w>l', { remap = false, desc = "Switch to right window" })
 
 -- Filesystem navigation `oil.nvim`
 kms("n", "-", require("oil").open, { desc = "Open parent directory" })

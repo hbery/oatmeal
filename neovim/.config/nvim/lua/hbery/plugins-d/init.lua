@@ -8,6 +8,7 @@ require('hbery.plugins-d.oil-nvim')
 require('hbery.plugins-d.undotree')
 require('hbery.plugins-d.search-replace')
 require('hbery.plugins-d.harpoon')
+require('hbery.plugins-d.diffview')
 
 -- require('hbery.plugins-d.nerdtree')
 -- require('hbery.plugins-d.nvim-tree')
