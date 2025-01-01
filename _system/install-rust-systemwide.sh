@@ -60,5 +60,5 @@ _mainRustFn () {
 }
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
-    _mainRustFn "${@}"
+    _mainRustFn "${@:-}"
 fi

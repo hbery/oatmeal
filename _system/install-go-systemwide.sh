@@ -10,6 +10,7 @@
 _goHome="${GO_HOME:-"/opt/go"}"
 _goChosenVersion="${GO_VERSION:-"latest"}"
 _goDlLinkPrefix="https://go.dev/dl"
+_goDlReleaseFile="$(mktemp go-install.XXXXXX.json)"
 
 _needCmdFn () {
     if ! command -v "${1:-}" &>/dev/null; then
@@ -22,16 +23,16 @@ _getArchFn () {
     local _arch
     _arch="$(uname -m)"
 
-    # I care only for amd64 and arm64
-    # (once riscv64 is official for go - also riscv)
+    # I care only for amd64, arm64 and riscv64
     case "${_arch}" in
-        x86_64 | x86-64 | x64 | amd64) printf "amd64" ;;
-        aarch64 | arm64)               printf "arm64" ;;
+        x86_64 | x86-64 | x64 | amd64) printf "amd64"   ;;
+        aarch64 | arm64)               printf "arm64"   ;;
+        riscv64)                       printf "riscv64" ;;
     esac
 }
 
 _makeGoPrerequisitiesFn () {
-    for _pkg in "tail" "grep" "curl" "sed" "sort" "find" "uname"; do
+    for _pkg in "tail" "grep" "curl" "find" "uname" "jq" "sha256sum"; do
         _needCmdFn "${_pkg}"
     done
 }
@@ -48,26 +49,56 @@ _chooseGoVersionFn () {
 }
 
 _craftGoPkgNameFn () {
-    _goVersions="$(curl \
+    local _arch _kernel
+    _arch="$(_getArchFn)"
+    _kernel="$(uname -s)"; _kernel="${_kernel,,}"
+
+    curl \
         --silent --show-error --fail --proto '=https' --tlsv1.2 \
-        --url "https://go.dev/doc/devel/release" \
-        | sed -nr 's/.*<p id="(go.*)".*/\1/p' \
-        | sort -ut'.' -k 2n -k 3n)"
+        --url "${_goDlLinkPrefix}/?mode=json&include=all" \
+        > "${_goDlReleaseFile}"
+
+    _goVersions="$(jq -r \
+                       '[ .[] | select( .stable == true ) | .version ]
+                        | sort_by( . | sub("^go"; "") | split(".") | map(tonumber) )
+                        | .[]' \
+                       "${_goDlReleaseFile}")"
     export _goVersions
 
-    printf "%s.%s-%s.tar.gz" "$(_chooseGoVersionFn)" "linux" "$(_getArchFn)"
+    jq -r \
+        --arg v "$(_chooseGoVersionFn)" \
+        --arg a "${_arch}" \
+        --arg k "${_kernel}" \
+        '.[]
+         | select( (.version == $v) )
+         | .files[]
+         | select( ( .kind == "archive" ) and ( .os == $k ) and ( .arch == $a ) )
+         | .filename' \
+        "${_goDlReleaseFile}"
     unset _goVersions
 }
 
 _downloadGoTarballFn () {
-    local _tarball
-    _tarball="${1:-}"
-    [[ -z "${_tarball}" ]] && _tarball="$(_craftGoPkgNameFn)"
+    local _tarballName
+    _tarballName="${1:-}"
+    [[ -z "${_tarballName}" ]] && _tarballName="$(_craftGoPkgNameFn)"
+
+    _tarballSHASum="$(jq -r \
+                          --arg f "${_tarballName}" \
+                          '.[][]
+                           | arrays
+                           | .[]
+                           | select(.filename == $f)
+                           | .sha256' \
+                          "${_goDlReleaseFile}")"
+    [[ -z "${_tarballSHASum}" ]] && echo >&2 "Missing SHA sum for the downloaded tarball. Aborting.." && return 99
 
     curl \
         --location --silent --show-error --fail --proto '=https' --tlsv1.2 \
-        --output "/tmp/${_tarball}" \
-        --url "${_goDlLinkPrefix}/${_tarball}"
+        --output "/tmp/${_tarballName}" \
+        --url "${_goDlLinkPrefix}/${_tarballName}"
+
+    printf '%s  %s' "${_tarballSHASum}" "/tmp/${_tarballName}" | sha256sum -c -
 }
 
 _installTarballFn () {
@@ -100,17 +131,17 @@ _mainGoFn () {
         exit 1
     fi
 
-    local _pkg_name
-    _pkg_name="$(_craftGoPkgNameFn)"
-    echo "Installing golang version: ${_pkg_name/.tar.gz/}"
+    local _pkgName
+    _pkgName="$(_craftGoPkgNameFn)"
+    echo "Installing golang version: ${_pkgName/.tar.gz/}"
 
     _makeGoPrerequisitiesFn
-    _downloadGoTarballFn "${_pkg_name}"
-    _installTarballFn "${_pkg_name}"
-    _linkGoBinariesFn
-    _cleanupFn "${_pkg_name}"
+    _downloadGoTarballFn "${_pkgName}" || exit
+    _installTarballFn "${_pkgName}"    || exit
+    _linkGoBinariesFn                  || exit
+    _cleanupFn "${_pkgName}" "${_goDlReleaseFile:-}"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
-    _mainGoFn "${@}"
+    _mainGoFn "${@:-}"
 fi
