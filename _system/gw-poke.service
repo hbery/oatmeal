@@ -1,0 +1,11 @@
+[Unit]
+Description=Poke WiFi gateway via arping
+Requires=gw-poke.timer
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/gw-poke.sh
+LogNamespace=GWPOKE
+
+[Install]
+WantedBy=default.target
