@@ -37,7 +37,7 @@ alias wormhole='wormhole-william'
 
 # conf
 alias strip_conf='grep -Ev "^#|^\s*$"'
-alias pea='source $("$HOME/scripts/python_environment_activate")/bin/activate'
+alias ape='source "$("${XDG_LOCAL_SBIN:-"${HOME}/.local/sbin"}/activate-python-environment")/bin/activate"'
 
 # qtile only
 alias qtilekb='qtile cmd-obj -o cmd -f display_kb'
