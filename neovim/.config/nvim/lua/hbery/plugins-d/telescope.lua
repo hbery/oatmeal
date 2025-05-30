@@ -40,8 +40,9 @@ kms('n', '<leader>sh', tbuiltin.help_tags,    { desc = '[S]earch [H]elp'        
 kms('n', '<leader>sd', tbuiltin.diagnostics,  { desc = '[S]earch [D]iagnostics'                          })
 kms('n', '<leader>sS', tbuiltin.git_status,   { desc = '[S]how Git [S]tatus'                             })
 
-kms('n', '<leader>hm', require('telescope').extensions.harpoon.marks,
-                                              { desc = '[H]arpoon [M]arks'                               })
+---Old Harpoon v1
+-- kms('n', '<leader>hm', require('telescope').extensions.harpoon.marks,
+--                                               { desc = '[H]arpoon [M]arks'                               })
 
 kms("n", "<Leader>gl", require('telescope').extensions.git_worktree.git_worktrees,
                                               { desc = "[G]it-worktree [L]ist",            silent = true })

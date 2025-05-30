@@ -20,7 +20,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- Diagnostic keymaps
-kms('n', '[d',        vim.diagnostic.goto_prev,  { desc = "Go to previous diagnostic message" })
-kms('n', ']d',        vim.diagnostic.goto_next,  { desc = "Go to next diagnostic message"     })
+kms('n', '[d',        vim.diagnostic.goto_prev,  { desc = "Go to ([)previous [D]iagnostic message" })
+kms('n', ']d',        vim.diagnostic.goto_next,  { desc = "Go to (])next [D]iagnostic message"     })
 kms('n', '<leader>e', vim.diagnostic.open_float, { desc = "Open floating diagnostic message"  })
-kms('n', '<leader>q', vim.diagnostic.setloclist, { desc = "Open diagnostics list"             })
+kms('n', '<leader>q', vim.diagnostic.setloclist, { desc = "Open diagnostics [Q]uick list"             })

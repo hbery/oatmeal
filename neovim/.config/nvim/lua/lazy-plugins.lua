@@ -64,6 +64,7 @@ require('lazy').setup({
 
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
+    version = "v1.0.0",
     dependencies = {
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
@@ -203,7 +204,9 @@ require('lazy').setup({
     opts = {},
   },
 
-  { 'ThePrimeagen/harpoon',
+  {
+    'ThePrimeagen/harpoon',
+    branch = "harpoon2",
     dependencies= {
       'nvim-lua/plenary.nvim',
     },
@@ -223,5 +226,11 @@ require('lazy').setup({
 
   -- Little practice
   { 'ThePrimeagen/vim-be-good', },
+
+  {
+    'goerz/jupytext.nvim',
+    version = '0.2.0',
+    opts = {},  -- see Options
+  },
 }, {})
 
