@@ -2,18 +2,31 @@
 # vim: ft=sh : ts=4 : sw=4 :
 # Perl environmental variables
 
-export PERL_MY_HOME="${HOME}/.local/share/perl";
+export PERL_MY_HOME="${HOME}/.local/share/perl"
 
-export PERL_CPANM_HOME="${PERL_MY_HOME}/.cpanm";
-export PERL_LOCAL_LIB_ROOT="${PERL_LOCAL_LIB_ROOT}:${PERL_MY_HOME}";
+export PERL_CPANM_HOME="${PERL_MY_HOME}/cpanminus"
 
-export PERL_MB_OPT="--install_base ${PERL_MY_HOME}";
-export PERL_MM_OPT="INSTALL_BASE=${PERL_MY_HOME}";
-export PERL5LIB="${PERL_MY_HOME}/lib/perl5:${PERL5LIB}";
-export PERL_MY_BIN="${PERL_MY_HOME}/bin";
+case ":${PERL_LIB_LOCAL_ROOT}:" in
+    *":${PERL_MY_HOME}:"*) ;;
+    *) export PERL_LIB_LOCAL_ROOT="${PERL_LIB_LOCAL_ROOT}:${PERL_MY_HOME}" ;;
+esac
+
+for _env in "PERL5LIB" "PERLLIB"; do
+    _eval="$(eval "printf '%s' \"\$${_env}\"")"
+    case ":${_eval}:" in
+        *":${PERL_MY_HOME}/lib/perl5:"*) ;;
+        *) eval "export ${_env}=\"${PERL_MY_HOME}/lib/perl5:${_eval}\"" ;;
+    esac
+done
+
+export PERL_MB_OPT="--install_base ${PERL_MY_HOME}"
+export PERL_MM_OPT="INSTALL_BASE=${PERL_MY_HOME}"
+export PERL_MY_BIN="${PERL_MY_HOME}/bin"
+
+export CPAN_OPTS="-j ${PERL_MY_HOME}/cpan/CPAN/Config.pm"
 
 export PERLBREW_ROOT="${PERL_MY_HOME}/perlbrew"
-export PERLBREW_HOME="${XDG_CONFIG_HOME}/.perlbrew"
+export PERLBREW_HOME="${XDG_CONFIG_HOME}/perlbrew"
 
 # append to PATH
 case ":${PATH}:" in
