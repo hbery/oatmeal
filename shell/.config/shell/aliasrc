@@ -15,10 +15,10 @@ alias rm='rm -i'
 
 # ls -> exa
 alias l='/bin/ls -F'
-if command -v exa >/dev/null 2>&1; then
-    alias ls='exa --color=always --group-directories-first'
-    alias la='exa -al --color=always --group-directories-first'
-    alias ll='exa -l --color=always --group-directories-first'
+if command -v eza >/dev/null 2>&1; then
+    alias ls='eza --color=always --group-directories-first'
+    alias la='eza -al --color=always --group-directories-first'
+    alias ll='eza -l --color=always --group-directories-first'
 else
     alias ls='ls --color=always --group-directories-first'
     alias la='ls -Al --color=always --group-directories-first'
@@ -36,7 +36,7 @@ alias cat='bat --no-pager --plain'
 alias wormhole='wormhole-william'
 
 # conf
-alias strip_conf='grep -Ev "^#|^\s*$"'
+alias strip_conf='grep -Pv "^\s*($|#)"'
 alias ape='source "$("${XDG_LOCAL_SBIN:-"${HOME}/.local/sbin"}/activate-python-environment")/bin/activate"'
 
 # qtile only
