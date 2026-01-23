@@ -76,13 +76,14 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 -- Setup local LSP Servers
-for server_name, server_config in pairs(local_servers) do
-  require('lspconfig')[server_name].setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-    settings = server_config,
-  }
+for name, conf in pairs(local_servers) do
+  if type(conf) == "function" then
+    conf = conf()
+  end
+  conf.capabilities = vim.tbl_deep_extend('force', {}, capabilities, conf.capabilities or {})
+  vim.lsp.config(name, conf)
 end
+
 
 -- Setup mason so it can manage external tooling
 require('mason').setup()
@@ -95,15 +96,14 @@ mason_lspconfig.setup {
   automatic_installation = true
 }
 
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-    }
-  end,
-}
+for name, conf in pairs(servers) do
+  if type(conf) == "function" then
+    conf = conf()
+  end
+  conf.capabilities = vim.tbl_deep_extend('force', {}, capabilities, conf.capabilities or {})
+  vim.lsp.config(name, conf)
+end
+
 
 -- nvim-cmp setup
 local cmp = require('cmp')

@@ -64,17 +64,12 @@ require('lazy').setup({
 
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
-    version = "v1.0.0",
     dependencies = {
-      'williamboman/mason.nvim',
-      'williamboman/mason-lspconfig.nvim',
-      {
-        'j-hui/fidget.nvim',
-        opts = {},
-        tag = 'legacy'
-      },
+      { 'williamboman/mason.nvim', tag = "stable", config = true },
+      { 'williamboman/mason-lspconfig.nvim', tag = "stable" },
 
-      -- Additional lua configuration, makes nvim stuff amazing!
+      'WhoIsSethDaniel/mason-tool-installer.nvim',
+      'j-hui/fidget.nvim',
       'folke/neodev.nvim',
     },
   },
@@ -90,15 +85,12 @@ require('lazy').setup({
     },
   },
 
-  {
-    "iamcco/markdown-preview.nvim",
-    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-    ft = { "markdown" },
-    build = function() vim.fn["mkdp#util#install"]() end,
-  },
-
-  { 'saltstack/salt-vim' },
-  { 'stephpy/vim-yaml' },
+  -- {
+  --   "iamcco/markdown-preview.nvim",
+  --   cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+  --   ft = { "markdown" },
+  --   build = function() vim.fn["mkdp#util#install"]() end,
+  -- },
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
@@ -214,6 +206,7 @@ require('lazy').setup({
 
   {
     'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
@@ -221,6 +214,16 @@ require('lazy').setup({
       pcall(require('nvim-treesitter.install').update { with_sync = true })
     end,
   },
+
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-tree/nvim-web-devicons'
+    },
+    opts = {},
+  },
+
 
   require('hbery.plugins-d.debug'),
 
