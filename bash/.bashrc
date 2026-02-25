@@ -46,8 +46,8 @@ HISTFILE=~/.cache/bash/history
 
 # PS1 setup
 _nonzero_return () {
-    RETVAL=$?
-    [ $RETVAL -ne 0 ] && echo "$RETVAL "
+  RETVAL=$?
+  [ $RETVAL -ne 0 ] && echo "$RETVAL "
 }
 
 export PS1="\[\e[35m\]\`_nonzero_return\`\[\e[m\]\[\e[31m\][\[\e[m\]\[\e[34m\]\A\[\e[m\] \[\e[33m\]\u\[\e[m\]\[\e[32m\]@\[\e[m\]\[\e[36m\]\h\[\e[m\] \[\e[35m\]\w\[\e[m\]\[\e[31m\]]\[\e[m\]\\$ "
