@@ -15,7 +15,7 @@ _parseSSHWithoutUserFn () {
         _user="$USER"
     fi
 
-    grep "$(printf "%-9s" "${_user}")ssh" <<<"${_ssh}"  | awk '{print $1"@"$NF}'
+    grep "$(printf "%-9s" "${_user}")ssh" <<<"${_ssh}" | awk '{print $1"@"$NF}'
 }
 
 _parseLocalUserFn () {
@@ -29,14 +29,14 @@ _mainFn () {
     _ps="$(ps -t "${1}" -o "user=,command=")"
     _ssh="$(echo "${_ps}" | grep " ssh ")"
 
-    [ "${_ssh}" != "" ] \
-        && {
-            _toprint="$(_parseSSHWithUserFn)" \
-            || _toprint="$(_parseSSHWithoutUserFn)"
-        } \
-            || _toprint="$(_parseLocalUserFn)";
+    if [ -n "${_ssh}" ]; then
+        _toprint="$(_parseSSHWithUserFn)" \
+        || _toprint="$(_parseSSHWithoutUserFn)"
+    else
+        _toprint="$(_parseLocalUserFn)";
+    fi
 
-    [ "${_toprint}" != "" ] && echo "${_toprint}" || echo "-@-"
+    [ -n "${_toprint}" ] && echo "${_toprint}" || echo "-@-"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
