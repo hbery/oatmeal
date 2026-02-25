@@ -2,6 +2,7 @@
 # vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
 #
 # install astronaut sddm theme
+set -x
 
 _tmpDirTemplate="/tmp/sddm-theme-XXXXXX"
 _tmpDir="$(mktemp -d "${_tmpDirTemplate}")"
@@ -51,10 +52,10 @@ _overrideThemeOptionsFn () {
     cp "$(dirname "$0")/login_bg.jpg" "${_tmpDir}/astronaut/Backgrounds/bg.jpg"
 
     # change options
-    sed -ri 's/CustomBackground=(.*)/CustomBackground="true"/' "${_tmpDir}/astronaut/Themes/theme1.conf"
-    sed -ri 's/Background=(.*)/Background="Backgrounds/bg.jpg"/' "${_tmpDir}/astronaut/Themes/theme1.conf"
-    sed -ri 's/Font=(.*)/Font="'"${_fontName}"'"/' "${_tmpDir}/astronaut/Themes/theme1.conf"
-    sed -ri 's/FontSize=(.*)/FontSize=10/' "${_tmpDir}/astronaut/Themes/theme1.conf"
+    sed -ri 's/CustomBackground=(.*)/CustomBackground="true"/' "${_tmpDir}/astronaut/Themes/astronaut.conf"
+    sed -ri 's/Background=(.*)/Background="Backgrounds/bg.jpg"/' "${_tmpDir}/astronaut/Themes/astronaut.conf"
+    sed -ri 's/Font=(.*)/Font="'"${_fontName}"'"/' "${_tmpDir}/astronaut/Themes/astronaut.conf"
+    sed -ri 's/FontSize=(.*)/FontSize=10/' "${_tmpDir}/astronaut/Themes/astronaut.conf"
 
     sed -ri 's/Name=(.*)/Name=astronaut/' "${_tmpDir}/astronaut/metadata.desktop"
     sed -ri 's/Theme-Id=(.*)/Theme-Id=astronaut/' "${_tmpDir}/astronaut/metadata.desktop"

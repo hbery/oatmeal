@@ -7,6 +7,22 @@
 #   Install fonts in ${HOME}/.local/share/fonts direcory and place fontconfig
 # ~~~
 
+
+_renameBin=
+_renamePkg=
+case "$(sed -nr 's/^ID=(.*)/\1/p' /etc/os-release)" in
+    "ubuntu"|"debian")
+        _renameBin=file-rename
+        _renamePkg=rename
+        ;;
+    "fedora")
+        _renameBin=prename
+        _renamePkg=prename
+        ;;
+    *)
+        _renameBin=false
+        _renamePkg=-
+esac
 _localFontDirectory="${HOME}/.local/share/fonts"
 _tempFontDirectory="/tmp/fonts"
 _nerdFontLink="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1"
@@ -17,7 +33,7 @@ _otherFontList="Noto-Emoji;https://github.com/googlefonts/noto-emoji/raw/main/fo
                 Lato;https://www.latofonts.com/download/lato2ofl-zip/
                 font-awesome;https://use.fontawesome.com/releases/v6.5.2/fontawesome-free-6.5.2-desktop.zip"
 _shippedFontList="DankMono Liberata Bookerly"
-_necessaryPkgs=("unzip:unzip" "fc-cache:fontconfig" "wget:wget" "file-rename:rename")
+_necessaryPkgs=("unzip:unzip" "fc-cache:fontconfig" "wget:wget" "${_renameBin}:${_renamePkg}")
 
 _redClr="\e[1;31m"
 _grnClr="\e[1;32m"
@@ -92,7 +108,7 @@ _parseArgumentsFn () {
 _checkBinariesFn () {
     for _pkg in "${_necessaryPkgs[@]}"; do
         if ! command -v "${_pkg%:*}" &>/dev/null; then
-            _errMsg "No command ${_pkg%:*} on the system. Please install package containing this binary, pkg like ${_pkg#*:}."
+            _errMsg "No command ${_pkg%:*} on the system. Please install package containing this binary, pkg like \`${_pkg#*:}\`."
             exit 1
         fi
     done
@@ -181,7 +197,7 @@ _installGoogleFontFn () {
         && mkdir -p "${_font_destination}/${_font_name}"
     cp -rv "${_path2font}/${_font_name}"* "${_font_destination}/${_font_name}/"
     # shellcheck disable=SC2016
-    file-rename -v -E 's/(.*)(\[.*\])(.*)/$1$3/' "${_font_name}"*
+    "${_renameBin}" -v -E 's/(.*)(\[.*\])(.*)/$1$3/' "${_font_name}"*
 }
 
 _installOtherFontFn () {
