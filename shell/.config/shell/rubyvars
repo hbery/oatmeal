@@ -1,8 +1,8 @@
 #!/bin/sh
-# vim: ft=sh : ts=4 : sw=4 :
+# vim: ft=sh : ts=4 : sts=4 : sw=4 : et :
 # Ruby and Gem environmental variables
 
-export GEM_HOME="${HOME}/.local/share/gem"
+export GEM_HOME="${XDG_DATA_HOME:-"${HOME}/.local/share"}/gem"
 export GEM_PATH="${GEM_HOME}/gems"
 export GEM_BIN="${GEM_HOME}/bin"
 

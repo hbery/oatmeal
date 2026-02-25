@@ -1,8 +1,8 @@
 #!/bin/sh
-# vim: ft=sh : ts=4 : sw=4 :
+# vim: ft=sh : ts=4 : sts=4 : sw=4 : et :
 # Perl environmental variables
 
-export PERL_MY_HOME="${HOME}/.local/share/perl"
+export PERL_MY_HOME="${XDG_DATA_HOME:-"${HOME}/.local/share"}/perl"
 
 export PERL_CPANM_HOME="${PERL_MY_HOME}/cpanminus"
 

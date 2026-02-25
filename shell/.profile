@@ -48,13 +48,14 @@ elif [ "${_profile_uname}" = "Darwin" ]; then
     export XDG_RUNTIME_DIR="/Users/${USER}/Library/Caches/TemporaryItems"
 fi
 
-# source Language specific vars (Perl5,Golang,Rust,Python3,NodeJS)
+# source Language specific vars (Perl5,Golang,Rust,Python3,NodeJS,ASDF)
 source "${XDG_CONFIG_HOME}/shell/perl5vars"
 source "${XDG_CONFIG_HOME}/shell/govars"
 source "${XDG_CONFIG_HOME}/shell/rustvars"
 source "${XDG_CONFIG_HOME}/shell/python3vars"
 source "${XDG_CONFIG_HOME}/shell/nodevars"
 source "${XDG_CONFIG_HOME}/shell/rubyvars"
+source "${XDG_CONFIG_HOME}/shell/asdfvars"
 
 if [ -n "${BASH_VERSION}" ]; then
     [ -f "${HOME}/.bashrc" ] && source "${HOME}/.bashrc"

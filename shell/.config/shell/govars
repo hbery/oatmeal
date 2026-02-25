@@ -1,9 +1,9 @@
 #!/bin/sh
-# vim: ft=sh : ts=4 : sw=4 :
+# vim: ft=sh : ts=4 : sts=4 : sw=4 : et :
 # Golang environmental variables
 
 # export GOPRIVATE="github.com/$GITUSER/*,gitlab.com/$GITUSER/*"
-export GOPATH="${HOME}/.local/share/go"
+export GOPATH="${XDG_DATA_HOME:-"${HOME}/.local/share"}/go"
 export GOBIN="${GOPATH}/bin"
 export GOPROXY=direct
 export CGO_ENABLED=0

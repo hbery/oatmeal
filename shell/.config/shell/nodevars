@@ -1,5 +1,5 @@
 #!/bin/sh
-# vim: ft=sh : ts=4 : sw=4 :
+# vim: ft=sh : ts=4 : sts=4 : sw=4 : et :
 # Golang environmental variables
 
-export NPM_CONFIG_PREFIX="${HOME}/.local/share/node_modules"
+export NPM_CONFIG_PREFIX="${XDG_DATA_HOME:-"${HOME}/.local/share"}/node_modules"

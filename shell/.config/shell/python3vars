@@ -1,3 +1,21 @@
 #!/bin/sh
-# vim: ft=sh : ts=4 : sw=4 :
+# vim: ft=sh : ts=4 : sts=4 : sw=4 : et :
 # Python3 and Pip3 environmental variables
+
+export PIPX_HOME="${XDG_DATA_HOME:-"${HOME}/.local/share"}/pipx"
+
+export PIPX_BIN_DIR="${XDG_LOCAL_BIN}"
+export PIPX_MAN_DIR="${XDG_DATA_HOME:-"${HOME}/.local/share"}/man"
+
+export PIPX_SHARED_LIBS="${PIPX_HOME}/shared"
+export PIPX_LOCAL_VENVS="${PIPX_HOME}/venvs"
+export PIPX_LOG_DIR="${PIPX_HOME}/log"
+export PIPX_TRASH_DIR="${PIPX_HOME}/trash"
+
+export PIPX_VENV_CACHEDIR="${XDG_CACHE_HOME}/pipx"
+export PIPX_STANDALONE_PYTHON_CACHEDIR="${PIPX_HOME}/py"
+
+export PIPX_DEFAULT_PYTHON="$(whereis -b -B /usr/bin -f python3 | cut -d' ' -f2)"
+
+export PIPX_USE_EMOJI=true
+export PIPX_HOME_ALLOW_SPACE=false
