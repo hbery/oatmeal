@@ -1,0 +1,15 @@
+#!/bin/sh
+# vim: ft=sh : ts=4 : sts=4 : sw=4 : et :
+# ASDF environmental variables
+
+export ASDF_DATA_DIR="${XDG_DATA_HOME:-"${HOME}/.local/share"}/asdf"
+export ASDF_CONFIG_FILE="${XDG_CONFIG_HOME:-"${HOME}/.config"}/asdfrc"
+
+case ":${PATH}:" in
+    *":${ASDF_DATA_DIR}/shims:"*) ;;
+    *)
+        case "$-" in
+            *"i"*) export PATH="${ASDF_DATA_DIR}/shims:${PATH}" ;;
+            *) ;;
+        esac
+esac
