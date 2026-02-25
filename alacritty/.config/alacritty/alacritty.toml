@@ -1,3 +1,4 @@
+[general]
 import = ["/home/hbery/.config/alacritty/themes/Argonauth.toml"]
 live_config_reload = true
 
@@ -12,19 +13,19 @@ TERM = "tmux-256color"
 size = 14.0
 
 [font.bold]
-family = "FantasqueSansMono Nerd Font"
+family = "ComicShannsMono Nerd Font"
 style = "Bold"
 
 [font.bold_italic]
-family = "FantasqueSansM Nerd Font"
+family = "ComicShannsMono Nerd Font"
 style = "Bold Italic"
 
 [font.italic]
-family = "FantasqueSansM Nerd Font"
+family = "ComicShannsMono Nerd Font"
 style = "Italic"
 
 [font.normal]
-family = "FantasqueSansM Nerd Font"
+family = "ComicShannsMono Nerd Font"
 style = "Regular"
 
 [[keyboard.bindings]]
@@ -128,7 +129,7 @@ mouse = "Middle"
 [scrolling]
 history = 10000
 
-[shell]
+[terminal.shell]
 args = ["--login"]
 program = "/bin/zsh"
 
