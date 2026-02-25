@@ -1,0 +1,61 @@
+#!/bin/bash
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
+
+EWW_BIN="$HOME/.local/bin/eww"
+EWW_CMD="${EWW_BIN} --config ${XDG_CONFIG_HOME:-"${HOME}/.config"}/eww"
+STATE_DIR="${XDG_STATE_DIR:-"${HOME}/.local/state"}/eww"
+ACTIVE_MONITOR="$(hyprctl -j monitors | jq -r '.[] | select(.focused == true) | .id')"
+POPUP_CLOSER_WIN="popup_closer"
+
+_windows=(calendar system music_win audio_ctl)
+
+_getAllExceptFn () {
+    local _except
+    _except="${1}"
+    echo "${_windows[*]}" | sed 's/ /\n/g' | grep -v "${_except}" | xargs
+}
+
+_closePopUpFn () {
+    _activeWindows=($(eww active-windows | awk -F': ' '!/^bar/ {print $1}'))
+    ${EWW_CMD} close "${_activeWindows[@]}"
+    rm -f ${STATE_DIR}/*.lock
+}
+
+_popUpFn () {
+    local _lockFile _app
+    _app="${1:-}"
+    _lockFile="${STATE_DIR}/${_app}.lock"
+
+    if [ ! -f "${_lockFile}" ]; then
+        ${EWW_CMD} close $(_getAllExceptFn "${_app}")
+        touch "${_lockFile}"
+        ${EWW_CMD} open --screen "${ACTIVE_MONITOR}" "${POPUP_CLOSER_WIN}" \
+        && ${EWW_CMD} open --screen "${ACTIVE_MONITOR}" "${_app}" \
+            && echo "OK"
+    else
+        ${EWW_CMD} close "${_app}"
+        rm "${_lockFile}" \
+            && echo "DONE"
+    fi
+}
+
+_mainFn () {
+    local _opt
+    _opt="${1}"
+
+    if [[ ! -d "${STATE_DIR}" ]]; then
+        mkdir -p "${STATE_DIR}"
+    fi
+
+    case "${_opt}" in
+        "calendar") _popUpFn calendar  ;;
+        "system")   _popUpFn system    ;;
+        "music")    _popUpFn music_win ;;
+        "audio")    _popUpFn audio_ctl ;;
+        "close")    _closePopUpFn      ;;
+    esac
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    _mainFn "${@:-}"
+fi

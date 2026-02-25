@@ -1,0 +1,36 @@
+#!/bin/bash
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
+#
+# $author: hbery
+# $description: Return ICMP statistics to STDOUT
+
+_destinationDomain="${PING_ADDRESS:-"google.com"}"
+
+_doPingFn () {
+    local _count
+    _count="${1:-1}"
+    ping -c "${_count}" "${_destinationDomain}"
+}
+
+_doInstantPingFn () {
+    _doPingFn | sed -nr '/bytes from/ s/.*time=(.*) \w\w$/\1/p'
+}
+
+_doGraphPingFn () {
+    echo "WIP"
+}
+
+_mainFn () {
+    local _opt
+    _opt="${1:-}"
+
+    case "${_opt}" in
+        "instant") _doInstantPingFn ;;
+        "graph") _doGraphPing ;;
+        *) ;;
+    esac
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    _mainFn "${@:-}"
+fi

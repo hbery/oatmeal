@@ -1,0 +1,30 @@
+#!/bin/bash
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
+#
+# $description: Get Wifi Info
+
+_mainFn () {
+    local _opt _connStatus _wirelessDevice
+    _opt="${1:-}"
+    _connStatus="$(nmcli --terse general status | cut -d: -f1)"
+
+    case "${_opt}" in
+        "colour")
+            [ "${_connStatus}" = "connected" ] && echo "#a1bdce" || echo "#575268"
+            ;;
+        "essid")
+            if [ "${_connStatus}" = "connected" ]; then
+                _wirelessDevice="$(ip -br link | awk '/^(wl|wifi)/ { print $1 }')"
+                nmcli -t c show --active | awk -F: '/'"${_wirelessDevice}"'/ { print $1 }'
+            fi
+            ;;
+        "icon")
+            [ "${_connStatus}" = "connected" ] && echo " " || echo " "
+            ;;
+        *) ;;
+    esac
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    _mainFn "${@:-}"
+fi

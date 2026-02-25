@@ -1,0 +1,100 @@
+#!/bin/bash
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
+
+STATE_DIR="${XDG_STATE_HOME:-"$HOME/.local/state"}"
+EWW_BIN="$(which eww)"
+EWW_CONFIG="${XDG_CONFIG_HOME:-"$HOME/.config"}/eww"
+EWW="${EWW_BIN} --config ${EWW_CONFIG}"
+
+_stateBarLock="${STATE_DIR}/eww/bar.lock"
+
+_usageFn () {
+	cat <<_EOU
+usage: $(basename "$0") <start|stop|restart|respawn|toggle>
+
+  Perform action on EWW Topbar.
+
+commands:
+  start       Start daemon and spawn the bar.
+  spawn       Spawn the bar.
+  stop        Close the bar and stop daemon.
+  close       Close the bar.
+  restart     Shortcut for: \`stop && start\`
+  respawn     Close the bar and spawn again (without killing the daemon).
+  toggle      Toggle daemon and bar (start & spawn if dead, close and kill if runnning).
+_EOU
+}
+
+_startDaemonFn () {
+	if [[ ! $(pidof eww) ]]; then
+		XDG_CACHE_HOME="${STATE_DIR}" ${EWW} daemon
+		sleep 1
+	fi
+}
+
+_stopDaemonFn () {
+	killall eww
+}
+
+_spawnBarFn () {
+	if [[ ! -f "${_stateBarLock}" ]]; then
+		${EWW} open \
+			 bar \
+		&& touch "${_stateBarLock}"
+	else
+		echo >&2 "Bar is already present. First close the bar or restart it"
+	fi
+}
+
+_closeBarFn () {
+	${EWW} close-all \
+		&& rm -rf "${_stateBarLock}"
+}
+
+_restartEwwTopBarFn () {
+	# stop
+	_closeBarFn
+	_stopDaemonFn
+	# start
+	_startDaemonFn
+	_spawnBarFn
+}
+
+_respawnEwwTopBarFn () {
+	_closeBarFn
+	_spawnBarFn
+}
+
+_toggleEwwTopBarFn () {
+	if [[ ! $(pidof eww) ]]; then
+		_startDaemonFn
+		_spawnBarFn
+		return
+	fi
+	if [[ ! -f "${_stateBarLock}" ]]; then
+		_spawnBarFn
+		return
+	fi
+	_closeBarFn
+	_stopDaemonFn
+}
+
+_mainFn () {
+	local _opt
+	_opt="${1:-}"
+
+	case "${_opt}" in
+		"start")   _startDaemonFn; _spawnBarFn ;;
+        "spawn")   _spawnBarFn ;;
+		"stop")    _closeBarFn; _stopDaemonFn ;;
+        "close")   _closeBarFn ;;
+		"restart") _restartEwwTopBarFn ;;
+		"respawn") _respawnEwwTopBarFn ;;
+		"toggle")  _toggleEwwTopBarFn   ;;
+		*)         _usageFn ;;
+	esac
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    _mainFn "${@:-}"
+fi

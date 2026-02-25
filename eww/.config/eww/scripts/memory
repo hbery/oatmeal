@@ -1,0 +1,21 @@
+#!/bin/bash
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
+#
+# $description: Get memory information
+
+_mainFn () {
+    local _opt
+    _opt="${1:-}"
+
+    case "${_opt}" in
+        "total") free --human --si | awk '/^Mem:/ { print $2 }' ;;
+        "used")  free --human --si | awk '/^Mem:/ { print $3 }' ;;
+        "avail") free --human --si | awk '/^Mem:/ { print $7 }' ;;
+        "percent") free --mega | awk '/^Mem:/ {print ($3/$2)*100}' ;;
+        *) ;;
+    esac
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    _mainFn "${@:-}"
+fi

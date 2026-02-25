@@ -1,0 +1,64 @@
+#!/bin/bash
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
+
+_nonFocusedIcon=""
+_focusedIcon=""
+_hyprctlBin="$(which hyprctl)"
+_switchWSCmd="${_hyprctlBin} dispatch workspace"
+
+_ewwRenderWorkspacesFn () {
+    local _activeWorkpace _wsString
+    declare -a _workspaces
+    declare -A _workspaceClasses _workspaceIcons
+
+    _workspaces=( 1 2 3 4 5 6 7 8 9 10 )
+
+    _activeWS="$("${_hyprctlBin}" -j activeworkspace | jq -r '.id')"
+    _occupiedWS="$(hyprctl -j workspaces | jq -r '.[] | "\(.id),\(if (.windows > 0) then "occupied" else "" end)"')"
+
+    local _status
+    for _ws in "${_workspaces[@]}"; do
+        _status="$(awk -F, '/^'"${_ws}"',/ { print $2 }' <<<"${_occupiedWS}" )"
+        [ -z "${_status}" ] && _status="empty"
+        [ "${_ws}" == "${_activeWS}" ] && _status="focused"
+
+        _workspaceClasses["${_ws}"]="ws-${_status}"
+        case "${_status}" in
+            "empty"|"occupied") _workspaceIcons["${_ws}"]="${_nonFocusedIcon}" ;;
+            "focused")          _workspaceIcons["${_ws}"]="${_focusedIcon}" ;;
+            *) ;;
+        esac
+    done
+
+    _wsString='(box :class "ws-container" :orientation "h" :spacing 5 :space-evenly "false"'
+    for _ws in "${_workspaces[@]}"; do
+        _wsString+="(button :class \"${_workspaceClasses["${_ws}"]}\" :onclick \"${_switchWSCmd} ${_ws}\" \"${_workspaceIcons["${_ws}"]} \")"
+    done
+    _wsString+=')'
+    echo "${_wsString}"
+}
+
+_handleHyprlandEventFn () {
+    local _evName _evVal
+    _evName="${1%%>>*}"
+    _evVal="${1##*>>}"
+
+    case "${_evName}" in
+        "workspacev2")
+            _ewwRenderWorkspacesFn
+            ;;
+        *) ;;
+    esac
+}
+
+_mainFn () {
+    _ewwRenderWorkspacesFn
+    socat -U - "UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock" \
+        | while read -r _line; do
+            _handleHyprlandEventFn "${_line}"
+        done
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    _mainFn "${@:-}"
+fi

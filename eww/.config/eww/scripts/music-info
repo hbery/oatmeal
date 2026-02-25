@@ -1,0 +1,101 @@
+#!/bin/bash
+# vim: ft=bash : ts=4 : sts=4 : sw=4 : et :
+#
+# $author: adi1090x
+# $modified-by: hbery
+
+_cover="/tmp/.music_cover.png"
+_musicDir="$(xdg-user-dir MUSIC)"
+
+_getStatusFn () {
+    local _status="$(mpc status)"
+    if [[ ${_status} == *"[playing]"* ]]; then
+        echo ""
+    else
+        echo ""
+    fi
+}
+
+_getSongFn () {
+    local _song="$(mpc -f %title% current)"
+    if [[ -z "${_song}" ]]; then
+        echo "offline"
+    else
+        echo "${_song}"
+    fi
+}
+
+_getArtistFn () {
+    local _artist="$(mpc -f %artist% current)"
+    if [[ -z "${_artist}" ]]; then
+        echo ""
+    else
+        echo "${_artist}"
+    fi
+}
+
+_getTimeFn () {
+    local _time="$(mpc status | grep "%)" | awk '{print $4}' | tr -d '(%)')"
+    if [[ -z "${_time}" ]]; then
+        echo "0"
+    else
+        echo "${_time}"
+    fi
+}
+
+_getCtimeFn () {
+    local _ctime="$(mpc status | grep "#" | awk '{print $3}' | sed 's|/.*||g')"
+    if [[ -z "${_ctime}" ]]; then
+        echo "0:00"
+    else
+        echo "${_ctime}"
+    fi
+}
+
+_getTtimeFn () {
+    local _ttime="$(mpc -f %time% current)"
+    if [[ -z "${_ttime}" ]]; then
+        echo "0:00"
+    else
+        echo "${_ttime}"
+    fi
+}
+
+_getCoverFn () {
+    ffmpeg -i "${MUSIC_DIR}/$(mpc current -f %file%)" "${_cover}" -y &> /dev/null
+    _errno=$?
+
+    if [[ "${_errno}" -eq 0 ]];then
+        echo "${_cover}"
+    else
+        echo "images/music.png"
+    fi
+}
+
+_mainFn () {
+    local _opt
+    _opt="${1}"
+
+    case "${_opt}" in
+        "--song")   _getSongFn    ;;
+        "--artist") _getArtistFn  ;;
+        "--status") _getStatusFn  ;;
+        "--time")   _getTimeFn    ;;
+        "--ctime")  _getCtimeFn   ;;
+        "--ttime")  _getTtimeFn   ;;
+        "--cover")  _getCoverFn   ;;
+        "--toggle") mpc -q toggle ;;
+        "--next")
+            mpc -q next
+            _getCoverFn
+            ;;
+        "--prev")
+            mpc -q prev
+            _getCoverFn
+            ;;
+    esac
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    _mainFn "${@:-}"
+fi
