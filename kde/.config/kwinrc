@@ -1,6 +1,9 @@
 [$Version]
 update_info=kwin.upd:replace-scalein-with-scale,kwin.upd:port-minimizeanimation-effect-to-js,kwin.upd:port-scale-effect-to-js,kwin.upd:port-dimscreen-effect-to-js,kwin.upd:auto-bordersize,kwin.upd:animation-speed
 
+[Activities][LastVirtualDesktop]
+cff24695-e2cb-4480-b972-d2787318cea5=9d316376-cd98-4e1f-a38b-14e974fca0bb
+
 [Compositing]
 Backend=OpenGL
 Enabled=true
@@ -49,6 +52,9 @@ BorderActivate=9
 BorderActivateAll=9
 BorderActivateClass=9
 
+[Effect-overview]
+BorderActivate=9
+
 [ElectricBorders]
 Bottom=None
 BottomLeft=None
@@ -82,8 +88,8 @@ CommandWindowWheel=Scroll
 
 [NightColor]
 Active=true
-LatitudeAuto=50.041
-LongitudeAuto=19.9702
+LatitudeAuto=52.2297
+LongitudeAuto=21.0122
 
 [PlasmaRunnerManager]
 LaunchCounts=
@@ -142,6 +148,42 @@ ShowDesktopMode=0
 ShowTabBox=true
 SwitchingMode=0
 
+[Tiling]
+padding=4
+
+[Tiling][12c95b8e-4aff-5c42-ace6-6370e9f0ef62]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][1bddfba6-5354-42a9-9fb8-18681d5c9703][]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][1bddfba6-5354-42a9-9fb8-18681d5c9703][be7eac04-8ee5-4467-8b6d-f69a5d8d3075]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][9d316376-cd98-4e1f-a38b-14e974fca0bb][]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][9d316376-cd98-4e1f-a38b-14e974fca0bb][be7eac04-8ee5-4467-8b6d-f69a5d8d3075]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][9fa6011d-450e-5875-8ad9-621fb2ad7895]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][a20730a4-a32e-4236-bfcd-c5ff1d9f759a][]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][a20730a4-a32e-4236-bfcd-c5ff1d9f759a][be7eac04-8ee5-4467-8b6d-f69a5d8d3075]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][a7d014cc-eab8-4f4b-9de9-2b3445b736b8][]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][a7d014cc-eab8-4f4b-9de9-2b3445b736b8][be7eac04-8ee5-4467-8b6d-f69a5d8d3075]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][c185e100-08c2-53c4-a073-562d6a24752f]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
 [Windows]
 ActiveMouseScreen=false
 AutoRaise=false
@@ -171,6 +213,9 @@ ShadeHoverInterval=250
 SnapOnlyWhenOverlapping=false
 TitlebarDoubleClickCommand=Maximize
 WindowSnapZone=10
+
+[Xwayland]
+Scale=1.15
 
 [org.kde.kdecoration2]
 ButtonsOnLeft=S

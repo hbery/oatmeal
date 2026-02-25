@@ -136,8 +136,9 @@ ForegroundPositive=39,174,96
 ForegroundVisited=120,120,120
 
 [DirSelect Dialog]
-DirSelectDialog Size=840,596
-History Items[$e]=
+DirSelectDialog Size=815,582
+History Items[$e]=file:$HOME/doc/aud,file:$HOME,file:$HOME
+Splitter State=\x00\x00\x00\xff\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x86\x00\x00\x02\xa8\x00\xff\xff\xff\xff\x01\x00\x00\x00\x01\x00
 
 [Emoticons]
 emoticonsTheme=GoogleEmojiComplete
@@ -145,7 +146,7 @@ parseMode=2
 
 [General]
 BrowserApplication=brave-browser.desktop
-ColorScheme=McMojave
+ColorSchemeHash=888f558ddb41ce5656c7b32ba0fcc1916eca895f
 Name=McMojave
 TerminalApplication=alacritty
 XftAntialias=true
@@ -184,6 +185,7 @@ Show Speedbar=true
 Show hidden files=false
 Sort by=Name
 Sort directories first=true
+Sort hidden files last=false
 Sort reversed=false
 Speedbar Width=149
 View Style=DetailTree

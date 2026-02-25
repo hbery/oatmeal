@@ -74,3 +74,4 @@ wmclassmatch=1
 
 [General]
 count=4
+rules=1,2,3,4
